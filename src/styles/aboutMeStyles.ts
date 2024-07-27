@@ -46,6 +46,7 @@ const aboutMeStyles = (isMobile: boolean): Record<string, SxProps<Theme>> => ({
     },
   },
   paragraph: {
+    letterSpacing: '1.5px',
     lineHeight: 1.5,
     marginBottom: '1rem',
     color: theme.palette.common.white,

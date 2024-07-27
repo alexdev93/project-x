@@ -34,8 +34,8 @@ const StyledCard = styled(Card)`
   ${offeringsStyles.card}
 `;
 
-const StyledGrid = styled(Grid)<{ isMobile: boolean }>`
-${({ isMobile }) => offeringsStyles.grid( isMobile)}
+const StyledGrid = styled(Grid) <{ isMobile: boolean }>`
+${({ isMobile }) => offeringsStyles.grid(isMobile)}
 `;
 
 const CardContentWrapper = styled(CardContent) <{ index: number }>`
@@ -45,9 +45,9 @@ const CardContentWrapper = styled(CardContent) <{ index: number }>`
 const Profession: React.FC = () => {
   const isMobile = useIsMobile();
   return (
-    <Section id="about">
+    <Section id="profession">
       <Subtitle variant="subtitle1">
-        what we&apos;re offering
+        carrer
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -64,43 +64,43 @@ const Profession: React.FC = () => {
         </svg>
       </Subtitle>
       <Heading variant="h1">
-        Services Built Specifically for your Business
+        Comprehensive Software Solutions Engineer
       </Heading>
       <StyledGrid container spacing={3} isMobile={isMobile}>
         {[
           {
             varient: "fadeInLeft",
-            title: 'UI/UX creative design',
+            title: 'Backend Engineer',
             description:
-              'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.',
+              'Expert in Spring Boot, microservices, Docker, and event-driven architectures, delivering robust server-side applications.',
             img: 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           },
           {
             varient: "fadeInRight",
-            title: 'visual graphic design',
+            title: 'Frontend Engineer',
             description:
-              'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.',
+              'Specializes in modern web technologies like Next.js and Material-UI, creating responsive and user-friendly interfaces.',
             img: 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           },
           {
             varient: "fadeInUp",
-            title: 'strategy & digital marketing',
+            title: 'UI/UX Creative Design',
             description:
-              'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.',
+              'Focuses on best practices to craft visually appealing and intuitive user experiences for web applications.',
             img: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           },
           {
             varient: "fadeInDown",
-            title: 'effective business growth',
+            title: 'Full-Stack Web Developer',
             description:
-              'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.',
+              'Proficient in both frontend and backend technologies, providing comprehensive solutions for modern web applications.',
             img: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           },
         ].map((offer, index) => (
           <Grid item xs={12} sm={6} key={index}>
             <StyledCard>
               <AnimatedBox variant="fadeIn">
-                <Circle img={offer.img} index={index + 1} ismobile={isMobile}/>
+                <Circle img={offer.img} index={index + 1} ismobile={isMobile} />
               </AnimatedBox>
               <AnimatedBox variant="fadeInDown">
                 <CardContentWrapper index={index + 1}>

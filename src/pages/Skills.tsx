@@ -6,15 +6,14 @@ import { useTheme } from '@mui/material/styles';
 import AnimatedBox from '../components/AnimatedBox';
 
 const skills = [
-  { title: 'HTML5', width: '80%', color: '#E44D26' },
-  { title: 'C++', width: '60%', color: '#00599C' },
-  { title: 'CSS3', width: '95%', color: '#1572B6' },
-  { title: 'ReactJS', width: '75%', color: '#61DAFB' },
-  { title: 'NodeJS', width: '87%', color: '#68A063' },
-  { title: 'Python', width: '50%', color: '#3776AB' },
-  { title: 'Go', width: '60%', color: '#00ADD8' },
-  { title: 'Rust', width: '40%', color: '#DEA584' },
-  { title: 'JavaScript', width: '95%', color: '#F7DF1E' },
+  { title: 'Spring Boot:', width: '95%', color: '#6DB33F' },
+  { title: 'NextJs', width: '90%', color: '#000' },
+  { title: 'NodeJs', width: '95%', color: ' #8CC84B' },
+  { title: 'TypeScript', width: '90%', color: '#007ACC' },
+  { title: 'ReactJS', width: '95%', color: '#61DAFB' },
+  { title: 'NestJS', width: '97%', color: '#000' },
+  { title: 'Java', width: '92%', color: '#007396' },
+  { title: 'JavaScript', width: '100%', color: '#F7DF1E' },
 ];
 
 const Skills = () => {
@@ -32,7 +31,7 @@ const Skills = () => {
       backgroundColor: '#191d2b',
       display: 'grid',
       placeItems: 'center'
-    }}>
+    }} id="skills">
       <Container style={{ width: '80%' }}>
         <Box sx={classes.aboutStats}>
           <Typography variant="h4" sx={classes.statTitle}>My Skills</Typography>

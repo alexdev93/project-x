@@ -20,7 +20,7 @@ const AboutMe = () => {
       backgroundColor: '#191d2b',
       display: 'grid',
       placeItems: 'center'
-    }}>
+    }} id="about">
       <Box sx={classes.aboutSection}>
         <Box sx={classes.mainTitle}>
           <Typography variant="h2">
@@ -35,17 +35,22 @@ const AboutMe = () => {
               </AnimatedBox>
               <AnimatedBox variant="slideInLeft">
                 <Typography variant="body1" sx={classes.paragraph}>
-                  In addition to my technical skills, I am committed to continuous learning and growth. I stay
-                  up-to-date with the latest trends and best practices in web development by attending
-                  conferences, participating in online communities, and reading industry publications.
+                Hi, I’m Alemayehu Mekonen, a dedicated software developer 
+                with a strong background in computer science and hands-on 
+                experience from various projects and internships, 
+                including Safaricom. I am certified in Spring Boot and 
+                have undergone training at Gebeya, which has honed my 
+                backend skills. I specialize in web development with 
+                expertise in Spring Boot, NestJS, and general backend solutions.
                 </Typography>
               </AnimatedBox>
               <AnimatedBox variant="slideInLeft">
                 <Typography variant="body1" sx={classes.paragraph}>
-                  I enjoy exploring new technologies and working on personal projects outside of work.
-                  Additionally, I volunteer my time to help non-profit organizations with their web
-                  development needs. Giving back to the community is a rewarding way for me to apply my skills
-                  and make a positive impact on the world.
+                Currently, I am enhancing my portfolio with Next.js and Material-UI to achieve 
+                a clean, professional look. My work integrates backend engineering, frontend 
+                development, UI/UX design, and full-stack solutions, providing comprehensive 
+                and high-quality software solutions tailored to meet client needs and improve 
+                their digital presence.
                 </Typography>
               </AnimatedBox>
               <Box sx={classes.btnContainer}>

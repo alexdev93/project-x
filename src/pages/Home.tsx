@@ -1,4 +1,4 @@
-'use client'
+
 import React from 'react';
 import {
   Header,
@@ -13,10 +13,8 @@ import {
 } from '../styles/HomeStyles';
 import Image from 'next/image';
 import AnimatedBox from '../components/AnimatedBox';
-import useIsMobile from '../utils/mediaQueries';
 
 const HomeHeader = () => {
-  const isMobile = useIsMobile();
   return (
     <Header className="cnt header active" id="home">
       <HeaderContent className="header-content">
@@ -34,16 +32,15 @@ const HomeHeader = () => {
         <RightHeader className="right-header">
           <AnimatedBox variant="fadeInUp">
             <Name className="name">
-              Hi, I&apos;m <span>Alemayehu Mekonen.</span>
-              A Web Developer.
+              Alemayehu Mekonen
+              <br /><span>Versatile Full-Stack</span> Software Developer
             </Name>
           </AnimatedBox>
           <AnimatedBox variant="fadeIn">
             <Description style={{ fontStyle: 'italic' }}>
-              &quot;Bringing your online vision to life,
-              <span className="pixel">one pixel at a time</span>&quot;
-              emphasizes my dedication to creating customized and visually appealing website that accurately reflect the brand and
-              goals of each client.
+              &quot;I am a versatile software developer specializing in frontend, backend, and
+              <span className="pixel">full-stack engineering.</span>&quot;
+              I excel in Node.js, Next.js, Material-UI, Spring Boot, microservices, Docker, and event-driven architectures, delivering high-quality, responsive applications.
             </Description>
           </AnimatedBox>
           <MainButton href="./ALEMAYEHU_MEKONEN[RESUME].pdf" className="main-btn" download>

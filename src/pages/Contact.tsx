@@ -31,19 +31,19 @@ const ContactPage: React.FC = () => {
               <Box sx={contactStyles.contactItem}>
                 <Email sx={contactStyles.contactIcon} />
                 <Typography sx={contactStyles.contactInfo}>
-                  <MuiLink href="mailto:email@domain.com" color="inherit">email@domain.com</MuiLink>
+                  <MuiLink href="mailto:email@domain.com" color="inherit">alemayehu.dev@gmail.com</MuiLink>
                 </Typography>
               </Box>
               <Box sx={contactStyles.contactItem}>
                 <Phone sx={contactStyles.contactIcon} />
                 <Typography sx={contactStyles.contactInfo}>
-                  <MuiLink href="tel:+123456789" color="inherit">+123 456 789</MuiLink>
+                  <MuiLink href="tel:+123456789" color="inherit">+251 993 460 548</MuiLink>
                 </Typography>
               </Box>
               <Box sx={contactStyles.contactItem}>
                 <LocationOn sx={contactStyles.contactIcon} />
                 <Typography sx={contactStyles.contactInfo}>
-                  123 Main Street, City, Country
+                  Adis Abeba, Ethiopia
                 </Typography>
               </Box>
             </Box>

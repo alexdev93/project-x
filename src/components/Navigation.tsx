@@ -15,9 +15,9 @@ const iconStyle = { width: 28, height: 28, fill: '#dbe1e8' }
 
 const navigationItems = [
   { id: 'home', icon: <HomeIcon sx={iconStyle} /> },
-  { id: 'about', icon: <PersonIcon sx={iconStyle} /> },
-  { id: 'projects', icon: <WorkIcon sx={iconStyle} /> },
-  { id: 'blogs', icon: <DescriptionIcon sx={iconStyle} /> },
+  { id: 'profession', icon: <PersonIcon sx={iconStyle} /> },
+  { id: 'about', icon: <WorkIcon sx={iconStyle} /> },
+  { id: 'experiance', icon: <DescriptionIcon sx={iconStyle} /> },
   { id: 'contact', icon: <MailOutlineIcon sx={iconStyle} /> },
 ];
 

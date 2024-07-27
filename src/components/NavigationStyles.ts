@@ -29,11 +29,10 @@ export const ControlsContainer = styled.nav`
 `;
 
 export const Control = styled.div`
-  padding: 1rem;
   cursor: pointer;
   background-color: ${theme.palette.grey[400]};
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   justify-content: center;

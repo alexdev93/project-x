@@ -42,13 +42,12 @@ const Footer: React.FC = () => {
             <div>
               <Typography variant="h6" sx={footerStyles.sectionTitle}>Our Contact</Typography>
               <address>
-                <strong>Hi-Tech Inc</strong><br />
-                JC Main Road, Near Silnile tower<br />
-                Pin-21542 NewYork US.
+                <strong>Alex</strong><br />
+                Pin-21542 Adis Abeba, ET.
               </address>
               <Typography>
-                <i className="icon-phone" /> (123) 456-789 - 1255-12584 <br />
-                <i className="icon-envelope-alt" /> email@domainname.com
+                <i className="icon-phone" /> (+251) 993 - 460 - 548 <br />
+                <i className="icon-envelope-alt" /> alemayehu.dev@gmail.com
               </Typography>
             </div>
           </Grid>
@@ -91,15 +90,15 @@ const Footer: React.FC = () => {
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item>
               <Typography sx={{ color: '#e6e8ea' }}>
-                <span>© Hi-Tech 2016 All rights reserved. By </span>
-                <MuiLink href="http://webthemez.com" target="_blank" sx={footerStyles.link}>WebThemez</MuiLink>
+                <span>© 2024 All rights reserved. By </span>
+                <MuiLink href="http://webthemez.com" target="_blank" sx={footerStyles.link}>Alex</MuiLink>
               </Typography>
             </Grid>
             <Grid item>
               <div>
-                <MuiLink href="#" title="Facebook" sx={footerStyles.socialLinks}><Facebook /></MuiLink>
-                <MuiLink href="#" title="Twitter" sx={footerStyles.socialLinks}><Twitter /></MuiLink>
-                <MuiLink href="#" title="LinkedIn" sx={footerStyles.socialLinks}><LinkedIn /></MuiLink>
+                <MuiLink href="https://www.facebook.com/alemayehu.dev" title="Facebook" sx={footerStyles.socialLinks}><Facebook /></MuiLink>
+                <MuiLink href="https://github.com/alexdev93" title="Twitter" sx={footerStyles.socialLinks}><Twitter /></MuiLink>
+                <MuiLink href="https://www.linkedin.com/in/alemayehu-mekonen/" title="LinkedIn" sx={footerStyles.socialLinks}><LinkedIn /></MuiLink>
                 <MuiLink href="#" title="Pinterest" sx={footerStyles.socialLinks}><Pinterest /></MuiLink>
                 <MuiLink href="#" title="Google" sx={footerStyles.socialLinks}><Google /></MuiLink>
               </div>

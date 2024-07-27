@@ -70,7 +70,7 @@ const Experiance = () => {
       placeItems: 'center',
       backgroundColor: "#191d2b",
       color: '#fff'
-    }}>
+    }} id="experiance">
       <Container style={{
         width: '80%',
         color: '#fff',

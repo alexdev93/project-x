@@ -62,23 +62,23 @@ const Education: React.FC = () => {
   const educationData = [
     {
       school: 'Gebeya Training',
-      degree: 'Certified Backend Developer',
+      degree: 'Certified Backend Engineer',
+      year: '2024',
+    },
+    {
+      school: 'Unity University',
+      degree: 'Bachelor of Computer Science',
       year: '2023',
     },
     {
-      school: 'University of Addis Ababa',
-      degree: 'Bachelor of Computer Science',
-      year: '2022',
-    },
-    {
       school: 'Safaricom Internship',
-      degree: 'Intensive Internship in Insurance Research',
-      year: '2021',
+      degree: 'Intensive Internship in Backend Development',
+      year: '2024',
     },
   ];
 
   return (
-    <Container style={{ width: "100%", maxWidth: "100%", backgroundColor: "#191d2b" }}>
+    <Container style={{ width: "100%", maxWidth: "100%", backgroundColor: "#191d2b" }} id="education">
 
       <EducationContainer>
         <Heading>

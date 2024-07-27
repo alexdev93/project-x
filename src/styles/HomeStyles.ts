@@ -95,7 +95,7 @@ export const RightHeader = styled.div`
 `;
 
 export const Name = styled.h1`
-  font-size: 3rem;
+  font-size: 2.6rem;
 
   @media screen and (max-width: 800px) {
     font-size: 2.5rem;
@@ -104,6 +104,7 @@ export const Name = styled.h1`
   }
 
   span {
+  font-size: 3rem;
     color: ${theme.palette.secondary.main};
   }
 `;
