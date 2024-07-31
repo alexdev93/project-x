@@ -58,7 +58,7 @@ const AboutMe = () => {
                   style={{ backgroundColor: '#9BF2EA', color: '#260101' }}
                   variant="contained"
                   startIcon={<DownloadIcon />}
-                  href="./ALEMAYEHU_MEKONEN[RESUME].pdf"
+                  href="./Alemayehu Mekonen Full-Stack Software Developer CV Resume.pdf"
                 >
                   Download CV
                 </Button>

@@ -43,7 +43,7 @@ const HomeHeader = () => {
               I excel in Node.js, Next.js, Material-UI, Spring Boot, microservices, Docker, and event-driven architectures, delivering high-quality, responsive applications.
             </Description>
           </AnimatedBox>
-          <MainButton href="./ALEMAYEHU_MEKONEN[RESUME].pdf" className="main-btn" download>
+          <MainButton href="./Alemayehu Mekonen Full-Stack Software Developer CV Resume.pdf" className="main-btn" download>
             <span className="btn-text">Download CV</span>
             <span className="btn-icon"><i className="fas fa-download"></i></span>
           </MainButton>

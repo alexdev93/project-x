@@ -47,7 +47,7 @@ const Profession: React.FC = () => {
   return (
     <Section id="profession">
       <Subtitle variant="subtitle1">
-        carrer
+        career
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

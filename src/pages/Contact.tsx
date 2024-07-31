@@ -37,13 +37,13 @@ const ContactPage: React.FC = () => {
               <Box sx={contactStyles.contactItem}>
                 <Phone sx={contactStyles.contactIcon} />
                 <Typography sx={contactStyles.contactInfo}>
-                  <MuiLink href="tel:+123456789" color="inherit">+251 993 460 548</MuiLink>
+                  <MuiLink href="tel:+251993460548" color="inherit">+251 993 460 548</MuiLink>
                 </Typography>
               </Box>
               <Box sx={contactStyles.contactItem}>
                 <LocationOn sx={contactStyles.contactIcon} />
                 <Typography sx={contactStyles.contactInfo}>
-                  Adis Abeba, Ethiopia
+                  Addis Abeba, Ethiopia
                 </Typography>
               </Box>
             </Box>

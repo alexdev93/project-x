@@ -1,9 +1,9 @@
-// components/Footer.tsx
-
-import React from 'react';
-import { Container, Grid, Typography, Link as MuiLink, Box } from '@mui/material';
+'use client'
+import React, { useRef } from 'react';
+import { Container, Grid, Typography, Link as MuiLink, Box, } from '@mui/material';
 import { Facebook, Twitter, LinkedIn, Pinterest, Google } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material/styles';
+import { Link } from 'react-scroll';
 
 const footerStyles: Record<string, SxProps<Theme>> = {
   footer: {
@@ -33,7 +33,26 @@ const footerStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
+const links = [
+  { id: 'home' },
+  { id: 'profession' },
+  { id: 'about' },
+  { id: 'experiance' },
+  { id: 'contact' },
+]
+
 const Footer: React.FC = () => {
+
+  const navRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const handleClick = (id: string) => () => {
+    const scrollTo = navRefs.current[id];
+    if (scrollTo) {
+      console.log(scrollTo)
+      scrollTo.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <Box component="footer" sx={footerStyles.footer} >
       <Container sx={footerStyles.container}>
@@ -43,10 +62,10 @@ const Footer: React.FC = () => {
               <Typography variant="h6" sx={footerStyles.sectionTitle}>Our Contact</Typography>
               <address>
                 <strong>Alex</strong><br />
-                Pin-21542 Adis Abeba, ET.
+                Addis Abeba, ET.
               </address>
               <Typography>
-                <i className="icon-phone" /> (+251) 993 - 460 - 548 <br />
+                <i className="icon-phone" /> <MuiLink href="tel:+251993460548" color="inherit">+251 993 460 548</MuiLink><br />
                 <i className="icon-envelope-alt" /> alemayehu.dev@gmail.com
               </Typography>
             </div>
@@ -55,11 +74,17 @@ const Footer: React.FC = () => {
             <div>
               <Typography variant="h6" sx={footerStyles.sectionTitle}>Quick Links</Typography>
               <ul style={{ listStyleType: 'none', padding: 0 }}>
-                <li><MuiLink href="#" sx={footerStyles.link}>Latest Events</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Terms and Conditions</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Privacy Policy</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Career</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Contact Us</MuiLink></li>
+                {links.map(({ id }) => (
+                  <Link to={id} smooth={true} duration={500} key={id}>
+                    <div
+                      ref={(el: any) => (navRefs.current[id] = el)}
+                      style={{ color: '#afb1b4', }}
+                      onClick={handleClick(id)}
+                    >
+                      {id}
+                    </div>
+                  </Link>
+                ))}
               </ul>
             </div>
           </Grid>
@@ -67,9 +92,9 @@ const Footer: React.FC = () => {
             <div>
               <Typography variant="h6" sx={footerStyles.sectionTitle}>Latest Posts</Typography>
               <ul style={{ listStyleType: 'none', padding: 0 }}>
-                <li><MuiLink href="#" sx={footerStyles.link}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Pellentesque et pulvinar enim. Quisque at tempor ligula</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Natus error sit voluptatem accusantium doloremque</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>Understanding React Hooks: A Comprehensive Guide</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>10 Tips for Improving Your JavaScript Code</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>Exploring the New Features in ES2024</MuiLink></li>
               </ul>
             </div>
           </Grid>
@@ -77,9 +102,9 @@ const Footer: React.FC = () => {
             <div>
               <Typography variant="h6" sx={footerStyles.sectionTitle}>Recent News</Typography>
               <ul style={{ listStyleType: 'none', padding: 0 }}>
-                <li><MuiLink href="#" sx={footerStyles.link}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Pellentesque et pulvinar enim. Quisque at tempor ligula</MuiLink></li>
-                <li><MuiLink href="#" sx={footerStyles.link}>Natus error sit voluptatem accusantium doloremque</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>Tech Conference 2024: Key Takeaways and Highlights</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>New Advances in AI: What to Expect in the Coming Years</MuiLink></li>
+                <li><MuiLink href="#" sx={footerStyles.link}>Cybersecurity Trends: Staying Safe in a Digital World</MuiLink></li>
               </ul>
             </div>
           </Grid>

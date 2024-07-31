@@ -7,38 +7,52 @@ import AnimatedBox from '../components/AnimatedBox';
 
 const experiences = [
   {
-    duration: '2023 - present',
-    title: 'Web Developer',
-    company: 'Freelancer',
-    description: 'As a freelance web developer, I have been working on various projects, utilizing my skills and expertise in web development. I specialize in creating engaging and user-friendly websites.',
+    duration: 'March 2024 - May 2024',
+    title: 'Backend Engineer',
+    company: 'Safaricom Ethiopia ',
+    description: `Developed and maintained backend services for various applications using Spring and Spring Boot.
+                  Implemented authentication and authorization using Keycloak, OAuth2, and JWT.
+                  Built and managed microservices, ensuring high performance and reliability. Monitored and maintained system health using
+Grafana and Prometheus
+`,
     icon: <Work />,
   },
   {
-    duration: '2022 - 2023',
-    title: 'Front-end',
-    company: 'Solo Learn',
-    description: 'During this period, I focused on enhancing my front-end development skills through the SoloLearn platform. I learned and practiced the latest technologies and techniques to build modern and responsive web interfaces.',
+    duration: 'Feburary 2024 - July 2024',
+    title: 'Full-stack Developer & UI/UX',
+    company: 'Purpose Black Ethiopia ',
+    description: `Developed and maintained full-stack applications
+using the MERN stack. integrated RESTful APIs and front-end interfaces
+using React. Designed and implemented microservices
+architecture using Spring Boot and Node.js Conducted code reviews and mentored junior
+developers, ensuring adherence to best practices
+and code quality.
+`,
     icon: <Work />,
   },
   {
-    duration: '2019 - 2020',
-    title: 'JS Programmer',
-    company: 'Code with Mosh',
-    description: 'I dedicated this time to become proficient in JavaScript programming through the Code with Mosh platform. I gained a deep understanding of JavaScript fundamentals and advanced concepts, enabling me to develop robust and interactive web applications.',
+    duration: 'October 2023 - April 2024',
+    title: 'Advanced Software Engineering Trainee',
+    company: 'Gebeya Inc',
+    description: `Completed an intensive 6-month training program 
+focused on advanced software engineering 
+concepts. Worked on real-world projects, gaining hands-on 
+experience with modern development practices. Enhanced skills in full-stack development, 
+microservices architecture, and DevOps practices`,
     icon: <Work />,
   },
   {
-    duration: '2020 - 2021',
-    title: 'Game Developer',
-    company: 'Solo Learn',
-    description: 'During this period, I explored the field of game development through SoloLearn. I acquired knowledge and hands-on experience in creating games using different frameworks and tools, enhancing my creativity and problem-solving skills.',
+    duration: '2020 - present',
+    title: 'Freelance Developer',
+    company: 'Various Projects',
+    description: `Worked on numerous freelance projects across different industries. Gained extensive experience in full-stack development, UI/UX design, and project management. Collaborated with clients to deliver high-quality solutions, meeting their specific needs and requirements.`,
     icon: <Work />,
   },
   {
-    duration: '2018 - 2023',
-    title: 'Computer Science Degree',
-    company: 'Unity University',
-    description: 'I pursued a comprehensive computer science degree from Unity University. The program provided me with a solid foundation in computer science principles, algorithms, data structures, and software development methodologies.',
+    duration: '2018 - Present',
+    title: 'Online Certifications',
+    company: 'Udemy, LinkedIn Learning, SoloLearn, Udacity',
+    description: 'Acquired various certifications in advanced software development, machine learning, data science, and other technology-related fields. Continuous learning and upskilling through online courses from reputed platforms such as Udemy, LinkedIn Learning, SoloLearn, and Udacity.',
     icon: <School />,
   },
 ];
@@ -79,7 +93,7 @@ const Experiance = () => {
         <Header>
           <Typography variant="h4">Experiance</Typography>
         </Header>
-        <Grid container spacing={4} style={{marginLeft:"-20px",}}>
+        <Grid container spacing={4} style={{ marginLeft: "-20px", }}>
           {experiences.map((experience, index) => (
             <Grid item xs={12} md={6} key={index}>
               <Box
