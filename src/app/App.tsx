@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState, ReactNode } from 'react';
 import Grid from '@mui/material/Grid';
-import GlobalStyles from '../styles/GlobalStyles';
 import LoaderComponent from '../components/Loader';
 
 interface HomeProps {
@@ -21,7 +20,6 @@ const App: React.FC<HomeProps> = ({ children }) => {
 
     return (
         <Grid style={{ width: '100%', maxWidth: '100%', padding: 0 }}>
-            <GlobalStyles />
             {isLoading ? (
                 <LoaderComponent />
             ) : (
