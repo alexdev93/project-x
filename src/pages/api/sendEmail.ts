@@ -24,13 +24,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const mailOptions = {
       from: email,
       to: process.env.EMAIL_USER,
-      subject: `Contact Form: ${subject}`,
+      subject: `Subject: ${subject}`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      replyTo: email,
+      headers: {
+        'X-Sender': email // Optional header to include the sender's email
+      }
     };
 
     try {
       await transporter.sendMail(mailOptions);
-      res.status(200).json({ success: true });
+      res.status(200).json({ success: true, name: name });
     } catch (error) {
       res.status(500).json({ success: false, message: (error as Error).message });
     }

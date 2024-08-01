@@ -27,7 +27,6 @@ const Navigation: React.FC = () => {
   const handleClick = (id: string) => () => {
     const scrollTo = navRefs.current[id];
     if (scrollTo) {
-      console.log(scrollTo)
       scrollTo.scrollIntoView({ behavior: 'smooth' });
     }
   };

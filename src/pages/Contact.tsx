@@ -44,7 +44,7 @@ const ContactPage: React.FC = () => {
       });
 
       const result = await response.json();
-      console.log(result)
+      if(result.success) alert(`${result.name} your feedback sent successfully to Alex`)
     } catch (error) {
       console.log(error)
     } finally {

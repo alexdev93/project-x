@@ -124,7 +124,7 @@ const ExperienceDescription = styled(Typography)(({ theme }) => ({
 
 const Experience = () => {
   return (
-    <ExperienceContainer id="experience">
+    <ExperienceContainer id="experiance">
       <ExperienceContent>
         <Header>
           <Typography variant="h4">Experience</Typography>
