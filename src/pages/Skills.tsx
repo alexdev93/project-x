@@ -4,6 +4,8 @@ import { Box, Typography, Grid, Container } from '@mui/material';
 import skillsStyles from '../styles/skillStyles';
 import { useTheme } from '@mui/material/styles';
 import AnimatedBox from '../components/AnimatedBox';
+import useIsMobile from '../utils/mediaQueries';
+
 
 const skills = [
   { title: 'Spring Boot:', width: '95%', color: '#6DB33F' },
@@ -20,6 +22,7 @@ const Skills = () => {
 
   const theme = useTheme();
   const classes = skillsStyles(theme);
+  const isMobile = useIsMobile();
 
   return (
     <Container style={{
@@ -32,7 +35,7 @@ const Skills = () => {
       display: 'grid',
       placeItems: 'center'
     }} id="skills">
-      <Container style={{ width: '80%' }}>
+      <Container style={{ width: isMobile ? '100%': '80%' }}>
         <Box sx={classes.aboutStats}>
           <Typography variant="h4" sx={classes.statTitle}>My Skills</Typography>
           <Grid container spacing={4} sx={classes.progressBars}>
