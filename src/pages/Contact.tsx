@@ -1,12 +1,57 @@
-'use client'
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import { Container, Grid, Typography, TextField, Button, Box, Link as MuiLink } from '@mui/material';
 import { Email, Phone, LocationOn } from '@mui/icons-material';
 import contactStyles from '@/styles/contactStyles';
 import AnimatedBox from '../components/AnimatedBox';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+// Define the FormData interface
+interface FormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
 
 const ContactPage: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container style={{
       minHeight: '120vh',
@@ -51,10 +96,13 @@ const ContactPage: React.FC = () => {
           <Grid item xs={12} md={6}>
             <Box sx={contactStyles.section}>
               <Typography variant="h6" sx={{ marginBottom: '1em', color: '#5dbb65' }}>Send Me a Message</Typography>
-              <Box component="form" sx={contactStyles.form}>
+              <Box component="form" sx={contactStyles.form} onSubmit={handleSubmit}>
                 <TextField
                   label="Name"
                   variant="outlined"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   sx={contactStyles.formField}
                   required
                   InputLabelProps={{
@@ -64,6 +112,9 @@ const ContactPage: React.FC = () => {
                 <TextField
                   label="Email"
                   variant="outlined"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   sx={contactStyles.formField}
                   type="email"
                   required
@@ -74,6 +125,9 @@ const ContactPage: React.FC = () => {
                 <TextField
                   label="Subject"
                   variant="outlined"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
                   sx={contactStyles.formField}
                   required
                   InputLabelProps={{
@@ -83,6 +137,9 @@ const ContactPage: React.FC = () => {
                 <TextField
                   label="Message"
                   variant="outlined"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   sx={contactStyles.formField}
                   multiline
                   rows={4}
@@ -91,14 +148,13 @@ const ContactPage: React.FC = () => {
                     sx: contactStyles.labelField
                   }}
                 />
-                <Button type="submit" sx={contactStyles.submitButton}>
-                  Send Message
+                <Button type="submit" sx={contactStyles.submitButton} disabled={loading}>
+                  {loading ? 'Sending...' : 'Send Message'}
                 </Button>
               </Box>
             </Box>
           </Grid>
         </Grid>
-        {/* Optionally, you can include a map here if you have a location to display */}
       </Container>
     </Container>
   );

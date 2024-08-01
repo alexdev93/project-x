@@ -38,21 +38,27 @@ const contactStyles: Record<string, SxProps<Theme>> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1em',
-    color: theme.palette.common.white,
+    color: '#fff',
   },
   formField: {
     width: '100%',
-    color: theme.palette.common.white,
+    color: '#fff',
+    '& .MuiInputBase-input': {
+      color: '#ffffff', // Input text color
+    },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
         border: '0.5px solid ',
         borderColor: '#799c81',
+        color: theme.palette.common.white,
       },
       '&:hover fieldset': {
         borderColor: theme.palette.grey[500],
+        color: theme.palette.common.white,
       },
       '&.Mui-focused fieldset': {
         borderColor: theme.palette.secondary.main,
+        color: theme.palette.common.white,
       },
     },
   },
