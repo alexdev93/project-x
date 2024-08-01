@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React from 'react';
 import { Box, Typography, Grid, Container } from '@mui/material';
 import { Work, School } from '@mui/icons-material';
@@ -12,33 +12,21 @@ const experiences = [
     company: 'Safaricom Ethiopia ',
     description: `Developed and maintained backend services for various applications using Spring and Spring Boot.
                   Implemented authentication and authorization using Keycloak, OAuth2, and JWT.
-                  Built and managed microservices, ensuring high performance and reliability. Monitored and maintained system health using
-Grafana and Prometheus
-`,
+                  Built and managed microservices, ensuring high performance and reliability. Monitored and maintained system health using Grafana and Prometheus.`,
     icon: <Work />,
   },
   {
     duration: 'Feburary 2024 - July 2024',
     title: 'Full-stack Developer & UI/UX',
     company: 'Purpose Black Ethiopia ',
-    description: `Developed and maintained full-stack applications
-using the MERN stack. integrated RESTful APIs and front-end interfaces
-using React. Designed and implemented microservices
-architecture using Spring Boot and Node.js Conducted code reviews and mentored junior
-developers, ensuring adherence to best practices
-and code quality.
-`,
+    description: `Developed and maintained full-stack applications using the MERN stack. Integrated RESTful APIs and front-end interfaces using React. Designed and implemented microservices architecture using Spring Boot and Node.js. Conducted code reviews and mentored junior developers, ensuring adherence to best practices and code quality.`,
     icon: <Work />,
   },
   {
     duration: 'October 2023 - April 2024',
     title: 'Advanced Software Engineering Trainee',
     company: 'Gebeya Inc',
-    description: `Completed an intensive 6-month training program 
-focused on advanced software engineering 
-concepts. Worked on real-world projects, gaining hands-on 
-experience with modern development practices. Enhanced skills in full-stack development, 
-microservices architecture, and DevOps practices`,
+    description: `Completed an intensive 6-month training program focused on advanced software engineering concepts. Worked on real-world projects, gaining hands-on experience with modern development practices. Enhanced skills in full-stack development, microservices architecture, and DevOps practices.`,
     icon: <Work />,
   },
   {
@@ -52,18 +40,19 @@ microservices architecture, and DevOps practices`,
     duration: '2018 - Present',
     title: 'Online Certifications',
     company: 'Udemy, LinkedIn Learning, SoloLearn, Udacity',
-    description: 'Acquired various certifications in advanced software development, machine learning, data science, and other technology-related fields. Continuous learning and upskilling through online courses from reputed platforms such as Udemy, LinkedIn Learning, SoloLearn, and Udacity.',
+    description: `Acquired various certifications in advanced software development, machine learning, data science, and other technology-related fields. Continuous learning and upskilling through online courses from reputed platforms such as Udemy, LinkedIn Learning, SoloLearn, and Udacity.`,
     icon: <School />,
   },
 ];
 
-const Header = styled(Box)(() => ({
+const Header = styled(Box)(({ theme }) => ({
   width: '100%',
   padding: '2rem',
   position: 'relative',
   color: '#A3BFAA',
   marginTop: '5rem',
   marginBottom: '5rem',
+  textAlign: 'center',
   '&::after': {
     content: '""',
     display: 'block',
@@ -74,69 +63,83 @@ const Header = styled(Box)(() => ({
   },
 }));
 
-const Experiance = () => {
+const ExperienceContainer = styled(Container)(({ theme }) => ({
+  minHeight: '100vh',
+  width: '100%',
+  maxWidth: '100%',
+  display: 'grid',
+  placeItems: 'center',
+  backgroundColor: "#191d2b",
+  color: '#fff',
+  paddingBottom: '5rem',
+}));
+
+const ExperienceContent = styled(Container)(({ theme }) => ({
+  width: '100%',
+  color: '#fff',
+  padding: 0,
+}));
+
+const ExperienceItem = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  paddingLeft: '2rem',
+  borderLeft: '1px solid grey',
+  marginBottom: '2rem',
+}));
+
+const ExperienceIcon = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  left: '-25px',
+  top: 0,
+  backgroundColor: '#27AE60',
+  width: '50px',
+  height: '50px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: '5px',
+}));
+
+const ExperienceDuration = styled(Typography)(({ theme }) => ({
+  padding: '0.2rem 0.6rem',
+  backgroundColor: '#191d2b',
+  borderRadius: '15px',
+  display: 'inline-block',
+  textTransform: 'uppercase',
+  fontWeight: '500',
+  marginBottom: '0.5rem',
+  color: '#fff',
+}));
+
+const ExperienceTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  color: '#beebd0',
+  marginBottom: '0.5rem',
+}));
+
+const ExperienceDescription = styled(Typography)(({ theme }) => ({
+  color: '#dbe1e8',
+}));
+
+const Experience = () => {
   return (
-    <Container style={{
-      minHeight: '100vh',
-      width: '100%',
-      maxWidth: '100%',
-      display: 'grid',
-      placeItems: 'center',
-      backgroundColor: "#191d2b",
-      color: '#fff'
-    }} id="experiance">
-      <Container style={{
-        width: '80%',
-        color: '#fff',
-        padding: 0,
-      }}>
+    <ExperienceContainer id="experience">
+      <ExperienceContent>
         <Header>
-          <Typography variant="h4">Experiance</Typography>
+          <Typography variant="h4">Experience</Typography>
         </Header>
-        <Grid container spacing={4} style={{ marginLeft: "-20px", }}>
+        <Grid container spacing={4} style={{ marginLeft: "-20px" }}>
           {experiences.map((experience, index) => (
             <Grid item xs={12} md={6} key={index}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  paddingLeft: '2rem',
-                  borderLeft: '1px solid grey',
-                  mb: '2rem',
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    left: '-25px',
-                    top: 0,
-                    backgroundColor: '#27AE60',
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: 5
-                  }}
-                >
+              <ExperienceItem>
+                <ExperienceIcon>
                   {experience.icon}
-                </Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    padding: '0.2rem 0.6rem',
-                    backgroundColor: '#191d2b',
-                    borderRadius: '15px',
-                    display: 'inline-block',
-                    textTransform: 'uppercase',
-                    fontWeight: '500',
-                    mb: '0.5rem',
-                    color: '#fff'
-                  }}
-                >
+                </ExperienceIcon>
+                <ExperienceDuration variant="body2">
                   {experience.duration}
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#beebd0' }}>
+                </ExperienceDuration>
+                <ExperienceTitle variant="h6">
                   {experience.title}
                   {experience.company && (
                     <span style={{ color: '#fff', fontWeight: 500 }}>
@@ -144,19 +147,19 @@ const Experiance = () => {
                       - {experience.company}
                     </span>
                   )}
-                </Typography>
+                </ExperienceTitle>
                 <AnimatedBox variant="slideInRight">
-                  <Typography variant="body2" color="#dbe1e8">
+                  <ExperienceDescription variant="body2">
                     {experience.description}
-                  </Typography>
+                  </ExperienceDescription>
                 </AnimatedBox>
-              </Box>
+              </ExperienceItem>
             </Grid>
           ))}
         </Grid>
-      </Container>
-    </Container>
+      </ExperienceContent>
+    </ExperienceContainer>
   );
 };
 
-export default Experiance;
+export default Experience;
