@@ -22,7 +22,7 @@ const HomeHeader = () => {
           <HShape className="h-shape"></HShape>
           <ImageContainer>
             <Image
-              src='/Alemayehu.jpg'
+              src='/photo_2024-10-26_14-07-10.jpg'
               alt=""
               layout='fill' // Fill the container
               objectFit='cover'
