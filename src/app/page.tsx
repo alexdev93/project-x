@@ -17,11 +17,11 @@ export default function Home() {
         <App>
           <Navigation />
           <HomePage />
-          <Profession />
           <AboutMe />
+          <Experiance />
+          <Profession />
           <Education />
           <Skills />
-          <Experiance />
           <Contact />
           <Footer />
         </App>
