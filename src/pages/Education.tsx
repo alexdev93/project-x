@@ -61,35 +61,40 @@ const Degree = styled(Typography)`
 const Education: React.FC = () => {
   const educationData = [
     {
-      school: 'Gebeya Training',
-      degree: 'Certified Backend Engineer',
-      year: '2024',
+      school: "Gebeya Training",
+      degree: "Certified Backend Engineer",
+      year: "2024",
     },
     {
-      school: 'Unity University',
-      degree: 'Bachelor of Computer Science',
-      year: '2023',
+      school: "Unity University",
+      degree: "Bachelor of Computer Science",
+      year: "2023",
     },
     {
-      school: 'Safaricom Internship',
-      degree: 'Intensive Internship in Backend Development',
-      year: '2024',
+      school: "Safaricom Internship",
+      degree: "Intensive Internship in Backend Development",
+      year: "2024",
+    },
+    {
+      school: "Safaricom Talent Cloud",
+      degree: "Advanced Backend & DevOps Training (Online Learning)",
+      year: "March 2025 (Ongoing)",
     },
   ];
 
   return (
-    <Container style={{ width: "100%", maxWidth: "100%", backgroundColor: "#191d2b" }} id="education">
-
+    <Container
+      style={{ width: "100%", maxWidth: "100%", backgroundColor: "#191d2b" }}
+      id="education"
+    >
       <EducationContainer>
-        <Heading>
-          Education
-        </Heading>
+        <Heading>Education</Heading>
         <Grid container spacing={4} justifyContent="center">
           {educationData.map((edu, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <AnimatedBox variant='fadeIn'>
+              <AnimatedBox variant="fadeIn">
                 <EducationItem>
-                  <SchoolIcon sx={{ color: '#9BF2EA' }} fontSize="large" />
+                  <SchoolIcon sx={{ color: "#9BF2EA" }} fontSize="large" />
                   <EducationDetails>
                     <SchoolName variant="h6">{edu.school}</SchoolName>
                     <Degree variant="subtitle1">{edu.degree}</Degree>
