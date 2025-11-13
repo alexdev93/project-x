@@ -100,7 +100,7 @@ export const Line = styled.div`
   right: 103px;
   height: 10px;
   width: 1000px;
-  z-index: -1;
+  z-index: 100;
   border-radius: 50px;
   background-color: ${theme.palette.secondary.main};
   color: ${theme.palette.secondary.main};
