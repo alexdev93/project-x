@@ -32,7 +32,7 @@ const aboutMeStyles = (isMobile: boolean): Record<string, SxProps<Theme>> => ({
   aboutContainer: {
     paddingBottom: isMobile ? '5rem' : '',
     width: '100%',
-    diplay: 'grid',
+    display: 'grid',
     placeItems: 'center',
     marginLeft: isMobile ? -2 : '',
   },

@@ -36,7 +36,7 @@ const AboutMe = () => {
               </AnimatedBox>
               <AnimatedBox variant="slideInLeft">
                 <Typography variant="body1" sx={classes.paragraph}>
-                  Hi, I’m Alemayehu Mekonen, a passionate and detail-oriented
+                  Hi, I’m Alex Tesfaye, a passionate and detail-oriented
                   software developer with a strong foundation in computer
                   science. I currently work at Lion International Bank, focusing
                   on building and maintaining reliable software systems. My
@@ -62,7 +62,7 @@ const AboutMe = () => {
                   style={{ backgroundColor: "#9BF2EA", color: "#260101" }}
                   variant="contained"
                   startIcon={<DownloadIcon />}
-                  href="./Alemayehu Mekonen Full-Stack Software Developer CV Resume.pdf"
+                  href="./Alex Tesfaye Full-Stack Software Developer CV Resume.pdf"
                 >
                   Download CV
                 </Button>

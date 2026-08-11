@@ -22,16 +22,18 @@ const HomeHeader = () => {
           <ImageContainer>
             <Image
               src="/photo_2024-10-26_14-07-10.jpg"
-              alt=""
-              layout="fill" // Fill the container
-              objectFit="cover"
+              alt="Alex Tesfaye"
+              fill
+              sizes="(max-width: 800px) 100vw, 35vw"
+              style={{ objectFit: "cover" }}
+              priority
             />
           </ImageContainer>
         </LeftHeader>
         <RightHeader className="right-header">
           <AnimatedBox variant="fadeInUp">
             <Name className="name">
-              Alemayehu Mekonen
+              Alex Tesfaye
               <br />
               <span>Versatile Full-Stack Engineer</span> & DevOps Engineer
             </Name>
@@ -45,7 +47,7 @@ const HomeHeader = () => {
             </Description>
           </AnimatedBox>
           <MainButton
-            href="./Alemayehu Mekonen Full-Stack Software Developer CV Resume.pdf"
+            href="./Alex Tesfaye Full-Stack Software Developer CV Resume.pdf"
             className="main-btn"
             download
           >

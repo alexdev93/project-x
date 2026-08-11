@@ -35,8 +35,10 @@ const StyledCard = styled(Card)`
   ${offeringsStyles.card}
 `;
 
-const StyledGrid = styled(Grid)<{ isMobile: boolean }>`
-  ${({ isMobile }) => offeringsStyles.grid(isMobile)}
+const StyledGrid = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== "ismobile",
+})<{ ismobile: boolean }>`
+  ${({ ismobile }) => offeringsStyles.grid(ismobile)}
 `;
 
 const CardContentWrapper = styled(CardContent)<{ index: number }>`
@@ -65,7 +67,7 @@ const Profession: React.FC = () => {
         </svg>
       </Subtitle>
       <Heading variant="h1">Comprehensive Software Solutions Engineer</Heading>
-      <StyledGrid container spacing={3} isMobile={isMobile}>
+      <StyledGrid container spacing={3} ismobile={isMobile}>
         {[
           {
             varient: "fadeInLeft",

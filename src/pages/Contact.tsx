@@ -12,7 +12,7 @@ import {
 import { Email, Phone, LocationOn } from "@mui/icons-material";
 import contactStyles from "@/styles/contactStyles";
 import AnimatedBox from "../components/AnimatedBox";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Define the FormData interface
@@ -54,10 +54,14 @@ const ContactPage: React.FC = () => {
       });
 
       const result = await response.json();
-      if (result.success)
-        alert(`${result.name} your feedback sent successfully to Alex`);
+      if (result.success) {
+        toast.success(`Thanks ${result.name}, your message was sent successfully!`);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        toast.error("Something went wrong while sending your message. Please try again.");
+      }
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong while sending your message. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -208,6 +212,7 @@ const ContactPage: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+      <ToastContainer position="bottom-right" theme="dark" />
     </Container>
   );
 };

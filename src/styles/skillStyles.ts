@@ -42,8 +42,8 @@ const skillsStyles = (theme: Theme): Record<string, SxProps<Theme>> => ({
     alignItems: 'center',
     gap: '0.5rem',
   },
-  progressText: {
-    color: theme.palette.grey[600],
+  progText: {
+    color: theme.palette.grey[200],
   },
   progress: {
     flexGrow: 1,

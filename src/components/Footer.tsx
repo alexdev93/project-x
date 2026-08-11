@@ -23,7 +23,7 @@ const footerStyles: Record<string, SxProps<Theme>> = {
     width: "100%",
     padding: "2rem",
     color: "#e6e8ea",
-    marginBottom: "2reem",
+    marginBottom: "2rem",
   },
   container: {
     padding: "20px",
