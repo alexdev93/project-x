@@ -1,0 +1,63 @@
+[
+  {
+    "id": "backend",
+    "title": "Backend",
+    "description": "Where most of my work happens — service design, APIs and the contracts between them.",
+    "skills": [
+      { "name": "Java", "depth": "core" },
+      { "name": "Spring Boot", "depth": "core" },
+      { "name": "Node.js", "depth": "core" },
+      { "name": "Express", "depth": "core" },
+      { "name": "NestJS", "depth": "working" },
+      { "name": "REST APIs", "depth": "core" },
+      { "name": "RabbitMQ", "depth": "working" }
+    ]
+  },
+  {
+    "id": "platform",
+    "title": "Platform & DevOps",
+    "description": "Getting services built, shipped and observable — currently my day-to-day at a bank.",
+    "skills": [
+      { "name": "Docker", "depth": "core" },
+      { "name": "Kubernetes", "depth": "core" },
+      { "name": "Jenkins", "depth": "core" },
+      { "name": "Linux", "depth": "core" },
+      { "name": "Nginx", "depth": "working" },
+      { "name": "Nexus", "depth": "working" },
+      { "name": "Grafana", "depth": "working" },
+      { "name": "Prometheus", "depth": "working" }
+    ]
+  },
+  {
+    "id": "security",
+    "title": "Identity & Access",
+    "description": "Authentication and authorisation across service boundaries.",
+    "skills": [
+      { "name": "Keycloak", "depth": "working" },
+      { "name": "OAuth2", "depth": "working" },
+      { "name": "JWT", "depth": "core" }
+    ]
+  },
+  {
+    "id": "data",
+    "title": "Data",
+    "description": "Modelling for the access patterns a system actually has.",
+    "skills": [
+      { "name": "MongoDB", "depth": "core" },
+      { "name": "PostgreSQL", "depth": "working" },
+      { "name": "MySQL", "depth": "working" }
+    ]
+  },
+  {
+    "id": "frontend",
+    "title": "Frontend",
+    "description": "Interfaces built against APIs I've usually designed myself.",
+    "skills": [
+      { "name": "TypeScript", "depth": "core" },
+      { "name": "React", "depth": "core" },
+      { "name": "Next.js", "depth": "working" },
+      { "name": "Tailwind CSS", "depth": "working" },
+      { "name": "Material UI", "depth": "working" }
+    ]
+  }
+]

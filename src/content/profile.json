@@ -1,0 +1,59 @@
+{
+  "name": "Alemayehu Mekonen",
+  "shortName": "Alex",
+  "displayName": "Alemayehu “Alex” Mekonen",
+  "role": "Full-Stack & DevOps Engineer",
+  "tagline": "I build backend systems that stay up — and the pipelines that keep them shipping.",
+  "bio": [
+    "I'm a software engineer working across backend services, infrastructure and the delivery pipeline that connects them. Most of my work sits where those three meet: designing a service, containerising it, and making sure it can be deployed and observed without ceremony.",
+    "Today I work at Lion International Bank, where the systems I look after have low tolerance for downtime. That environment shapes how I build — I care more about a service that degrades predictably than one that is clever. Before this I built backend services at Safaricom Ethiopia with Spring Boot and Keycloak, and shipped full-stack products at Addis Software and Purpose Black Ethiopia.",
+    "I work mainly in Java and Spring Boot, TypeScript and Node.js, with Docker, Kubernetes and Jenkins for delivery. I'm most interested in the parts of a system that are hard to change later: service boundaries, authentication, and how failures propagate."
+  ],
+  "focusAreas": [
+    {
+      "title": "Backend engineering",
+      "description": "Spring Boot and Node.js services, REST APIs, authentication with Keycloak and OAuth2, and message-driven communication with RabbitMQ."
+    },
+    {
+      "title": "Distributed systems",
+      "description": "Decomposing applications into services with their own configuration, discovery, gateway and logging concerns — and keeping the seams between them explicit."
+    },
+    {
+      "title": "Delivery and operations",
+      "description": "Jenkins pipelines, Docker images, Kubernetes workloads and Linux servers, with Grafana and Prometheus for visibility once it's running."
+    },
+    {
+      "title": "Full-stack product work",
+      "description": "React and Next.js front-ends built against the APIs I design, so the contract between the two is deliberate rather than discovered."
+    }
+  ],
+  "location": "Addis Ababa, Ethiopia",
+  "email": "alemayehu.dev@gmail.com",
+  "phone": "+251 993 460 548",
+  "avatar": "/photo_2024-10-26_14-07-10.jpg",
+  "resume": {
+    "href": "/Alex Tesfaye Full-Stack Software Developer CV Resume.pdf",
+    "label": "Download CV"
+  },
+  "availability": {
+    "open": true,
+    "message": "Open to backend and platform engineering roles"
+  },
+  "socials": [
+    {
+      "platform": "github",
+      "label": "GitHub",
+      "href": "https://github.com/alexdev93"
+    },
+    {
+      "platform": "linkedin",
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/alemayehu-mekonen/"
+    },
+    {
+      "platform": "email",
+      "label": "Email",
+      "href": "mailto:alemayehu.dev@gmail.com"
+    }
+  ]
+}
