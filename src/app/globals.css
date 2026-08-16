@@ -25,8 +25,11 @@
   --ink-subtle: #6f675e;
   --line: #e5e0d8;
   --line-strong: #d5cec3;
-  --accent: #b4552b;
-  --accent-hover: #9c4823;
+  /* Darkened from #b4552b: accent text on accent-soft measured 4.05:1, under
+     the 4.5 floor for body-size text. This reads 4.77:1 there, 5.46:1 on the
+     canvas, and 5.79:1 for white on accent. */
+  --accent: #a64a24;
+  --accent-hover: #8f3e1e;
   --accent-soft: #f3e7df;
   --accent-ink: #ffffff;
 

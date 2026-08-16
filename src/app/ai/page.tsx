@@ -13,6 +13,11 @@ export default function AiPage() {
     // The shell's header is 4rem; filling the rest keeps the composer pinned to
     // the bottom of the viewport instead of below the fold.
     <div className="h-[calc(100dvh-4rem)]">
+      {/* The visible heading belongs to the empty state and disappears once a
+          conversation starts, so the page carries its own h1 for the outline. */}
+      <h1 className="sr-only">
+        Ask AI about {profile.shortName}&apos;s work
+      </h1>
       <ChatPanel autoFocus />
     </div>
   );

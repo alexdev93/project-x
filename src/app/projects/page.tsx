@@ -24,7 +24,8 @@ export default function ProjectsPage() {
       <Stagger className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <StaggerItem key={project.slug} className="h-full">
-            <ProjectCard project={project} className="h-full" />
+            {/* h2: the page title above is the h1. */}
+            <ProjectCard project={project} className="h-full" headingLevel={2} />
           </StaggerItem>
         ))}
       </Stagger>
