@@ -1,29 +1,28 @@
-'use client'
-import React from 'react';
-import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
-import HomePage from '../pages/Home';
-import Education from '../pages/Education';
-import AboutMe from '../pages/AboutMe';
-import Skills from '../pages/Skills';
-import Contact from '../pages/Contact';
-import Experiance from '../pages/Experiance';
-import Profession from '../pages/Profession';
-import App from './App';
+import React from "react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import Hero from "@/components/sections/Hero";
+import AboutMe from "@/components/sections/AboutMe";
+import Experience from "@/components/sections/Experience";
+import Profession from "@/components/sections/Profession";
+import Education from "@/components/sections/Education";
+import Skills from "@/components/sections/Skills";
+import Contact from "@/components/sections/Contact";
 
-export default function Home() {
-
+export default function HomePage() {
   return (
-        <App>
-          <Navigation />
-          <HomePage />
-          <AboutMe />
-          <Experiance />
-          <Profession />
-          <Education />
-          <Skills />
-          <Contact />
-          <Footer />
-        </App>
+    <>
+      <Navigation />
+      <main>
+        <Hero />
+        <AboutMe />
+        <Experience />
+        <Profession />
+        <Education />
+        <Skills />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }

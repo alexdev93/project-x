@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import { Work, School } from "@mui/icons-material";
 import { styled } from "@mui/system";
-import AnimatedBox from "../components/AnimatedBox";
+import AnimatedBox from "@/components/AnimatedBox";
 
 const experiences = [
   {
@@ -144,7 +144,7 @@ const ExperienceDescription = styled(Typography)(({ theme }) => ({
 
 const Experience = () => {
   return (
-    <ExperienceContainer id="experiance">
+    <ExperienceContainer id="experience">
       <ExperienceContent>
         <Header>
           <Typography variant="h4">Experience</Typography>

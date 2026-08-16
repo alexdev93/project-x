@@ -1,19 +1,14 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
 import {
   Container,
   Grid,
   Typography,
   Link as MuiLink,
   Box,
+  IconButton,
 } from "@mui/material";
-import {
-  Facebook,
-  Twitter,
-  LinkedIn,
-  Pinterest,
-  Google,
-} from "@mui/icons-material";
+import { GitHub, LinkedIn, Email as EmailIcon } from "@mui/icons-material";
 import { SxProps, Theme } from "@mui/material/styles";
 import { Link } from "react-scroll";
 
@@ -23,192 +18,127 @@ const footerStyles: Record<string, SxProps<Theme>> = {
     width: "100%",
     padding: "2rem",
     color: "#e6e8ea",
-    marginBottom: "2rem",
   },
-  container: {
-    padding: "20px",
-  },
-  sectionTitle: {
-    color: "#27AE60",
-  },
+  container: { padding: "20px" },
+  sectionTitle: { color: "#27AE60", marginBottom: "0.75rem" },
   link: {
     color: "#afb1b4",
+    textDecoration: "none",
+    cursor: "pointer",
+    display: "inline-block",
+    padding: "0.25rem 0",
+    "&:hover": { color: "#e6e8ea" },
   },
-  subFooter: {
-    backgroundColor: "#141618",
-    padding: "50px 0",
-    gap: "10px",
-  },
-  socialLinks: {
-    color: "#e6e8ea",
-    margin: "0 5px",
-  },
+  subFooter: { backgroundColor: "#141618", paddingTop: "2rem" },
+  socialLink: { color: "#e6e8ea", "&:hover": { color: "#27AE60" } },
 };
 
-const links = [
-  { id: "home" },
-  { id: "profession" },
-  { id: "about" },
-  { id: "experiance" },
-  { id: "contact" },
+const quickLinks = [
+  { id: "home", label: "Home" },
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "profession", label: "What I do" },
+  { id: "skills", label: "Skills" },
+  { id: "contact", label: "Contact" },
+];
+
+const socials = [
+  {
+    href: "https://github.com/alexdev93",
+    label: "GitHub profile",
+    icon: <GitHub />,
+  },
+  {
+    href: "https://www.linkedin.com/in/alemayehu-mekonen/",
+    label: "LinkedIn profile",
+    icon: <LinkedIn />,
+  },
+  {
+    href: "mailto:alemayehu.dev@gmail.com",
+    label: "Send an email",
+    icon: <EmailIcon />,
+  },
 ];
 
 const Footer: React.FC = () => {
-  const navRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-
-  const handleClick = (id: string) => () => {
-    const scrollTo = navRefs.current[id];
-    if (scrollTo) {
-      console.log(scrollTo);
-      scrollTo.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <Box component="footer" sx={footerStyles.footer}>
       <Container sx={footerStyles.container}>
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={3}>
-            <div>
-              <Typography variant="h6" sx={footerStyles.sectionTitle}>
-                Our Contact
-              </Typography>
-              <address>
-                <strong>Alex</strong>
-                <br />
-                Addis Abeba, ET.
-              </address>
-              <Typography>
-                <i className="icon-phone" />{" "}
-                <MuiLink href="tel:+251993460548" color="inherit">
-                  +251 993 460 548
-                </MuiLink>
-                <br />
-                <i className="icon-envelope-alt" /> alemayehu.dev@gmail.com
-              </Typography>
-            </div>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6" sx={footerStyles.sectionTitle}>
+              Get in touch
+            </Typography>
+            <Typography component="address" sx={{ fontStyle: "normal" }}>
+              Addis Ababa, Ethiopia
+              <br />
+              <MuiLink href="tel:+251993460548" sx={footerStyles.link}>
+                +251 993 460 548
+              </MuiLink>
+              <br />
+              <MuiLink
+                href="mailto:alemayehu.dev@gmail.com"
+                sx={footerStyles.link}
+              >
+                alemayehu.dev@gmail.com
+              </MuiLink>
+            </Typography>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <div>
-              <Typography variant="h6" sx={footerStyles.sectionTitle}>
-                Quick Links
-              </Typography>
-              <ul style={{ listStyleType: "none", padding: 0 }}>
-                {links.map(({ id }) => (
-                  <Link to={id} smooth={true} duration={500} key={id}>
-                    <div
-                      ref={(el: any) => (navRefs.current[id] = el)}
-                      style={{ color: "#afb1b4" }}
-                      onClick={handleClick(id)}
-                    >
-                      {id}
-                    </div>
-                  </Link>
-                ))}
-              </ul>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <div>
-              <Typography variant="h6" sx={footerStyles.sectionTitle}>
-                Latest Posts
-              </Typography>
-              <ul style={{ listStyleType: "none", padding: 0 }}>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    Understanding React Hooks: A Comprehensive Guide
-                  </MuiLink>
+
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h6" sx={footerStyles.sectionTitle}>
+              Quick links
+            </Typography>
+            <Box
+              component="ul"
+              sx={{ listStyle: "none", padding: 0, margin: 0 }}
+            >
+              {quickLinks.map(({ id, label }) => (
+                <li key={id}>
+                  <Box
+                    component={Link}
+                    to={id}
+                    smooth
+                    duration={500}
+                    sx={footerStyles.link}
+                  >
+                    {label}
+                  </Box>
                 </li>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    10 Tips for Improving Your JavaScript Code
-                  </MuiLink>
-                </li>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    Exploring the New Features in ES2024
-                  </MuiLink>
-                </li>
-              </ul>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <div>
-              <Typography variant="h6" sx={footerStyles.sectionTitle}>
-                Recent News
-              </Typography>
-              <ul style={{ listStyleType: "none", padding: 0 }}>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    Tech Conference 2024: Key Takeaways and Highlights
-                  </MuiLink>
-                </li>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    New Advances in AI: What to Expect in the Coming Years
-                  </MuiLink>
-                </li>
-                <li>
-                  <MuiLink href="#" sx={footerStyles.link}>
-                    Cybersecurity Trends: Staying Safe in a Digital World
-                  </MuiLink>
-                </li>
-              </ul>
-            </div>
+              ))}
+            </Box>
           </Grid>
         </Grid>
       </Container>
-      <Box id="sub-footer" sx={footerStyles.subFooter}>
+
+      <Box sx={footerStyles.subFooter}>
         <Container>
-          <Grid container justifyContent="space-between" alignItems="center">
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+          >
             <Grid item>
-              <Typography sx={{ color: "#e6e8ea" }}>
-                <span>
-                  © {new Date().getFullYear()} All rights reserved. By{" "}
-                </span>
-                <MuiLink
-                  href="http://webthemez.com"
-                  target="_blank"
-                  sx={footerStyles.link}
-                >
-                  Alex
-                </MuiLink>
+              <Typography variant="body2" sx={{ color: "#afb1b4" }}>
+                © {new Date().getFullYear()} Alemayehu Mekonen
               </Typography>
             </Grid>
             <Grid item>
-              <div>
-                <MuiLink
-                  href="https://www.facebook.com/alemayehu.dev"
-                  title="Facebook"
-                  sx={footerStyles.socialLinks}
+              {socials.map(({ href, label, icon }) => (
+                <IconButton
+                  key={href}
+                  href={href}
+                  aria-label={label}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
+                  sx={footerStyles.socialLink}
                 >
-                  <Facebook />
-                </MuiLink>
-                <MuiLink
-                  href="https://github.com/alexdev93"
-                  title="Twitter"
-                  sx={footerStyles.socialLinks}
-                >
-                  <Twitter />
-                </MuiLink>
-                <MuiLink
-                  href="https://www.linkedin.com/in/alemayehu-mekonen/"
-                  title="LinkedIn"
-                  sx={footerStyles.socialLinks}
-                >
-                  <LinkedIn />
-                </MuiLink>
-                <MuiLink
-                  href="#"
-                  title="Pinterest"
-                  sx={footerStyles.socialLinks}
-                >
-                  <Pinterest />
-                </MuiLink>
-                <MuiLink href="#" title="Google" sx={footerStyles.socialLinks}>
-                  <Google />
-                </MuiLink>
-              </div>
+                  {icon}
+                </IconButton>
+              ))}
             </Grid>
           </Grid>
         </Container>

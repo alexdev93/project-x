@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { Link as ScrollLink } from 'react-scroll';
 import createCustomTheme from './../theme';
 
 // Get theme values
@@ -28,7 +29,7 @@ export const ControlsContainer = styled.nav`
   }
 `;
 
-export const Control = styled.div`
+export const Control = styled(ScrollLink)`
   cursor: pointer;
   background-color: ${theme.palette.grey[400]};
   width: 50px;
@@ -38,15 +39,26 @@ export const Control = styled.div`
   justify-content: center;
   align-items: center;
   margin: 1rem 0;
-  box-shadow: 0 3px 15px rgba(0, 0, 0, .3);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease-in-out;
 
-  &:hover {
+  &:hover,
+  &.is-active {
     background-color: ${theme.palette.secondary.main};
-    transition: all 0.4s ease-in-out;
   }
 
-  &:hover > svg {
+  &:hover > svg,
+  &.is-active > svg {
     fill: ${theme.palette.common.white};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${theme.palette.secondary.main};
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `;
 

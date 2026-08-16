@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Email, Phone, LocationOn } from "@mui/icons-material";
 import contactStyles from "@/styles/contactStyles";
-import AnimatedBox from "../components/AnimatedBox";
+import AnimatedBox from "@/components/AnimatedBox";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -45,7 +45,7 @@ const ContactPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/sendEmail", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const ContactPage: React.FC = () => {
         toast.success(`Thanks ${result.name}, your message was sent successfully!`);
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        toast.error("Something went wrong while sending your message. Please try again.");
+        toast.error(result.error ?? "Something went wrong while sending your message. Please try again.");
       }
     } catch (error) {
       toast.error("Something went wrong while sending your message. Please try again.");

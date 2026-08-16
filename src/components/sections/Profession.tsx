@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { Typography, Grid, Card, CardContent } from "@mui/material";
-import { offeringsStyles } from "../styles/professionsStyles";
+import { offeringsStyles } from "@/styles/professionsStyles";
 import styled from "@emotion/styled";
-import AnimatedBox from "../components/AnimatedBox";
-import useIsMobile from "../utils/mediaQueries";
+import AnimatedBox from "@/components/AnimatedBox";
+import useIsMobile from "@/utils/mediaQueries";
 
 const Section = styled.section`
   ${offeringsStyles.section}

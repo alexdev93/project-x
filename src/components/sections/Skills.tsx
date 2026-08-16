@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { Box, Typography, Grid, Container } from "@mui/material";
-import skillsStyles from "../styles/skillStyles";
+import skillsStyles from "@/styles/skillStyles";
 import { useTheme } from "@mui/material/styles";
-import AnimatedBox from "../components/AnimatedBox";
-import useIsMobile from "../utils/mediaQueries";
+import AnimatedBox from "@/components/AnimatedBox";
+import useIsMobile from "@/utils/mediaQueries";
 
 const skills = [
   { title: "Spring Boot", width: "95%", color: "#6DB33F" },

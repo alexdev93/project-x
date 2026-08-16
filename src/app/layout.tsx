@@ -1,26 +1,31 @@
-import React from 'react';
-import type { Metadata } from 'next';
-import CssBaseline from '@mui/material/CssBaseline';
-import { Grid } from '@mui/material';
+import React from "react";
+import type { Metadata, Viewport } from "next";
+import CssBaseline from "@mui/material/CssBaseline";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
 export const metadata: Metadata = {
-  title: 'Alex Tesfaye | Full-Stack & DevOps Engineer',
+  title: "Alemayehu Mekonen | Full-Stack & DevOps Engineer",
   description:
-    'Portfolio of Alex Tesfaye, a versatile Full-Stack and DevOps Engineer specializing in Spring Boot, Node.js, Docker, and Kubernetes.',
+    "Portfolio of Alemayehu (Alex) Mekonen — a full-stack and DevOps engineer specialising in Spring Boot, Node.js, Docker and Kubernetes.",
 };
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const viewport: Viewport = {
+  themeColor: "#191d2b",
+};
+
+const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <html lang="en">
-      <body >
+      <body style={{ margin: 0, backgroundColor: "#191d2b" }}>
+        {/* Gives Emotion an SSR-safe cache under the App Router, which
+            removes the unstyled-content flash on first paint. */}
+        <AppRouterCacheProvider options={{ key: "mui" }}>
           <CssBaseline />
-
-        <Grid style={{ minHeight: '100vh', width: '100%', maxWidth: '100%', padding: 0, backgroundColor: '#191d2b', overflow: 'hidden' }}>
           {children}
-        </Grid>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
 };
 
-export default Layout;
+export default RootLayout;

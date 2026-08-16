@@ -2,8 +2,8 @@
 import React from 'react';
 import { Container, Typography, Box, Paper, Grid, styled } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
-import createCustomTheme from './../theme';
-import AnimatedBox from '../components/AnimatedBox';
+import createCustomTheme from '@/theme';
+import AnimatedBox from '@/components/AnimatedBox';
 
 // Get theme values
 const theme = createCustomTheme();

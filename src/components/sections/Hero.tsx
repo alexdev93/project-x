@@ -9,9 +9,9 @@ import {
   Name,
   Description,
   MainButton,
-} from "../styles/HomeStyles";
+} from "@/styles/HomeStyles";
 import Image from "next/image";
-import AnimatedBox from "../components/AnimatedBox";
+import AnimatedBox from "@/components/AnimatedBox";
 
 const HomeHeader = () => {
   return (
