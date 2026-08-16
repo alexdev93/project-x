@@ -1,0 +1,212 @@
+[
+  {
+    "slug": "zemenawi-crm",
+    "name": "Zemenawi CRM",
+    "summary": "A CRM platform decomposed into independently deployable Spring Boot services, with its own gateway, service discovery, centralised configuration and log aggregation.",
+    "category": "distributed-systems",
+    "weight": 100,
+    "featured": true,
+    "year": "2026",
+    "role": "Architecture and backend engineering",
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "Spring Cloud",
+      "Keycloak",
+      "Docker",
+      "Kubernetes"
+    ],
+    "repo": {
+      "visibility": "private",
+      "name": "alexdev93/zemenawi-crm"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": [
+      {
+        "name": "gateway-bff",
+        "description": "Edge gateway and backend-for-frontend. Single entry point for clients, responsible for routing and request shaping."
+      },
+      {
+        "name": "discovery-server",
+        "description": "Service registry, so services resolve each other by name rather than by hardcoded address."
+      },
+      {
+        "name": "config-server",
+        "description": "Centralised configuration, keeping environment differences out of the service images."
+      },
+      {
+        "name": "auth-service-keycloak",
+        "description": "Authentication and authorisation built on Keycloak, issuing tokens consumed by the other services."
+      },
+      {
+        "name": "notification-service",
+        "description": "Handles outbound notifications independently of the request path that triggers them."
+      },
+      {
+        "name": "logmanager",
+        "description": "Log aggregation across services, so a single request can be traced past a service boundary."
+      },
+      {
+        "name": "common-lib",
+        "description": "Shared contracts and utilities, keeping cross-service types defined in one place."
+      }
+    ]
+  },
+  {
+    "slug": "zemen-hub",
+    "name": "Zemen Hub",
+    "summary": "A TypeScript platform built alongside a dedicated backend service, developed over roughly a year.",
+    "category": "full-stack",
+    "weight": 80,
+    "featured": true,
+    "year": "2025–2026",
+    "role": "Full-stack engineering",
+    "tech": ["TypeScript", "Node.js", "React"],
+    "repo": {
+      "visibility": "private",
+      "name": "alexdev93/zemen-hub"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": [
+      {
+        "name": "zemen-hub",
+        "description": "TypeScript client application."
+      },
+      {
+        "name": "zemen-backend",
+        "description": "TypeScript backend service."
+      },
+      {
+        "name": "zemen_manifest",
+        "description": "Deployment manifests for the platform."
+      }
+    ]
+  },
+  {
+    "slug": "api-gateway",
+    "name": "API Gateway",
+    "summary": "A standalone Java gateway service — the routing and entry-point layer that sits in front of a set of backend services.",
+    "category": "backend",
+    "weight": 70,
+    "featured": true,
+    "year": "2025",
+    "role": "Backend engineering",
+    "tech": ["Java", "Spring Boot", "Spring Cloud Gateway"],
+    "repo": {
+      "visibility": "public",
+      "name": "alexdev93/api-gateway",
+      "href": "https://github.com/alexdev93/api-gateway"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": []
+  },
+  {
+    "slug": "container-infrastructure",
+    "name": "Container & Deployment Infrastructure",
+    "summary": "Docker Compose and deployment configuration maintained as its own concern, separate from the applications it runs.",
+    "category": "infrastructure",
+    "weight": 60,
+    "featured": false,
+    "year": "2025–2026",
+    "role": "DevOps",
+    "tech": ["Docker", "Docker Compose", "Kubernetes", "Nginx"],
+    "repo": {
+      "visibility": "public",
+      "name": "alexdev93/motomo_docker",
+      "href": "https://github.com/alexdev93/motomo_docker"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": [
+      {
+        "name": "motomo_docker",
+        "description": "Docker configuration for a self-hosted analytics deployment."
+      },
+      {
+        "name": "liteapp_dockercompose",
+        "description": "Compose stack for a multi-container application."
+      },
+      {
+        "name": "backend-infra",
+        "description": "Shared infrastructure definitions for backend services."
+      }
+    ]
+  },
+  {
+    "slug": "ai-services",
+    "name": "AI Service Work",
+    "summary": "A set of TypeScript services and dashboards built around language-model APIs.",
+    "category": "ai",
+    "weight": 50,
+    "featured": false,
+    "year": "2026",
+    "role": "Full-stack engineering",
+    "tech": ["TypeScript", "Node.js", "React"],
+    "repo": {
+      "visibility": "private",
+      "name": "alexdev93/alv-ai-backend"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": [
+      {
+        "name": "alv-ai-backend",
+        "description": "TypeScript backend service for AI features."
+      },
+      {
+        "name": "creva-ai-dashboard",
+        "description": "Dashboard interface for AI service output."
+      },
+      {
+        "name": "PortaAI",
+        "description": "TypeScript AI application."
+      }
+    ]
+  },
+  {
+    "slug": "portfolio",
+    "name": "This Portfolio",
+    "summary": "A statically generated Next.js site with a grounded AI assistant that answers questions from structured content rather than a scraped page.",
+    "category": "full-stack",
+    "weight": 40,
+    "featured": false,
+    "year": "2024–2026",
+    "role": "Design and engineering",
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Framer Motion",
+      "Gemini"
+    ],
+    "repo": {
+      "visibility": "public",
+      "name": "alexdev93/project-x",
+      "href": "https://github.com/alexdev93/project-x"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": []
+  }
+]

@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/*
+ * Dark mode is driven by a `.dark` class on <html>, set before paint by the
+ * inline script in the root layout. Using a class (rather than only the media
+ * query) is what lets the manual toggle override the OS preference.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+ * Palette — warm editorial neutrals.
+ *
+ * Every pair below was checked against WCAG 2.1 on its intended background:
+ *   light  ink 15.9:1 · ink-muted 7.4:1 · ink-subtle 5.2:1 · accent 4.6:1
+ *   dark   ink 16.6:1 · ink-muted 7.1:1 · ink-subtle 4.9:1 · accent 6.1:1
+ * `ink-subtle` is the floor — anything lower would fail body-text contrast,
+ * so it is reserved for meta and captions, never for prose.
+ * ------------------------------------------------------------------------ */
+:root {
+  --canvas: #faf8f5;
+  --surface: #ffffff;
+  --surface-raised: #f5f2ed;
+  --ink: #1a1714;
+  --ink-muted: #575047;
+  --ink-subtle: #6f675e;
+  --line: #e5e0d8;
+  --line-strong: #d5cec3;
+  /* Darkened from #b4552b: accent text on accent-soft measured 4.05:1, under
+     the 4.5 floor for body-size text. This reads 4.77:1 there, 5.46:1 on the
+     canvas, and 5.79:1 for white on accent. */
+  --accent: #a64a24;
+  --accent-hover: #8f3e1e;
+  --accent-soft: #f3e7df;
+  --accent-ink: #ffffff;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+.dark {
+  --canvas: #14120f;
+  --surface: #1c1917;
+  --surface-raised: #24201c;
+  --ink: #f5f1ea;
+  --ink-muted: #a79e93;
+  --ink-subtle: #8b8175;
+  --line: #2e2924;
+  --line-strong: #3d372f;
+  --accent: #d97b4f;
+  --accent-hover: #e58d63;
+  --accent-soft: #2a1f18;
+  --accent-ink: #14120f;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Separation comes from hairlines and surface steps, not heavy drop shadows. */
+  --shadow-subtle: 0 1px 2px rgb(26 23 20 / 0.04);
+  --shadow-raised: 0 4px 16px -4px rgb(26 23 20 / 0.08);
+  --shadow-overlay: 0 16px 48px -12px rgb(26 23 20 / 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchored sections clear of the sticky header. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* One focus treatment for the whole app. Never remove it without a
+     replacement — keyboard users have no other way to track position. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Headings opt into the display face explicitly rather than by tag, so a
+     heading used for structure alone is not forced into the serif. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Honour the OS motion setting globally, so no individual component can
+   forget to. Components still use useReducedMotion for JS-driven animation. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

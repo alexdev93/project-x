@@ -1,29 +1,19 @@
-'use client'
-import React from 'react';
-import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
-import HomePage from '../pages/Home';
-import Education from '../pages/Education';
-import AboutMe from '../pages/AboutMe';
-import Skills from '../pages/Skills';
-import Contact from '../pages/Contact';
-import Experiance from '../pages/Experiance';
-import Profession from '../pages/Profession';
-import App from './App';
+import React from "react";
+import { Hero } from "@/components/home/Hero";
+import { CareerFacts } from "@/components/home/CareerFacts";
+import { FocusAreas } from "@/components/home/FocusAreas";
+import { SelectedWork } from "@/components/home/SelectedWork";
+import { ContactCta } from "@/components/home/ContactCta";
 
-export default function Home() {
-
+/** Server component — content is inlined at build, nothing fetches at runtime. */
+export default function HomePage() {
   return (
-        <App>
-          <Navigation />
-          <HomePage />
-          <AboutMe />
-          <Experiance />
-          <Profession />
-          <Education />
-          <Skills />
-          <Contact />
-          <Footer />
-        </App>
+    <>
+      <Hero />
+      <CareerFacts />
+      <FocusAreas />
+      <SelectedWork />
+      <ContactCta />
+    </>
   );
 }

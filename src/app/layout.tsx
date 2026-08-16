@@ -1,26 +1,77 @@
-import React from 'react';
-import type { Metadata } from 'next';
-import CssBaseline from '@mui/material/CssBaseline';
-import { Grid } from '@mui/material';
+import React from "react";
+import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ThemeScript } from "@/components/theme/theme-script";
+import { Header } from "@/components/layout/Header";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { ChatLauncher } from "@/components/chat/ChatLauncher";
+import { profile } from "@/content";
+import { fontVariables } from "@/lib/fonts";
+import { siteName, siteUrl } from "@/lib/site";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Alex Tesfaye | Full-Stack & DevOps Engineer',
-  description:
-    'Portfolio of Alex Tesfaye, a versatile Full-Stack and DevOps Engineer specializing in Spring Boot, Node.js, Docker, and Kubernetes.',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteName,
+    // Page titles render as "Projects — Alemayehu Mekonen".
+    template: `%s — ${profile.name}`,
+  },
+  description: profile.tagline,
+  authors: [{ name: profile.name, url: siteUrl }],
+  creator: profile.name,
+  openGraph: {
+    type: "profile",
+    siteName: profile.name,
+    title: siteName,
+    description: profile.tagline,
+    url: siteUrl,
+    locale: "en_GB",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: profile.tagline,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <html lang="en">
-      <body >
-          <CssBaseline />
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#14120f" },
+  ],
+};
 
-        <Grid style={{ minHeight: '100vh', width: '100%', maxWidth: '100%', padding: 0, backgroundColor: '#191d2b', overflow: 'hidden' }}>
-          {children}
-        </Grid>
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    // suppressHydrationWarning: ThemeScript sets the class before React
+    // hydrates, which is intended rather than a mismatch to fix.
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-dvh bg-canvas font-sans text-ink antialiased">
+        <ThemeProvider>
+          <SkipLink />
+          <div className="flex min-h-dvh flex-col">
+            <Header wordmark={profile.shortName} />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <SiteFooter />
+          </div>
+          <ChatLauncher />
+        </ThemeProvider>
       </body>
     </html>
   );
-};
-
-export default Layout;
+}

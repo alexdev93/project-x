@@ -1,0 +1,108 @@
+[
+  {
+    "id": "lion-international-bank",
+    "company": "Lion International Bank",
+    "title": "Application Administrator & DevOps Engineer",
+    "kind": "employment",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2025-01",
+    "end": null,
+    "summary": "Keep core banking applications available, and automate the path from commit to production.",
+    "highlights": [
+      "Administer business-critical banking applications where downtime is measured against service commitments, not convenience.",
+      "Build and monitor Jenkins CI/CD pipelines so deployments are repeatable rather than hand-run.",
+      "Operate Docker and Kubernetes workloads, including troubleshooting container and cluster-level failures.",
+      "Configure and maintain Linux servers, covering system stability, patching and performance.",
+      "Work with cross-functional teams to close security and efficiency gaps across the estate."
+    ],
+    "tech": ["Kubernetes", "Docker", "Jenkins", "Linux", "Nginx"]
+  },
+  {
+    "id": "addis-software",
+    "company": "Addis Software",
+    "title": "Full-Stack Developer",
+    "kind": "employment",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2024-10",
+    "end": "2025-01",
+    "summary": "Built and shipped web applications end to end, from schema design through to deployment.",
+    "highlights": [
+      "Developed and deployed web applications with React, Node.js and Express.",
+      "Designed and tuned MongoDB schemas around the access patterns the product actually had.",
+      "Collaborated across teams to keep delivery quality consistent under deadline pressure."
+    ],
+    "tech": ["React", "Node.js", "Express", "MongoDB"]
+  },
+  {
+    "id": "purpose-black-ethiopia",
+    "company": "Purpose Black Ethiopia",
+    "title": "Full-Stack Developer & UI/UX",
+    "kind": "employment",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2024-02",
+    "end": "2024-07",
+    "summary": "Delivered MERN-stack features and introduced service boundaries into a growing codebase.",
+    "highlights": [
+      "Built full-stack features on the MERN stack, integrating REST APIs with React interfaces.",
+      "Implemented a microservices split using Spring Boot and Node.js as the product outgrew a single service.",
+      "Reviewed code and mentored junior developers on practices and consistency."
+    ],
+    "tech": ["React", "Node.js", "MongoDB", "Spring Boot", "Express"]
+  },
+  {
+    "id": "safaricom-ethiopia",
+    "company": "Safaricom Ethiopia",
+    "title": "Backend Engineer",
+    "kind": "internship",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2024-03",
+    "end": "2024-05",
+    "summary": "Backend services in a telecom environment, with authentication and observability as first-class concerns.",
+    "highlights": [
+      "Built and maintained backend services with Spring and Spring Boot.",
+      "Implemented authentication and authorisation using Keycloak, OAuth2 and JWT.",
+      "Developed microservices with reliability and throughput as explicit requirements.",
+      "Instrumented and monitored system health with Grafana and Prometheus."
+    ],
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "Keycloak",
+      "OAuth2",
+      "JWT",
+      "Grafana",
+      "Prometheus"
+    ]
+  },
+  {
+    "id": "gebeya",
+    "company": "Gebeya Inc",
+    "title": "Advanced Software Engineering Trainee",
+    "kind": "training",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2023-10",
+    "end": "2024-04",
+    "summary": "Six-month intensive programme covering full-stack development, microservices and DevOps practice.",
+    "highlights": [
+      "Completed an intensive six-month advanced software engineering programme.",
+      "Worked on real project briefs rather than exercises, under review from working engineers.",
+      "Deepened microservices architecture and DevOps practice alongside full-stack fundamentals."
+    ],
+    "tech": ["Java", "Spring Boot", "Node.js", "Docker"]
+  },
+  {
+    "id": "freelance",
+    "company": "Independent",
+    "title": "Freelance Developer",
+    "kind": "freelance",
+    "start": "2020-01",
+    "end": null,
+    "summary": "Client work across several industries, usually owning the whole delivery rather than one layer.",
+    "highlights": [
+      "Delivered full-stack projects for clients across a range of industries.",
+      "Owned scoping, delivery and handover directly with clients.",
+      "Covered UI/UX alongside implementation where projects had no dedicated designer."
+    ],
+    "tech": ["React", "Node.js", "TypeScript", "MongoDB", "Docker"]
+  }
+]

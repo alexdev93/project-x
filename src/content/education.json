@@ -1,0 +1,34 @@
+[
+  {
+    "id": "unity-university",
+    "institution": "Unity University",
+    "credential": "BSc, Computer Science",
+    "year": "2023",
+    "kind": "degree",
+    "detail": ""
+  },
+  {
+    "id": "gebeya",
+    "institution": "Gebeya Inc",
+    "credential": "Certified Backend Engineer",
+    "year": "2024",
+    "kind": "programme",
+    "detail": "Six-month advanced software engineering programme covering full-stack development, microservices and DevOps practice."
+  },
+  {
+    "id": "safaricom-internship",
+    "institution": "Safaricom Ethiopia",
+    "credential": "Backend Development Internship",
+    "year": "2024",
+    "kind": "programme",
+    "detail": "Intensive backend internship working with Spring Boot, Keycloak and service monitoring."
+  },
+  {
+    "id": "safaricom-talent-cloud",
+    "institution": "Safaricom Talent Cloud",
+    "credential": "Advanced Backend & DevOps Training",
+    "year": "2025 — ongoing",
+    "kind": "programme",
+    "detail": ""
+  }
+]
