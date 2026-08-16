@@ -5,6 +5,7 @@ import { ThemeScript } from "@/components/theme/theme-script";
 import { Header } from "@/components/layout/Header";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { ChatLauncher } from "@/components/chat/ChatLauncher";
 import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
 import { siteName, siteUrl } from "@/lib/site";
@@ -68,6 +69,7 @@ export default function RootLayout({
             </main>
             <SiteFooter />
           </div>
+          <ChatLauncher />
         </ThemeProvider>
       </body>
     </html>

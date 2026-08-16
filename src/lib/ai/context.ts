@@ -1,0 +1,157 @@
+import {
+  education,
+  experiences,
+  formatDateRange,
+  profile,
+  projects,
+  skillGroups,
+} from "@/content";
+
+/**
+ * Serialises the portfolio content into the grounding context the model reads.
+ *
+ * Built once per process and cached: the content is static, inlined at build
+ * time, and identical for every request. Rebuilding it per request would burn
+ * CPU and tokens for an identical string.
+ */
+
+function buildContext(): string {
+  const sections: string[] = [];
+
+  sections.push(
+    [
+      "## Identity",
+      `Full name: ${profile.name}`,
+      `Referred to as: ${profile.shortName}`,
+      `Role: ${profile.role}`,
+      `Location: ${profile.location}`,
+      `Positioning: ${profile.tagline}`,
+      `Availability: ${profile.availability.open ? profile.availability.message : "Not currently looking"}`,
+      "",
+      "Biography:",
+      ...profile.bio.map((paragraph) => `- ${paragraph}`),
+    ].join("\n"),
+  );
+
+  sections.push(
+    [
+      "## Focus areas",
+      ...profile.focusAreas.map(
+        (area) => `- ${area.title}: ${area.description}`,
+      ),
+    ].join("\n"),
+  );
+
+  sections.push(
+    [
+      "## Experience (most recent first)",
+      ...experiences.map((entry) =>
+        [
+          `### ${entry.title} — ${entry.company}`,
+          `Period: ${formatDateRange(entry)}`,
+          `Type: ${entry.kind}`,
+          entry.location ? `Location: ${entry.location}` : null,
+          `Summary: ${entry.summary}`,
+          "Contributions:",
+          ...entry.highlights.map((highlight) => `- ${highlight}`),
+          `Technologies: ${entry.tech.join(", ")}`,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      ),
+    ].join("\n\n"),
+  );
+
+  sections.push(
+    [
+      "## Projects",
+      ...projects.map((project) => {
+        const lines: string[] = [
+          `### ${project.name} (/projects/${project.slug})`,
+          `Category: ${project.category}`,
+          `Year: ${project.year}`,
+          `Role: ${project.role}`,
+          `Summary: ${project.summary}`,
+          `Technologies: ${project.tech.join(", ")}`,
+        ];
+
+        if (project.repo) {
+          lines.push(
+            `Repository: ${project.repo.name} (${project.repo.visibility})`,
+          );
+        }
+
+        // Only include narrative fields that have been written. An empty field
+        // must not appear as an empty heading, or the model may treat the
+        // absence as a fact about the work.
+        if (project.problem) lines.push(`Problem: ${project.problem}`);
+        if (project.approach) lines.push(`Approach: ${project.approach}`);
+        if (project.architecture)
+          lines.push(`Architecture: ${project.architecture}`);
+        if (project.outcome) lines.push(`Outcome: ${project.outcome}`);
+
+        if (project.decisions.length > 0) {
+          lines.push("Key decisions:");
+          for (const decision of project.decisions) {
+            lines.push(`- ${decision.title}: ${decision.detail}`);
+          }
+        }
+
+        if (project.components.length > 0) {
+          lines.push("Services and components:");
+          for (const component of project.components) {
+            lines.push(`- ${component.name}: ${component.description}`);
+          }
+        }
+
+        return lines.join("\n");
+      }),
+    ].join("\n\n"),
+  );
+
+  sections.push(
+    [
+      "## Technical skills",
+      "Depth bands: core = used daily and owned; working = shipped with; familiar = used but not owned.",
+      ...skillGroups.map((group) =>
+        [
+          `### ${group.title}`,
+          group.description,
+          ...group.skills.map((skill) => `- ${skill.name} (${skill.depth})`),
+        ].join("\n"),
+      ),
+    ].join("\n\n"),
+  );
+
+  sections.push(
+    [
+      "## Education and training",
+      ...education.map((entry) =>
+        [
+          `- ${entry.credential}, ${entry.institution} (${entry.year})`,
+          entry.detail ? `  ${entry.detail}` : null,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      ),
+    ].join("\n"),
+  );
+
+  sections.push(
+    [
+      "## Contact",
+      `Email: ${profile.email}`,
+      `Contact page: /contact`,
+      ...profile.socials.map((social) => `${social.label}: ${social.href}`),
+    ].join("\n"),
+  );
+
+  return sections.join("\n\n---\n\n");
+}
+
+let cached: string | null = null;
+
+export function getPortfolioContext(): string {
+  cached ??= buildContext();
+  return cached;
+}

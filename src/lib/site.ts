@@ -25,9 +25,8 @@ export const navItems: NavItem[] = [
   { href: "/projects", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/experience", label: "Experience" },
+  { href: "/ai", label: "Ask AI" },
   { href: "/contact", label: "Contact" },
-  // "/ai" is added here in the phase that builds the assistant, so the nav
-  // never links to a route that does not exist yet.
 ];
 
 export function absoluteUrl(path: string): string {
