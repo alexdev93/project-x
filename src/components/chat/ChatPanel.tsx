@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef } from "react";
-import { AlertCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import { AlertCircle, RotateCcw, Trash2 } from "lucide-react";
+import { AlexLogo } from "@/components/brand/AlexLogo";
 import { aiConfig } from "@/content";
 import { useChat } from "@/hooks/useChat";
 import { cn } from "@/lib/utils";
@@ -125,8 +126,8 @@ export function ChatPanel({
 function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
   return (
     <div className="flex flex-col items-start gap-6 py-6">
-      <div className="flex size-10 items-center justify-center rounded-full border border-line bg-surface-raised">
-        <Sparkles aria-hidden className="size-4 text-accent" />
+      <div className="flex size-11 items-center justify-center rounded-full border border-line bg-surface-raised">
+        <AlexLogo variant="icon" className="size-5 text-ink" />
       </div>
 
       <div>

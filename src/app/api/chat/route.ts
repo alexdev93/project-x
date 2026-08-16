@@ -15,6 +15,13 @@ export const dynamic = "force-dynamic";
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY = 20;
 
+/**
+ * Ceiling on how long we wait for the model. Without it, an upstream that
+ * accepts the connection and then stalls would hold the request open until the
+ * platform's own timeout, with the user watching an idle typing indicator.
+ */
+const UPSTREAM_TIMEOUT_MS = 30_000;
+
 const requestSchema = z.object({
   messages: z
     .array(
@@ -72,10 +79,18 @@ export async function POST(request: Request) {
   }
 
   try {
+    // AbortSignal.any composes the two ways this call should end early: the
+    // client navigating away, and the model taking too long. Whichever fires
+    // first aborts the upstream request.
+    const signal = AbortSignal.any([
+      request.signal,
+      AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+    ]);
+
     const textStream = provider.streamReply({
       system: getSystemPrompt(),
       messages: parsed.data.messages,
-      signal: request.signal,
+      signal,
     });
 
     return new Response(textStream.pipeThrough(new TextEncoderStream()), {

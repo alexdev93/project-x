@@ -69,7 +69,7 @@ export default function AboutPage() {
 
           <div className="lg:col-span-5">
             <Reveal delay={0.05} direction="none">
-              <div className="relative aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface-raised">
+              <div className="relative aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-gradient-to-b from-portrait-from to-portrait-to">
                 <Image
                   src={profile.avatar}
                   alt={`Portrait of ${profile.name}`}
