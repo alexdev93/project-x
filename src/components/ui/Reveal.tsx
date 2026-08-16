@@ -85,7 +85,7 @@ export function Reveal({
 
 /**
  * Wraps a list so children animate in sequence. Children must be
- * <Stagger.Item> for the sequencing to apply.
+ * <StaggerItem> for the sequencing to apply.
  */
 export function Stagger({
   children,
@@ -120,7 +120,12 @@ export function Stagger({
   );
 }
 
-function StaggerItem({
+/**
+ * Child of Stagger. Exported by name rather than hung off Stagger as a static
+ * property — React's client manifest cannot resolve `Stagger.Item` across the
+ * server/client boundary, which fails the prerender.
+ */
+export function StaggerItem({
   children,
   direction = "up",
   className,
@@ -144,4 +149,3 @@ function StaggerItem({
   );
 }
 
-Stagger.Item = StaggerItem;

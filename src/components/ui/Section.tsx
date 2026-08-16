@@ -2,10 +2,16 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Container, type ContainerWidth } from "./Container";
 
+/**
+ * Padding is per-side, so two stacked sections contribute both halves to the
+ * gap between them. These values are chosen for that sum: `lg` yields roughly
+ * 128/160/192px between sections, not 192/256/320px. Sizing each side as if it
+ * were the whole gap is what produces dead space between adjacent sections.
+ */
 const spacing = {
-  sm: "py-14 sm:py-16",
-  md: "py-20 sm:py-24",
-  lg: "py-24 sm:py-32 lg:py-40",
+  sm: "py-10 sm:py-12",
+  md: "py-14 sm:py-16 lg:py-20",
+  lg: "py-16 sm:py-20 lg:py-24",
 } as const;
 
 type SectionProps = React.ComponentPropsWithoutRef<"section"> & {
