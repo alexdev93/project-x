@@ -2,6 +2,10 @@ import React from "react";
 import type { Metadata, Viewport } from "next";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ThemeScript } from "@/components/theme/theme-script";
+import { fontVariables } from "@/lib/fonts";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Alemayehu Mekonen | Full-Stack & DevOps Engineer",
@@ -10,18 +14,26 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#191d2b",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#14120f" },
+  ],
 };
 
 const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <html lang="en">
-      <body style={{ margin: 0, backgroundColor: "#191d2b" }}>
-        {/* Gives Emotion an SSR-safe cache under the App Router, which
-            removes the unstyled-content flash on first paint. */}
+    // suppressHydrationWarning: ThemeScript mutates the class list before
+    // React hydrates, which is the point — it is not a mismatch to fix.
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body>
+        {/* Emotion SSR cache for the App Router — removes the style flash.
+            Both this and CssBaseline go away once the last MUI section does. */}
         <AppRouterCacheProvider options={{ key: "mui" }}>
           <CssBaseline />
-          {children}
+          <ThemeProvider>{children}</ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
