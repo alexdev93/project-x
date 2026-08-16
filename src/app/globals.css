@@ -33,6 +33,12 @@
   --accent-soft: #f3e7df;
   --accent-ink: #ffffff;
 
+  /* Mat behind the cut-out portrait. It is a token rather than an inline value
+     because the two themes need genuinely different tones, not one tone at two
+     brightnesses — see the .dark block for why. */
+  --portrait-from: #f3e7df;
+  --portrait-to: #f5f2ed;
+
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 14px;
@@ -52,6 +58,15 @@
   --accent-hover: #e58d63;
   --accent-soft: #2a1f18;
   --accent-ink: #14120f;
+
+  /* The portrait's navy suit measures luminance 42. Against the surface tones
+     (33) it had a delta of 9 and the shoulders dissolved into the panel, so the
+     photo read as a floating head. These sit at 68 and 78, giving the suit a
+     delta of 26-36 and the dark hair a similar margin at the top. A mid-tone
+     mat in dark mode is deliberate: it behaves like the card a print is
+     mounted on, rather than trying to hide the panel. */
+  --portrait-from: #4a443c;
+  --portrait-to: #544d45;
 }
 
 @theme inline {
@@ -67,6 +82,8 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
+  --color-portrait-from: var(--portrait-from);
+  --color-portrait-to: var(--portrait-to);
 
   --font-display: var(--font-instrument-serif), Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

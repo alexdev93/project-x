@@ -103,6 +103,40 @@ yarn start   # serve the production build
 yarn lint    # eslint
 ```
 
+## Brand
+
+The identity lives in [`public/brand/`](public/brand/), with the full rationale
+in [`public/brand/BRAND_GUIDELINES.md`](public/brand/BRAND_GUIDELINES.md).
+
+The mark is an **A built from two strokes that never touch** — a crossbar
+bridges them, and that bridge is the only thing making them a letter. It reads
+as a precise geometric A on its own; the Gemini duality is there for anyone who
+looks twice.
+
+In code, use the component rather than the files — it inherits `currentColor`,
+so one implementation serves both themes:
+
+```tsx
+import { AlexLogo } from "@/components/brand/AlexLogo";
+
+<AlexLogo />                     // lockup
+<AlexLogo variant="icon" />      // mark only
+<AlexLogo variant="wordmark" />  // wordmark only
+<AlexLogo animated />            // one-shot mount animation
+```
+
+Geometry is generated, not duplicated: `scripts/build-brand.py` writes both the
+SVGs in `public/brand/` and `src/components/brand/geometry.ts`, so the assets
+and the component cannot drift apart. Don't hand-edit either — change the script
+and re-run it:
+
+```bash
+pip install fonttools brotli
+yarn build                        # emits Inter's woff2 for outline extraction
+python3 scripts/build-brand.py    # SVGs + geometry.ts
+node scripts/build-brand-png.js   # PNG exports (needs playwright)
+```
+
 ## Replacing the portrait
 
 `public/portrait.webp` is a background-free cutout, so it sits on whatever

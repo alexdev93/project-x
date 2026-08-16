@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { navItems } from "@/lib/site";
+import { AlexLogo } from "@/components/brand/AlexLogo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -120,7 +121,8 @@ export function MobileNav() {
               exit={reduced ? { opacity: 0 } : { x: "100%" }}
               transition={{ duration: reduced ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="flex h-16 items-center justify-end px-3">
+              <div className="flex h-16 items-center justify-between px-5">
+                <AlexLogo className="h-5 text-ink" label="Alex" />
                 <Button
                   variant="ghost"
                   size="icon"

@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Sparkles, X } from "lucide-react";
+import { X } from "lucide-react";
+import { AlexLogo } from "@/components/brand/AlexLogo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -106,7 +107,7 @@ export function ChatLauncher() {
           "shadow-[var(--shadow-overlay)] transition-colors hover:bg-surface-raised",
         )}
       >
-        <Sparkles aria-hidden className="size-4 text-accent" />
+        <AlexLogo variant="icon" className="size-4 text-ink" />
         <span className="hidden sm:inline">Ask AI</span>
       </button>
 
@@ -139,8 +140,8 @@ export function ChatLauncher() {
               transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex h-14 shrink-0 items-center justify-between border-b border-line px-4">
-                <p className="flex items-center gap-2 text-sm font-medium text-ink">
-                  <Sparkles aria-hidden className="size-4 text-accent" />
+                <p className="flex items-center gap-2.5 text-sm font-medium text-ink">
+                  <AlexLogo variant="icon" className="size-4 text-ink" />
                   Ask AI
                 </p>
                 <button

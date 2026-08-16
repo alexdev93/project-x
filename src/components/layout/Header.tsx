@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { navItems } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
+import { AlexLogo } from "@/components/brand/AlexLogo";
 
 /** True once the page has scrolled far enough to warrant a divider. */
 function useScrolled(threshold = 8): boolean {
@@ -41,9 +42,13 @@ export function Header({ wordmark }: { wordmark: string }) {
         <div className="flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
-            className="font-display text-lg tracking-tight text-ink transition-opacity hover:opacity-70"
+            aria-label={`${wordmark} — home`}
+            className="text-ink transition-opacity hover:opacity-70"
           >
-            {wordmark}
+            {/* Animated on the header only: it plays once on load and is the
+                first thing a visitor sees. The link carries the label, so the
+                logo itself stays hidden from assistive tech. */}
+            <AlexLogo animated className="h-6" />
           </Link>
 
           <nav aria-label="Main" className="hidden md:block">

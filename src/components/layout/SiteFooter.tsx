@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SocialIcon } from "@/components/ui/SocialIcon";
+import { AlexLogo } from "@/components/brand/AlexLogo";
 import { profile } from "@/content";
 import { navItems } from "@/lib/site";
 
@@ -12,7 +13,8 @@ export function SiteFooter() {
         <div className="flex flex-col gap-10 py-14 sm:py-16">
           <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
             <div className="max-w-sm">
-              <p className="font-display text-2xl text-ink">{profile.name}</p>
+              <AlexLogo className="h-7 text-ink" label={profile.shortName} />
+              <p className="mt-4 text-sm text-ink-muted">{profile.name}</p>
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                 {profile.tagline}
               </p>

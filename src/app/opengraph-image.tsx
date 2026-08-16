@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content";
+import { ICON_PATHS, ICON_STROKE, ICON_VIEW_BOX } from "@/components/brand/geometry";
 
 export const runtime = "nodejs";
 export const alt = `${profile.name} — ${profile.role}`;
@@ -25,21 +26,26 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* The mark, inlined: satori renders SVG children directly, and the
+              paths come from the same generated geometry as every other
+              surface, so the card cannot drift from the brand. */}
+          <svg width="88" height="88" viewBox={ICON_VIEW_BOX}>
+            <g
+              fill="none"
+              stroke="#f5f1ea"
+              strokeWidth={ICON_STROKE}
+              strokeLinecap="round"
+            >
+              {ICON_PATHS.map((d) => (
+                <path key={d} d={d} />
+              ))}
+            </g>
+          </svg>
           <div
             style={{
-              fontSize: 22,
-              letterSpacing: 4,
-              textTransform: "uppercase",
-              color: "#8b8175",
-            }}
-          >
-            {profile.role}
-          </div>
-          <div
-            style={{
-              marginTop: 28,
-              fontSize: 82,
-              lineHeight: 1.05,
+              marginTop: 30,
+              fontSize: 62,
+              lineHeight: 1.1,
               color: "#f5f1ea",
             }}
           >
@@ -68,7 +74,7 @@ export default function OpenGraphImage() {
             }}
           />
           <div style={{ fontSize: 24, color: "#8b8175" }}>
-            {profile.location}
+            {`${profile.role} · ${profile.location}`}
           </div>
         </div>
       </div>

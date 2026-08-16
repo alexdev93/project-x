@@ -74,10 +74,11 @@ export function Hero() {
 
           <div className="lg:col-span-5">
             <Reveal delay={0.1} direction="none">
-              {/* The portrait is a transparent cutout, so the panel behind it
-                  is what the viewer reads as its background. A soft warm wash
-                  gives it a designed backdrop that works in either theme. */}
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-gradient-to-b from-accent-soft to-surface-raised lg:max-w-none">
+              {/* The portrait is a transparent cutout, so this panel is what
+                  the viewer reads as its background. The two themes use
+                  genuinely different tones rather than one tone dimmed — see
+                  --portrait-from in globals.css. */}
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-gradient-to-b from-portrait-from to-portrait-to lg:max-w-none">
                 <Image
                   src={profile.avatar}
                   alt={`Portrait of ${profile.name}`}
