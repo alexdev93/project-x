@@ -102,3 +102,21 @@ yarn build   # production build (also validates content)
 yarn start   # serve the production build
 yarn lint    # eslint
 ```
+
+## Replacing the portrait
+
+`public/portrait.webp` is a background-free cutout, so it sits on whatever
+surface the current theme provides and works in light and dark from one asset.
+
+To swap in a new photograph, replace `assets/portrait-source.jpg` and re-run:
+
+```bash
+pip install pillow numpy scipy
+python3 scripts/build-portrait.py
+```
+
+This is a one-off asset tool, not part of `yarn build` — the committed `.webp`
+is what the site loads. It expects a studio-style photo on a plain, evenly lit
+backdrop; see `scripts/_matte.py` for how the matte is derived and what it
+assumes. For a photo shot against a busy background, cut it out by hand instead
+and save the result as `public/portrait.webp`.
