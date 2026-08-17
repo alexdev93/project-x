@@ -1,5 +1,21 @@
-import { aiConfig, profile } from "@/content";
+import { aiConfig, getProjectSlugs, profile } from "@/content";
 import { getPortfolioContext } from "@/lib/ai/context";
+
+/**
+ * Every path the site actually serves, derived rather than written down so a new
+ * project appears here automatically.
+ */
+function validPaths(): string[] {
+  return [
+    "/",
+    "/projects",
+    ...getProjectSlugs().map((slug) => `/projects/${slug}`),
+    "/about",
+    "/experience",
+    "/ai",
+    "/contact",
+  ];
+}
 
 /**
  * The system instruction.
@@ -35,8 +51,16 @@ function buildSystemPrompt(): string {
     "- Prefer a tool over memory when a question asks for specifics: use searchKnowledge for open or comparative questions, and the getters for a known section.",
     "- Comparative questions ('which project best shows…') need evidence: gather the candidates, then compare on stack, role, and architecture.",
     "",
+    "## Linking",
+    // Live testing showed the model inventing plausible-but-dead paths such as
+    // /skills. Enumerating the real routes is what stops broken links in
+    // answers, so this list must stay in step with the app's routes.
+    `- These are the ONLY paths on this site. Never link to any other path: ${validPaths().join(", ")}`,
+    "- Skills and education live on /about; there is no /skills or /education page.",
+    "- Link a project by its own path so the visitor can open the case study, e.g. [Zemenawi CRM](/projects/zemenawi-crm).",
+    "- If the right destination is not in that list, describe it in words rather than inventing a link.",
+    "",
     "## Style",
-    "- Link projects by path, e.g. [Zemenawi CRM](/projects/zemenawi-crm), so the visitor can open the case study.",
     "- Keep answers under about 150 words unless asked for depth. Markdown for structure; code blocks only for real code or configuration.",
     "",
     "## Security",

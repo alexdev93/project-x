@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getProjectSlugs } from "@/content";
 import { getSystemPrompt } from "./portfolio";
 
 /**
@@ -67,5 +68,32 @@ describe("system prompt", () => {
 
   it("is stable across calls", () => {
     expect(getSystemPrompt()).toBe(prompt);
+  });
+});
+
+describe("link safety", () => {
+  const prompt = getSystemPrompt();
+
+  it("enumerates every real route", () => {
+    // Live testing caught the model inventing /skills. The fix is this list, so
+    // it is asserted rather than trusted.
+    for (const path of ["/projects", "/about", "/experience", "/ai", "/contact"]) {
+      expect(prompt).toContain(path);
+    }
+  });
+
+  it("includes each project's own path", () => {
+    for (const slug of getProjectSlugs()) {
+      expect(prompt).toContain(`/projects/${slug}`);
+    }
+  });
+
+  it("forbids linking outside that list", () => {
+    expect(prompt).toMatch(/ONLY paths on this site/i);
+    expect(prompt).toMatch(/rather than inventing a link/i);
+  });
+
+  it("names the pages that do not exist", () => {
+    expect(prompt).toMatch(/no \/skills or \/education page/i);
   });
 });
