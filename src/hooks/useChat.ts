@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { parseSources } from "@/lib/ai/agent/types";
+import type { Source } from "@/lib/rag/types";
 
 export type ChatRole = "user" | "assistant";
 
@@ -8,6 +10,8 @@ export type Message = {
   id: string;
   role: ChatRole;
   content: string;
+  /** Portfolio content the answer drew on. Assistant messages only. */
+  sources?: Source[];
 };
 
 export type ChatStatus = "idle" | "streaming" | "error";
@@ -90,7 +94,7 @@ export function useChat() {
     setMessages([...history, { id: replyId, role: "assistant", content: "" }]);
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
@@ -114,15 +118,20 @@ export function useChat() {
         if (done) break;
 
         buffer += value;
-        // Update the placeholder in place so the text appears token by token.
+
+        // The citation tail is stripped on every tick, so a partially received
+        // sentinel is never shown to the user as literal text.
+        const { text, sources } = parseSources(buffer);
         setMessages((current) =>
           current.map((message) =>
-            message.id === replyId ? { ...message, content: buffer } : message,
+            message.id === replyId
+              ? { ...message, content: text, sources }
+              : message,
           ),
         );
       }
 
-      if (!buffer.trim()) {
+      if (!parseSources(buffer).text.trim()) {
         throw new Error("The assistant returned an empty response.");
       }
 

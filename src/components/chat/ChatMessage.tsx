@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import type { Message } from "@/hooks/useChat";
 import { Markdown } from "./Markdown";
 import { CopyButton } from "./CodeBlock";
+import { MessageSources } from "./MessageSources";
 
 /** Three animated dots shown while the first token is still in flight. */
 export function TypingIndicator() {
@@ -60,6 +61,14 @@ export function ChatMessageItem({
           {message.content ? (
             <>
               <Markdown content={message.content} />
+
+              {/* Citations appear only once the stream has settled — they
+                  arrive after the answer text, so showing them mid-stream
+                  would make them pop in and out. */}
+              {!isStreaming && message.sources?.length ? (
+                <MessageSources sources={message.sources} />
+              ) : null}
+
               {!isStreaming ? (
                 <CopyButton
                   value={message.content}
