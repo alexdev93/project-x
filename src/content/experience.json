@@ -1,108 +1,81 @@
 [
   {
+    "id": "safaricom-senior",
+    "company": "Safaricom Ethiopia",
+    "title": "Senior Backend Engineer",
+    "kind": "employment",
+    "location": "Addis Ababa, Ethiopia",
+    "start": "2025-08",
+    "end": null,
+    "summary": "Backend microservices behind M-PESA LiteApp and USSD mobile money, where correctness and fault recovery are the job.",
+    "highlights": [
+      "Build and maintain backend microservices for M-PESA LiteApp, supporting secure merchant payments, transaction orchestration, settlements and retry workflows for high-volume financial services.",
+      "Develop backend services for USSD-based mobile money operations — balance checks, transfers and merchant payments — with reliable fault recovery for low-bandwidth telecom users.",
+      "Work in a telecom fintech environment where transaction integrity and graceful degradation under load are non-negotiable."
+    ],
+    "tech": ["Microservices", "Spring Boot", "Redis", "Kubernetes", "PostgreSQL", "REST", "SOAP"]
+  },
+  {
+    "id": "universal-perk",
+    "company": "Universal Perk",
+    "title": "Full Stack Developer",
+    "kind": "employment",
+    "location": "Remote — Texas, USA",
+    "start": "2025-06",
+    "end": null,
+    "summary": "AI product engineering, remote for a US company — owning delivery end to end rather than one layer of it.",
+    "highlights": [
+      "Built and launched Creva AI, Dasguzo and other SaaS products, owning frontend, backend services, authentication and cloud deployment end to end.",
+      "Developed scalable business platforms and integrations with secure APIs, caching and workflow automation for reliable production delivery.",
+      "Working concurrently with a full-time role at Safaricom, across time zones, on AI-product rather than telecom-infrastructure problems."
+    ],
+    "tech": ["React", "Next.js", "Node.js", "MongoDB", "Redis", "REST APIs"]
+  },
+  {
     "id": "lion-international-bank",
     "company": "Lion International Bank",
-    "title": "Application Administrator & DevOps Engineer",
+    "title": "DevOps Engineer",
     "kind": "employment",
     "location": "Addis Ababa, Ethiopia",
     "start": "2025-01",
-    "end": null,
-    "summary": "Keep core banking applications available, and automate the path from commit to production.",
+    "end": "2025-09",
+    "summary": "Kept core banking applications available, and automated the path from commit to production.",
     "highlights": [
-      "Administer business-critical banking applications where downtime is measured against service commitments, not convenience.",
-      "Build and monitor Jenkins CI/CD pipelines so deployments are repeatable rather than hand-run.",
-      "Operate Docker and Kubernetes workloads, including troubleshooting container and cluster-level failures.",
-      "Configure and maintain Linux servers, covering system stability, patching and performance.",
-      "Work with cross-functional teams to close security and efficiency gaps across the estate."
+      "Built and maintained secure CI/CD pipelines, containerised services and Kubernetes-based deployment workflows, improving release reliability and rollback safety for banking applications.",
+      "Developed and managed monitoring, logging, backup and fault-recovery systems for critical banking services, aimed at high availability and fast incident response.",
+      "Administered business-critical banking applications where downtime is measured against service commitments, not convenience."
     ],
-    "tech": ["Kubernetes", "Docker", "Jenkins", "Linux", "Nginx"]
+    "tech": ["Kubernetes", "Docker", "CI/CD", "Linux", "PostgreSQL", "Prometheus"]
   },
   {
     "id": "addis-software",
     "company": "Addis Software",
-    "title": "Full-Stack Developer",
+    "title": "Full Stack Developer",
     "kind": "employment",
     "location": "Addis Ababa, Ethiopia",
-    "start": "2024-10",
+    "start": "2024-09",
     "end": "2025-01",
-    "summary": "Built and shipped web applications end to end, from schema design through to deployment.",
+    "summary": "Built and shipped web applications end to end, including IoT integrations for real-time device telemetry.",
     "highlights": [
-      "Developed and deployed web applications with React, Node.js and Express.",
-      "Designed and tuned MongoDB schemas around the access patterns the product actually had.",
-      "Collaborated across teams to keep delivery quality consistent under deadline pressure."
+      "Collaborated on the Dodai Admin Panel, improving backend services and maintaining production APIs.",
+      "Built IoT integrations for real-time device monitoring and telemetry.",
+      "Worked across the stack from schema design through to deployment."
     ],
-    "tech": ["React", "Node.js", "Express", "MongoDB"]
+    "tech": ["React", "Node.js", "MongoDB"]
   },
   {
-    "id": "purpose-black-ethiopia",
-    "company": "Purpose Black Ethiopia",
-    "title": "Full-Stack Developer & UI/UX",
-    "kind": "employment",
-    "location": "Addis Ababa, Ethiopia",
-    "start": "2024-02",
-    "end": "2024-07",
-    "summary": "Delivered MERN-stack features and introduced service boundaries into a growing codebase.",
-    "highlights": [
-      "Built full-stack features on the MERN stack, integrating REST APIs with React interfaces.",
-      "Implemented a microservices split using Spring Boot and Node.js as the product outgrew a single service.",
-      "Reviewed code and mentored junior developers on practices and consistency."
-    ],
-    "tech": ["React", "Node.js", "MongoDB", "Spring Boot", "Express"]
-  },
-  {
-    "id": "safaricom-ethiopia",
+    "id": "safaricom-apprenticeship",
     "company": "Safaricom Ethiopia",
-    "title": "Backend Engineer",
+    "title": "Backend Development Apprentice",
     "kind": "internship",
     "location": "Addis Ababa, Ethiopia",
     "start": "2024-03",
     "end": "2024-05",
-    "summary": "Backend services in a telecom environment, with authentication and observability as first-class concerns.",
+    "summary": "A two-month backend apprenticeship — the stint that led to the senior role he holds there now.",
     "highlights": [
-      "Built and maintained backend services with Spring and Spring Boot.",
-      "Implemented authentication and authorisation using Keycloak, OAuth2 and JWT.",
-      "Developed microservices with reliability and throughput as explicit requirements.",
-      "Instrumented and monitored system health with Grafana and Prometheus."
+      "Completed a two-month apprenticeship term in backend development, certified by Safaricom Telecommunications Ethiopia.",
+      "Built and maintained backend services in a telecom environment, with authentication and observability treated as first-class concerns."
     ],
-    "tech": [
-      "Java",
-      "Spring Boot",
-      "Keycloak",
-      "OAuth2",
-      "JWT",
-      "Grafana",
-      "Prometheus"
-    ]
-  },
-  {
-    "id": "gebeya",
-    "company": "Gebeya Inc",
-    "title": "Advanced Software Engineering Trainee",
-    "kind": "training",
-    "location": "Addis Ababa, Ethiopia",
-    "start": "2023-10",
-    "end": "2024-04",
-    "summary": "Six-month intensive programme covering full-stack development, microservices and DevOps practice.",
-    "highlights": [
-      "Completed an intensive six-month advanced software engineering programme.",
-      "Worked on real project briefs rather than exercises, under review from working engineers.",
-      "Deepened microservices architecture and DevOps practice alongside full-stack fundamentals."
-    ],
-    "tech": ["Java", "Spring Boot", "Node.js", "Docker"]
-  },
-  {
-    "id": "freelance",
-    "company": "Independent",
-    "title": "Freelance Developer",
-    "kind": "freelance",
-    "start": "2020-01",
-    "end": null,
-    "summary": "Client work across several industries, usually owning the whole delivery rather than one layer.",
-    "highlights": [
-      "Delivered full-stack projects for clients across a range of industries.",
-      "Owned scoping, delivery and handover directly with clients.",
-      "Covered UI/UX alongside implementation where projects had no dedicated designer."
-    ],
-    "tech": ["React", "Node.js", "TypeScript", "MongoDB", "Docker"]
+    "tech": ["Java", "Spring Boot", "REST APIs"]
   }
 ]

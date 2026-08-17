@@ -63,7 +63,7 @@ export default function RootLayout({
         <ThemeProvider>
           <SkipLink />
           <div className="flex min-h-dvh flex-col">
-            <Header wordmark={profile.shortName} />
+            <Header wordmark={profile.name} />
             <main id="main" className="flex-1">
               {children}
             </main>

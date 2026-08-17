@@ -149,14 +149,14 @@
   },
   {
     "slug": "ai-services",
-    "name": "AI Service Work",
-    "summary": "A set of TypeScript services and dashboards built around language-model APIs.",
+    "name": "AI Product Engineering — Universal Perk",
+    "summary": "Creva AI, Dasguzo and other AI-product SaaS tools, built end to end while working remotely for a Texas-based company.",
     "category": "ai",
     "weight": 50,
-    "featured": false,
-    "year": "2026",
-    "role": "Full-stack engineering",
-    "tech": ["TypeScript", "Node.js", "React"],
+    "featured": true,
+    "year": "2025–2026",
+    "role": "Full-stack engineering, remote",
+    "tech": ["React", "Next.js", "Node.js", "MongoDB", "Redis", "TypeScript"],
     "repo": {
       "visibility": "private",
       "name": "alexdev93/alv-ai-backend"
@@ -169,15 +169,15 @@
     "components": [
       {
         "name": "alv-ai-backend",
-        "description": "TypeScript backend service for AI features."
+        "description": "Backend service for AI-product features — authentication, integrations and API surface."
       },
       {
         "name": "creva-ai-dashboard",
-        "description": "Dashboard interface for AI service output."
+        "description": "Dashboard interface for Creva AI, one of the SaaS products built and launched at Universal Perk."
       },
       {
         "name": "PortaAI",
-        "description": "TypeScript AI application."
+        "description": "AI application built alongside Creva AI and Dasguzo."
       }
     ]
   },

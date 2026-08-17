@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { navItems } from "@/lib/site";
 import { AlexLogo } from "@/components/brand/AlexLogo";
+import { profile } from "@/content";
 import { cn } from "@/lib/utils";
 
 /**
@@ -122,7 +123,12 @@ export function MobileNav() {
               transition={{ duration: reduced ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex h-16 items-center justify-between px-5">
-                <AlexLogo className="h-5 text-ink" label="Alex" />
+                <div className="flex items-center gap-2.5">
+                  <AlexLogo variant="icon" className="h-6 w-6 text-ink" />
+                  <span className="font-display text-lg text-ink">
+                    {profile.name}
+                  </span>
+                </div>
                 <Button
                   variant="ghost"
                   size="icon"

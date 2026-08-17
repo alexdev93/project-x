@@ -5,30 +5,14 @@
     "credential": "BSc, Computer Science",
     "year": "2023",
     "kind": "degree",
-    "detail": ""
+    "detail": "Adama, Ethiopia. Foreign-degree recognition confirmed by Poland's National Agency for Academic Exchange (NAWA)."
   },
   {
     "id": "gebeya",
-    "institution": "Gebeya Inc",
-    "credential": "Certified Backend Engineer",
+    "institution": "Gebeya",
+    "credential": "Certificate of Completion — Back-End Engineering",
     "year": "2024",
     "kind": "programme",
-    "detail": "Six-month advanced software engineering programme covering full-stack development, microservices and DevOps practice."
-  },
-  {
-    "id": "safaricom-internship",
-    "institution": "Safaricom Ethiopia",
-    "credential": "Backend Development Internship",
-    "year": "2024",
-    "kind": "programme",
-    "detail": "Intensive backend internship working with Spring Boot, Keycloak and service monitoring."
-  },
-  {
-    "id": "safaricom-talent-cloud",
-    "institution": "Safaricom Talent Cloud",
-    "credential": "Advanced Backend & DevOps Training",
-    "year": "2025 — ongoing",
-    "kind": "programme",
-    "detail": ""
+    "detail": "180-hour Software Development Program covering backend engineering fundamentals, delivered by Gebeya Developers as a Service."
   }
 ]

@@ -10,6 +10,8 @@
       { "name": "Express", "depth": "core" },
       { "name": "NestJS", "depth": "working" },
       { "name": "REST APIs", "depth": "core" },
+      { "name": "System Design", "depth": "core" },
+      { "name": "Fintech Payments", "depth": "working" },
       { "name": "RabbitMQ", "depth": "working" }
     ]
   },
@@ -58,6 +60,23 @@
       { "name": "Next.js", "depth": "working" },
       { "name": "Tailwind CSS", "depth": "working" },
       { "name": "Material UI", "depth": "working" }
+    ]
+  },
+  {
+    "id": "ai-engineering",
+    "title": "AI Engineering",
+    "description": "Not just API calls to a model — the retrieval, tooling and guardrails around it. This site's own AI assistant is built on exactly this stack.",
+    "skills": [
+      { "name": "Retrieval-Augmented Generation (RAG)", "depth": "core" },
+      { "name": "Prompt Engineering", "depth": "core" },
+      { "name": "Tool Calling & Function Calling", "depth": "core" },
+      { "name": "Vector Databases", "depth": "core" },
+      { "name": "LLM Application Development", "depth": "core" },
+      { "name": "AI Agent Development", "depth": "working" },
+      { "name": "Agentic Workflows", "depth": "working" },
+      { "name": "AI Orchestration", "depth": "working" },
+      { "name": "Multi-Agent Systems", "depth": "familiar" },
+      { "name": "MCP (Model Context Protocol)", "depth": "familiar" }
     ]
   }
 ]
