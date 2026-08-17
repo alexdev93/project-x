@@ -64,12 +64,57 @@ describe("retrieve", () => {
     }
   });
 
+  it("drops matches far weaker than the best one", async () => {
+    // A broad question scores half the corpus just above the floor. Citing all
+    // of it implies the answer used projects it never mentioned.
+    embedQuery.mockResolvedValue([0.1]);
+    searchChunks.mockResolvedValue([
+      chunk("Focus areas", "/about", 0.759),
+      chunk("About", "/about-page", 0.703),
+      chunk("This Portfolio", "/projects/portfolio", 0.668),
+      chunk("AI Service Work", "/projects/ai-services", 0.667),
+      chunk("Zemenawi CRM", "/projects/z", 0.662),
+    ]);
+
+    const { sources, chunks } = await (await load())("what does Alex do");
+
+    expect(sources.map((s) => s.title)).toEqual(["Focus areas", "About"]);
+    expect(chunks).toHaveLength(2);
+  });
+
+  it("keeps every match when they are all close together", async () => {
+    // The Kubernetes probe: four chunks within 0.044, all genuinely relevant.
+    embedQuery.mockResolvedValue([0.1]);
+    searchChunks.mockResolvedValue([
+      chunk("Platform & DevOps skills", "/about", 0.731),
+      chunk("Container Infrastructure", "/projects/ci", 0.701),
+      chunk("Lion International Bank", "/experience", 0.692),
+      chunk("Focus areas", "/about-focus", 0.687),
+    ]);
+
+    const { sources } = await (await load())("kubernetes and docker");
+    expect(sources).toHaveLength(4);
+  });
+
+  it("keeps the single best match when nothing else is near it", async () => {
+    embedQuery.mockResolvedValue([0.1]);
+    searchChunks.mockResolvedValue([
+      chunk("Contact", "/contact", 0.687),
+      chunk("About", "/about", 0.565),
+    ]);
+
+    const { sources } = await (await load())("how do I contact him");
+    expect(sources.map((s) => s.title)).toEqual(["Contact"]);
+  });
+
   it("deduplicates sources that share a destination", async () => {
     // Five skill groups all link to /about; citing it five times is noise.
+    // Scores are kept within SCORE_MARGIN so both chunks survive the relevance
+    // filter and dedup is what actually collapses them.
     embedQuery.mockResolvedValue([0.1]);
     searchChunks.mockResolvedValue([
       chunk("Backend skills", "/about", 0.9),
-      chunk("Platform skills", "/about", 0.8),
+      chunk("Platform skills", "/about", 0.87),
     ]);
 
     const { sources } = await (await load())("skills");

@@ -30,6 +30,35 @@ export type RetrievalResult = {
 
 const EMPTY: RetrievalResult = { chunks: [], sources: [], available: false };
 
+/**
+ * How far below the best match a chunk may score and still be cited.
+ *
+ * The absolute floor (`RAG_MIN_SCORE`) separates relevant from irrelevant, and
+ * it does that well for specific questions, which show a clear cliff: "where did
+ * he study" scores 0.663 then drops to 0.613. Broad questions have no cliff —
+ * "what does Alex do" scored 0.759, 0.703, 0.668, 0.667, 0.667, 0.662, because
+ * half the corpus is mildly on-topic. Citing all six implied the answer drew on
+ * projects it never mentioned.
+ *
+ * A relative floor fixes that without touching the absolute one: keep what is
+ * close to the best match, drop the long tail. Measured over five probe queries,
+ * 0.06 kept every chunk the answer actually used and dropped every one it did
+ * not.
+ */
+const SCORE_MARGIN = 0.06;
+
+/**
+ * Drops matches far weaker than the best one, so a vague question cites its two
+ * real sources instead of everything above the floor.
+ */
+function keepClosest(chunks: RetrievedChunk[]): RetrievedChunk[] {
+  if (chunks.length === 0) return chunks;
+
+  // searchChunks orders by descending similarity, so the first is the best.
+  const floor = chunks[0].score - SCORE_MARGIN;
+  return chunks.filter((chunk) => chunk.score >= floor);
+}
+
 /** Public citation shape — no ids, scores, hashes or internal source keys. */
 function toSources(chunks: RetrievedChunk[]): Source[] {
   const seen = new Set<string>();
@@ -79,7 +108,8 @@ export async function retrieve(
       options.timeoutMs ?? 4000,
     );
 
-    return { chunks, sources: toSources(chunks), available: true };
+    const cited = keepClosest(chunks);
+    return { chunks: cited, sources: toSources(cited), available: true };
   } catch (error) {
     // Logged, never surfaced: citations are a bonus, not part of the contract.
     console.warn(

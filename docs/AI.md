@@ -129,6 +129,13 @@ The earlier non-agent path (`lib/ai/provider.ts`, `gemini.ts`, `prompt.ts` and
 the same thing is a maintenance cost with no upside, and the unused endpoint was
 an extra public surface to protect.
 
+**One thing worth knowing about `context.ts`:** it emits a *Career totals*
+section from the same `getCareerFacts()` the homepage stat block uses, and tells
+the model not to recompute them. Without it the model derived its own figures
+from the six overlapping date ranges and answered "about 5 years" while the
+homepage said "6+". Any total the site displays should reach the model
+pre-computed rather than be re-derived from the raw records.
+
 ---
 
 ## 4. Setup
@@ -211,7 +218,8 @@ Metadata per chunk: `{ source, category, title, url }`.
 ## 6. Retrieval
 
 ```
-question → embedQuery (RETRIEVAL_QUERY) → pgvector cosine → threshold → sources
+question → embedQuery (RETRIEVAL_QUERY) → pgvector cosine
+         → absolute floor → relative floor → sources
 ```
 
 - **Asymmetric embeddings.** Documents embed with `RETRIEVAL_DOCUMENT`, queries
@@ -219,6 +227,15 @@ question → embedQuery (RETRIEVAL_QUERY) → pgvector cosine → threshold → 
   different regions unless told which is which.
 - **`1 - (embedding <=> query)`** converts pgvector's cosine *distance* to a
   similarity, which is what `RAG_MIN_SCORE` thresholds against.
+- **Two floors, because one is not enough.** `RAG_MIN_SCORE` (0.66) separates
+  relevant from irrelevant, and specific questions show a clean cliff at it:
+  *where did he study* scores 0.663 then drops to 0.613. Broad questions have no
+  cliff — *what does Alex do* scored 0.759, 0.703, 0.668, 0.667, 0.667, 0.662,
+  because half the corpus is mildly on-topic, so the answer cited projects it
+  never mentioned. A relative floor (`SCORE_MARGIN`, 0.06 below the best match)
+  keeps what is close to the top hit and drops the tail. Measured across five
+  probe queries it kept every chunk the answer used and dropped every one it did
+  not, taking *what does Alex do* from four citations to one.
 - **No ANN index.** HNSW/IVFFlat pay off in the thousands of rows; this table has
   21. An exact sequential scan is faster here *and* accurate. Revisit past ~5k.
 - **Bounded and best-effort.** A 4s timeout, and every failure path returns no
