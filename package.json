@@ -9,10 +9,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "ingest": "tsx scripts/ingest-knowledge.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.44",
+    "@neondatabase/serverless": "^1.1.0",
     "ai": "^7.0.66",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.17",
@@ -32,9 +37,13 @@
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "dotenv": "^17.4.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.12",
+    "typescript": "^5",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
   }
 }
