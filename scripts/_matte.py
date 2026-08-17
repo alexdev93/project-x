@@ -201,7 +201,7 @@ def absorb_trapped_pockets(
     return backdrop | absorbed
 
 
-def clean_alpha(alpha, backdrop, threshold=0.5):
+def clean_alpha(alpha, backdrop, threshold=0.5, preserve=None):
     """
     Force everything outside the backdrop to full opacity.
 
@@ -209,10 +209,21 @@ def clean_alpha(alpha, backdrop, threshold=0.5):
     where partial coverage is real. Inside the subject, any dip in alpha is an
     artefact — a pale patch of shirt reading as grey — and would otherwise show
     as a hole punched through the chest.
+
+    `preserve` exempts pixels whose computed ramp must survive the fill. This
+    exists because the flood fill cannot pass between locks of hair: backdrop
+    visible in those gaps is not reachable from the border, counts as "not
+    backdrop", and was being promoted to alpha 1.0. It then composited as opaque
+    pale grey — the outer band of hair rendered as though it were going silver,
+    measured 40 levels brighter than the panel behind it. The 5x5 erosion below
+    is nowhere near the ~24px depth of the soft hair zone, so it cannot save
+    them.
     """
     subject = ~backdrop
     # Erode so the soft silhouette ramp is not overwritten by the hard fill.
     interior = ndimage.binary_erosion(subject, np.ones((5, 5)))
+    if preserve is not None:
+        interior &= ~preserve
 
     out = np.where(interior, 1.0, alpha)
 
@@ -226,27 +237,96 @@ def clean_alpha(alpha, backdrop, threshold=0.5):
     return np.clip(out, 0.0, 1.0)
 
 
-def silhouette_band(alpha, width=3):
-    """The narrow ring where the subject meets the backdrop."""
-    solid = alpha > 0.5
-    return ndimage.binary_dilation(solid, np.ones((width, width))) & ~ndimage.binary_erosion(
-        solid, np.ones((width, width))
-    )
-
-
-def decontaminate(rgb, model, alpha, strength=0.85):
+def backdrop_like(rgb, lum_min=120.0, chroma_max=18.0, limit=0.50):
     """
-    Undo backdrop bleed in the silhouette ring only.
+    Bright, neutral pixels in the upper frame: backdrop showing between curls.
 
-    An edge pixel is a blend of subject and backdrop; composited unchanged onto
-    a dark canvas it reads as a pale outline. Restricting this to the silhouette
-    matters — applied everywhere, it speckled the patterned shirt, whose fine
-    detail was being mistaken for edge.
+    Used to protect those gaps from `clean_alpha`'s interior fill, which would
+    otherwise render them as opaque grey hair.
+
+    Colour alone is not a sufficient test, and assuming it was punched a hole
+    through the chest. The shirt is a pale patterned green whose flatter areas
+    fall under a chroma of 18, so they qualified as backdrop and were made
+    transparent — alpha across the chest dropped to a minimum of 0.00. Position
+    resolves what colour cannot: the inter-curl gaps are all in the hair, so the
+    test is confined to the top `limit` of the frame, well above the collar. This
+    is the same reasoning `seed_mask` uses to ignore the bottom of the frame.
+    """
+    lum = rgb @ [0.2126, 0.7152, 0.0722]
+    chroma = rgb.max(2) - rgb.min(2)
+    out = (lum > lum_min) & (chroma < chroma_max)
+    out[int(rgb.shape[0] * limit):, :] = False
+    return out
+
+
+def decontaminate(rgb, model, alpha, floor=0.08, radius=30, solid_at=0.95):
+    """
+    Undo backdrop bleed wherever the pixel is genuinely a blend.
+
+    An edge pixel is a mix of subject and backdrop; composited unchanged onto a
+    dark canvas it reads as a pale outline. Recovering the subject is exact
+    algebra — `I = aF + (1-a)B`, so `F = (I - (1-a)B) / a`.
+
+    This used to be gated to a 3px morphological ring, which covered only 51.6%
+    of the pixels with partial alpha: curly hair has a soft transition many
+    pixels deep, so half the halo was never corrected and survived into the
+    shipped asset as a bright fringe (rim luminance 140 against hair at 86).
+
+    Gating on alpha instead fixes that and is simpler. Every partial pixel is
+    corrected by definition, and the formula is already an identity at a=1, so
+    solid interior needs no special case — which is also what stops the
+    patterned shirt speckling. An earlier attempt widened the ring instead and
+    caught interior shirt pixels, mistaking fine fabric detail for edge.
+
+    The algebra cannot be trusted at the soft edge, though. Dividing by a=0.29
+    amplifies any error in the backdrop estimate 3.4x, and applied raw it turned
+    the fringe blue — R31/B98 against warm hair at R114/B69, swapping a bright
+    halo for a coloured one.
+
+    The fix is to take the edge colour from the neighbouring solid subject
+    instead. That is not a fudge: this is an unpremultiplied cutout, so partial
+    coverage is carried entirely by the alpha channel, and the *colour* of a
+    pixel on the edge of a lock of hair is simply the colour of that hair. Two
+    attempts to be cleverer both failed for the same underlying reason — they
+    took the recovered luminance as a fact about colour and so double-counted
+    coverage that alpha already encodes. Blending the whole colour toward the
+    local subject left the hue 70 levels blue; transplanting the recovered
+    luminance onto the local hue clipped the channels toward black and dragged
+    the edge 48 levels dark.
+
+    Above `solid_at` the algebra reduces to an identity and is used unchanged,
+    which keeps genuinely opaque interior pixels exact. Below `floor` the pixel
+    is nearly invisible and is left alone.
     """
     a = alpha[..., None]
-    solved = (rgb - (1.0 - a) * model) / np.maximum(a, 0.06)
-    band = silhouette_band(alpha)[..., None]
-    return np.clip(np.where(band, rgb * (1 - strength) + solved * strength, rgb), 0, 255)
+    solved = (rgb - (1.0 - a) * model) / np.maximum(a, floor)
+
+    # Local subject colour: blur the solid interior only, normalised so backdrop
+    # and transparent pixels contribute nothing to the average.
+    solid = (alpha > 0.9).astype(np.float64)[..., None]
+    num = ndimage.gaussian_filter(rgb * solid, (radius, radius, 0))
+    den = ndimage.gaussian_filter(solid, (radius, radius, 0))
+    local = np.where(den > 1e-4, num / np.maximum(den, 1e-4), rgb)
+
+    trust = np.clip((a - 0.5) / (solid_at - 0.5), 0.0, 1.0)
+    blended = trust * solved + (1.0 - trust) * local
+    return np.clip(np.where(a >= floor, blended, rgb), 0, 255)
+
+
+# Chroma repair was tried here and removed.
+#
+# The source's skin carries uneven colour patches — the green-magenta spread
+# across the face measures 21.5 where smooth skin sits near 12 — and they are in
+# the original photograph, not introduced by this pipeline. Smoothing the chroma
+# channels while keeping luminance is the textbook fix, and it did reduce the
+# number: radius 22 took the spread to 12.7, radius 55 to 3.6.
+#
+# It also changed his face. Chroma blur at any radius large enough to flatten
+# the patches bled skin colour into the eyes, turning blue-grey irises brown,
+# and dissolved the eyebrows into the forehead. The patches are low-frequency,
+# so no radius separates them from features that matter. Left alone: a mild
+# unevenness that reads as a real photograph beats a smooth one that reads as
+# somebody else.
 
 
 def warm_grade(rgb, warmth=0.05, contrast=1.06, lift=0.015):

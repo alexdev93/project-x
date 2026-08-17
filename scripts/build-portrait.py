@@ -28,6 +28,7 @@ from PIL import Image
 
 from _matte import (
     absorb_trapped_pockets,
+    backdrop_like,
     backdrop_region,
     build_alpha,
     clean_alpha,
@@ -60,7 +61,9 @@ def main() -> None:
     model = fit_backdrop(rgb, seed_mask(rgb))
     alpha = build_alpha(rgb, model)
     backdrop = absorb_trapped_pockets(backdrop_region(rgb, model), alpha)
-    alpha = clean_alpha(alpha, backdrop)
+    # Gaps between locks of hair hold visible backdrop the border fill can never
+    # reach; without this they are filled to full opacity and read as grey hair.
+    alpha = clean_alpha(alpha, backdrop, preserve=backdrop_like(rgb))
 
     colour = warm_grade(decontaminate(rgb, model, alpha))
 
