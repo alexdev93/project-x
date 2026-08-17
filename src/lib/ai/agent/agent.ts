@@ -1,6 +1,6 @@
 import { streamText, stepCountIs } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { getAiConfig } from "@/lib/ai/config";
+import { getAiConfig, getGeminiApiKey } from "@/lib/ai/config";
 import { getSystemPrompt } from "@/lib/ai/prompts/portfolio";
 import { retrieve } from "@/lib/rag/retrieval";
 import type { Source } from "@/lib/rag/types";
@@ -48,7 +48,7 @@ export function runAgent({
   messages: ChatMessage[];
   signal?: AbortSignal;
 }): AgentRun {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   if (!apiKey) throw new Error("GEMINI_API_KEY is not set");
 
   const config = getAiConfig();

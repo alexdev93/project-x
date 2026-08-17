@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getAiConfig } from "@/lib/ai/config";
+import { getAiConfig, getGeminiApiKey, misnamedKeyHint } from "@/lib/ai/config";
 import { runAgent } from "@/lib/ai/agent/agent";
 import { SOURCES_SENTINEL } from "@/lib/ai/agent/types";
 import { cacheKey, getCached, setCached } from "@/lib/cache/ai-cache";
@@ -98,8 +98,15 @@ export async function POST(request: Request) {
     }
   }
 
-  if (!process.env.GEMINI_API_KEY) {
-    console.error("AI chat: GEMINI_API_KEY is not configured.");
+  if (!getGeminiApiKey()) {
+    // The user-facing copy stays vague; the log says exactly what is wrong, so a
+    // misnamed dashboard variable is diagnosable from the function logs alone.
+    console.error(
+      "AI chat: GEMINI_API_KEY is not set.",
+      misnamedKeyHint() ??
+        "Set it in the hosting environment for the Production scope, then redeploy — " +
+          "environment variables added after a build do not apply to it.",
+    );
     return fail(
       "The assistant isn't configured yet. Please use the contact form.",
       503,

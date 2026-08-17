@@ -1,6 +1,6 @@
 import { embed, embedMany } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { getAiConfig } from "@/lib/ai/config";
+import { getAiConfig, getGeminiApiKey } from "@/lib/ai/config";
 
 /**
  * Embedding generation.
@@ -21,7 +21,7 @@ export class EmbeddingError extends Error {
 }
 
 function embeddingModel() {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   if (!apiKey) throw new EmbeddingError("GEMINI_API_KEY is not set");
 
   const { embeddingModel: modelId } = getAiConfig();

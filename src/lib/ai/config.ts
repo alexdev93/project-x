@@ -101,3 +101,42 @@ export function getAiConfig(): AiConfig {
 export function hasVectorStore(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }
+
+/**
+ * The Gemini key, or undefined when it is not usable.
+ *
+ * Trimmed, because a value pasted into a dashboard field often carries a
+ * trailing space or newline. Left untrimmed that produces a confusing upstream
+ * auth failure rather than the honest "not configured" path.
+ *
+ * Server-only. Never returned to a client, logged, or embedded in a response.
+ */
+export function getGeminiApiKey(): string | undefined {
+  return process.env.GEMINI_API_KEY?.trim() || undefined;
+}
+
+/**
+ * Names this deployment sets that look like the key under the wrong name.
+ *
+ * A missing key and a misnamed one produce the same 503, which is hard to tell
+ * apart from a dashboard. Checking a short list of near-misses turns that into a
+ * log line naming the actual mistake. Only variable *names* are reported — never
+ * a value, from this or any other variable.
+ */
+const KEY_ALIASES = [
+  "GEMINI_KEY",
+  "GEMINI_API",
+  "GOOGLE_API_KEY",
+  "GOOGLE_GENERATIVE_AI_API_KEY",
+  "NEXT_PUBLIC_GEMINI_API_KEY",
+] as const;
+
+export function misnamedKeyHint(): string | undefined {
+  const found = KEY_ALIASES.filter((name) => process.env[name]?.trim());
+  if (found.length === 0) return undefined;
+
+  return (
+    `Found ${found.join(", ")} but this app reads GEMINI_API_KEY. ` +
+    `Rename the variable to GEMINI_API_KEY and redeploy.`
+  );
+}
