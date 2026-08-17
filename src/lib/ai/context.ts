@@ -2,6 +2,7 @@ import {
   education,
   experiences,
   formatDateRange,
+  getCareerFacts,
   profile,
   projects,
   skillGroups,
@@ -10,9 +11,13 @@ import {
 /**
  * Serialises the portfolio content into the grounding context the model reads.
  *
- * Built once per process and cached: the content is static, inlined at build
- * time, and identical for every request. Rebuilding it per request would burn
- * CPU and tokens for an identical string.
+ * Built once per process and cached: the content is inlined at build time and
+ * identical for every request. Rebuilding it per request would burn CPU and
+ * tokens for the same string.
+ *
+ * The one time-dependent value is the years total, which is resolved when the
+ * process first serves a request. It only changes on an anniversary, and a
+ * serverless process is far shorter-lived than that, so the memo is safe.
  */
 
 function buildContext(): string {
@@ -39,6 +44,19 @@ function buildContext(): string {
       ...profile.focusAreas.map(
         (area) => `- ${area.title}: ${area.description}`,
       ),
+    ].join("\n"),
+  );
+
+  // Pre-computed totals, from the same function the site's own stat block uses.
+  // Without these the model derives its own figures from the overlapping date
+  // ranges below and gets them wrong — it read the roles here as "about 5
+  // years" while the homepage said 6+. Stating the totals keeps one derivation.
+  sections.push(
+    [
+      "## Career totals",
+      "Already calculated from the records below. Quote these figures; do not",
+      "recompute them from the dates, which overlap and undercount.",
+      ...getCareerFacts().map((fact) => `- ${fact.label}: ${fact.value}`),
     ].join("\n"),
   );
 
