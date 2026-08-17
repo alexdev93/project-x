@@ -49,8 +49,15 @@ const schema = z.object({
    * Minimum cosine similarity for a chunk to count as relevant. Below this a
    * chunk is dropped rather than cited, which stops the UI attributing an
    * answer to content that merely shares vocabulary.
+   *
+   * 0.66 is measured, not guessed. Against this corpus and embedding model, nine
+   * probe queries put correct answers in 0.664-0.734 and the best *off-topic*
+   * match in 0.466-0.633 — a clean gap, and 0.66 sits inside it. The earlier
+   * 0.5 default admitted almost everything: a question about contact details
+   * came back citing an unrelated project. Re-measure with
+   * `RAG_MIN_SCORE` if the content or the embedding model changes materially.
    */
-  ragMinScore: z.coerce.number().min(0).max(1).catch(0.5),
+  ragMinScore: z.coerce.number().min(0).max(1).catch(0.66),
 
   /** Requests allowed per window, per IP. */
   rateLimit: numeric(10, 1, 1000),

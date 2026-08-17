@@ -130,12 +130,14 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode(delta));
         }
 
-        // Citations are appended once, after the answer, because the tools that
-        // produce them may run at any point during generation.
-        const tail = sourcesTail(run.sources);
+        // Citations are appended once, after the answer: retrieval runs
+        // concurrently with generation, so this await has normally already
+        // resolved by the time the stream drains.
+        const sources = await run.sources;
+        const tail = sourcesTail(sources);
         if (tail) controller.enqueue(encoder.encode(tail));
 
-        if (key) setCached(key, { text: answer, sources: run.sources });
+        if (key) setCached(key, { text: answer, sources });
         controller.close();
       } catch (error) {
         console.error("AI chat: stream failed.", error);

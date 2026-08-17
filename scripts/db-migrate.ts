@@ -8,6 +8,9 @@
  * changing AI_EMBEDDING_DIMENSIONS means editing that file too (see docs/AI.md).
  */
 
+// Must be first: populates process.env from .env.local.
+import "./_env";
+
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { neon } from "@neondatabase/serverless";

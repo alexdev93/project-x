@@ -11,6 +11,9 @@
  * the content are pruned.
  */
 
+// Must be first: populates process.env from .env.local.
+import "./_env";
+
 import { buildKnowledgeChunks } from "@/lib/rag/chunking";
 import { embedDocuments } from "@/lib/rag/embeddings";
 import {

@@ -2,6 +2,7 @@ import { streamText, stepCountIs } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { getAiConfig } from "@/lib/ai/config";
 import { getSystemPrompt } from "@/lib/ai/prompts/portfolio";
+import { retrieve } from "@/lib/rag/retrieval";
 import type { Source } from "@/lib/rag/types";
 import { createTools } from "./tools";
 import type { ChatMessage } from "./types";
@@ -25,10 +26,19 @@ export type AgentRun = {
    *  surface does not depend on the SDK's generic signature. */
   stream: AsyncIterable<string>;
   /**
-   * Sources gathered during the run. Populated as tools execute, so read this
-   * only after the stream is done.
+   * Resolves to the citations for this turn. Await it after the stream drains.
+   *
+   * Retrieval runs unconditionally on the question rather than only when the
+   * model calls searchKnowledge. Live testing showed why: the full corpus is
+   * already in the system prompt, so the model rarely has a reason to search,
+   * and citations almost never appeared. Since retrieval's job here is
+   * attribution rather than context selection, tying it to a tool the model
+   * elects to use was the wrong shape.
+   *
+   * It is kicked off before generation and awaited after, so its ~200ms overlaps
+   * the model's own latency and adds nothing to time-to-first-token.
    */
-  sources: Source[];
+  sources: Promise<Source[]>;
 };
 
 export function runAgent({
@@ -59,6 +69,12 @@ export function runAgent({
     },
   };
 
+  // Kicked off before generation so its latency overlaps the model's. Only the
+  // latest user turn is used as the query — a follow-up should be attributed to
+  // what it actually asks about, not to the whole transcript.
+  const question = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+  const retrieval = retrieve(question).then((r) => r.sources).catch(() => []);
+
   const result = streamText({
     model: google(config.model),
     system: getSystemPrompt(),
@@ -76,5 +92,12 @@ export function runAgent({
     },
   });
 
-  return { stream: result.textStream, sources: collected };
+  // Merge both channels: whatever unconditional retrieval found, plus anything
+  // the model surfaced by calling searchKnowledge itself. `collector` dedupes.
+  const sources = (async () => {
+    collector.add(await retrieval);
+    return collected;
+  })();
+
+  return { stream: result.textStream, sources };
 }

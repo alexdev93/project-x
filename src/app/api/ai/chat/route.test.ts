@@ -52,7 +52,7 @@ describe("POST /api/ai/chat", () => {
   });
 
   it("streams the answer as text", async () => {
-    runAgent.mockReturnValue({ stream: streamOf("Alex ", "builds ", "systems."), sources: [] });
+    runAgent.mockReturnValue({ stream: streamOf("Alex ", "builds ", "systems."), sources: Promise.resolve([]) });
 
     const response = await post(ask());
 
@@ -66,7 +66,9 @@ describe("POST /api/ai/chat", () => {
   it("appends citations after the answer", async () => {
     runAgent.mockReturnValue({
       stream: streamOf("Answer."),
-      sources: [{ title: "Zemenawi CRM", type: "project", url: "/projects/z" }],
+      sources: Promise.resolve([
+        { title: "Zemenawi CRM", type: "project", url: "/projects/z" },
+      ]),
     });
 
     const body = await (await post(ask())).text();
@@ -77,12 +79,12 @@ describe("POST /api/ai/chat", () => {
   });
 
   it("omits the sentinel when there are no citations", async () => {
-    runAgent.mockReturnValue({ stream: streamOf("Answer."), sources: [] });
+    runAgent.mockReturnValue({ stream: streamOf("Answer."), sources: Promise.resolve([]) });
     expect(await (await post(ask())).text()).toBe("Answer.");
   });
 
   it("serves a repeated question from cache without calling the agent", async () => {
-    runAgent.mockReturnValue({ stream: streamOf("Cached answer."), sources: [] });
+    runAgent.mockReturnValue({ stream: streamOf("Cached answer."), sources: Promise.resolve([]) });
 
     const first = await post(ask("What is his stack?"));
     expect(await first.text()).toBe("Cached answer.");
@@ -142,7 +144,7 @@ describe("POST /api/ai/chat", () => {
   it("rate limits and returns Retry-After", async () => {
     process.env.AI_RATE_LIMIT = "2";
     process.env.AI_RATE_WINDOW = "60";
-    runAgent.mockReturnValue({ stream: streamOf("ok"), sources: [] });
+    runAgent.mockReturnValue({ stream: streamOf("ok"), sources: Promise.resolve([]) });
 
     // Distinct questions so the cache cannot mask the limiter.
     const codes: number[] = [];
@@ -168,7 +170,7 @@ describe("POST /api/ai/chat", () => {
           throw new Error("upstream exploded");
         },
       },
-      sources: [],
+      sources: Promise.resolve([]),
     });
 
     const response = await post(ask("failing stream question"));
@@ -185,12 +187,12 @@ describe("POST /api/ai/chat", () => {
           throw new Error("died immediately");
         },
       },
-      sources: [],
+      sources: Promise.resolve([]),
     });
 
     await (await post(ask("never cache me"))).text();
 
-    runAgent.mockReturnValue({ stream: streamOf("Good answer."), sources: [] });
+    runAgent.mockReturnValue({ stream: streamOf("Good answer."), sources: Promise.resolve([]) });
     const retry = await post(ask("never cache me"));
 
     expect(retry.headers.get("x-cache")).toBe("MISS");
