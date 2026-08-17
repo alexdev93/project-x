@@ -39,6 +39,13 @@
   --portrait-from: #f3e7df;
   --portrait-to: #f5f2ed;
 
+  /* The hero portrait is a token, not an <img>, so that exactly one of the two
+     theme renderings is ever downloaded: a browser resolves this custom
+     property to a single used value and fetches only that URL. Two <img>
+     elements with one hidden by CSS would fetch both, doubling the bytes of the
+     largest element on the page. */
+  --hero-portrait: url("/portrait-light.webp");
+
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 14px;
@@ -67,6 +74,10 @@
      mounted on, rather than trying to hide the panel. */
   --portrait-from: #4a443c;
   --portrait-to: #544d45;
+
+  /* A separately rendered portrait rather than the light one dimmed: the
+     illustration's own lighting and backdrop differ between the two. */
+  --hero-portrait: url("/portrait-dark.webp");
 }
 
 @theme inline {
@@ -139,6 +150,66 @@
 
   p {
     text-wrap: pretty;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Ambient motion.
+ *
+ * Deliberately slow, low-contrast and CSS-only. Slow because this sits behind a
+ * portrait and a headline: it should register as light shifting in a room, not
+ * as something asking to be looked at. CSS-only because it then needs no
+ * JavaScript, no hydration, and is collapsed automatically by the
+ * prefers-reduced-motion block below.
+ *
+ * That collapse is why every set below rests at a *visible* state on 100%: the
+ * global rule forces `animation-duration: 0.01ms`, so an element effectively
+ * jumps to its final keyframe. A set ending at `opacity: 0` would leave the
+ * element invisible for anyone who asked for less motion — the exact bug this
+ * project already shipped once on the brand mark.
+ * ------------------------------------------------------------------------ */
+@layer utilities {
+  .animate-aura {
+    animation: aura-drift 18s ease-in-out infinite;
+  }
+
+  .animate-twinkle {
+    animation: twinkle 5s ease-in-out infinite;
+  }
+
+  .animate-orbit {
+    animation: orbit 60s linear infinite;
+  }
+}
+
+@keyframes aura-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate3d(-4%, -5%, 0) scale(1.12);
+    opacity: 0.8;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

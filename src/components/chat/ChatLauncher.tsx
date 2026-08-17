@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import { AlexLogo } from "@/components/brand/AlexLogo";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,15 +18,7 @@ const ChatPanel = dynamic(
   () => import("./ChatPanel").then((mod) => mod.ChatPanel),
   {
     ssr: false,
-    loading: () => (
-      <div
-        className="flex min-h-0 flex-1 items-center justify-center"
-        role="status"
-        aria-label="Loading assistant"
-      >
-        <span className="size-5 animate-spin rounded-full border-2 border-line border-t-accent" />
-      </div>
-    ),
+    loading: () => <BrandLoader compact message="Waking the assistant" />,
   },
 );
 

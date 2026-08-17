@@ -1,12 +1,12 @@
 import React from "react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Download } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { PortraitFrame } from "@/components/portrait/PortraitFrame";
 import { education, profile, skillGroups, type SkillDepth } from "@/content";
 import { cn } from "@/lib/utils";
 
@@ -69,15 +69,12 @@ export default function AboutPage() {
 
           <div className="lg:col-span-5">
             <Reveal delay={0.05} direction="none">
-              <div className="relative aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-gradient-to-b from-portrait-from to-portrait-to">
-                <Image
-                  src={profile.avatar}
-                  alt={`Portrait of ${profile.name}`}
-                  fill
-                  sizes="(max-width: 1024px) 384px, 33vw"
-                  className="object-cover"
-                />
-              </div>
+              {/* Same portrait as the hero, without the ambient motion: one
+                  animated introduction per visit is a flourish, two is a tic. */}
+              <PortraitFrame
+                label={`Portrait of ${profile.name}`}
+                className="w-full max-w-sm"
+              />
             </Reveal>
           </div>
         </div>

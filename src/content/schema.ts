@@ -55,8 +55,10 @@ export const profileSchema = z.object({
   location: z.string().min(1),
   email: z.string().email(),
   phone: z.string().min(1),
-  /** Path under /public. */
-  avatar: z.string().min(1),
+  // No `avatar` field. The portrait has a per-theme rendering, so its path is
+  // chosen by the --hero-portrait custom property in globals.css; naming a
+  // single file here as well would be a second source of truth that no code
+  // reads.
   resume: z.object({
     /** Path under /public. */
     href: z.string().min(1),

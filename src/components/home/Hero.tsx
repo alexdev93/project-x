@@ -4,7 +4,7 @@ import { ArrowRight, Download } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { PortraitLineArt } from "@/components/portrait/PortraitLineArt";
+import { PortraitFrame } from "@/components/portrait/PortraitFrame";
 import { profile } from "@/content";
 
 export function Hero() {
@@ -74,16 +74,11 @@ export function Hero() {
 
           <div className="lg:col-span-5">
             <Reveal delay={0.1} direction="none">
-              {/* Line art rather than the photograph: pure currentColor ink,
-                  so it is correct in both themes with no separate dark-mode
-                  asset. Temporary by design — swap for a proper photo whenever
-                  one exists; the panel and animation contract stay the same. */}
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface-raised p-6 text-ink sm:p-8 lg:max-w-none">
-                <PortraitLineArt
-                  className="h-full w-full"
-                  label={`Line-art portrait of ${profile.name}`}
-                />
-              </div>
+              <PortraitFrame
+                ambient
+                label={`Portrait of ${profile.name}`}
+                className="mx-auto w-full max-w-sm lg:max-w-none"
+              />
             </Reveal>
           </div>
         </div>
