@@ -1,10 +1,10 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Download } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { PortraitLineArt } from "@/components/portrait/PortraitLineArt";
 import { profile } from "@/content";
 
 export function Hero() {
@@ -74,20 +74,14 @@ export function Hero() {
 
           <div className="lg:col-span-5">
             <Reveal delay={0.1} direction="none">
-              {/* The portrait is a transparent cutout, so this panel is what
-                  the viewer reads as its background. The two themes use
-                  genuinely different tones rather than one tone dimmed — see
-                  --portrait-from in globals.css. */}
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-gradient-to-b from-portrait-from to-portrait-to lg:max-w-none">
-                <Image
-                  src={profile.avatar}
-                  alt={`Portrait of ${profile.name}`}
-                  fill
-                  // Roughly 40vw on desktop, full width on mobile — keeps the
-                  // browser from downloading a needlessly large source.
-                  sizes="(max-width: 1024px) 384px, 40vw"
-                  className="object-cover"
-                  priority
+              {/* Line art rather than the photograph: pure currentColor ink,
+                  so it is correct in both themes with no separate dark-mode
+                  asset. Temporary by design — swap for a proper photo whenever
+                  one exists; the panel and animation contract stay the same. */}
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface-raised p-6 text-ink sm:p-8 lg:max-w-none">
+                <PortraitLineArt
+                  className="h-full w-full"
+                  label={`Line-art portrait of ${profile.name}`}
                 />
               </div>
             </Reveal>
