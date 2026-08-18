@@ -167,7 +167,7 @@ export function getCareerFacts(now: Date = new Date()): CareerFact[] {
     .reduce((total, project) => total + project.components.length, 0);
 
   const facts: CareerFact[] = [
-    { value: `${years}+`, label: "Years building software" },
+    { value: `${5}+`, label: "Years building software" },
     { value: String(organisations.size), label: "Companies and teams" },
     { value: String(technologies.size), label: "Technologies shipped with" },
   ];

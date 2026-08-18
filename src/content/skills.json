@@ -46,8 +46,10 @@
     "description": "Modelling for the access patterns a system actually has.",
     "skills": [
       { "name": "MongoDB", "depth": "core" },
-      { "name": "PostgreSQL", "depth": "working" },
-      { "name": "MySQL", "depth": "working" }
+      { "name": "PostgreSQL", "depth": "core" },
+      { "name": "MySQL", "depth": "core" },
+      { "name": "Redis", "depth": "working" },
+      { "name": "Elasticsearch", "depth": "working" }
     ]
   },
   {
