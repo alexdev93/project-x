@@ -4,13 +4,15 @@ Personal site and engineering portfolio, with an AI assistant that answers
 questions about the work from structured content.
 
 **Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS v4 ·
-Framer Motion · Gemini · Vercel
+Framer Motion · Gemini · Better Auth · Neon Postgres · Vercel
 
 ## Changing the content
 
 **You do not need to touch a component to change what the site says.**
 Everything lives in [`src/content`](src/content) as JSON — see
 [`src/content/README.md`](src/content/README.md) for what each file controls.
+Editing those files from the browser is what `/admin/content` does; it saves by
+committing, which is explained in [`docs/BLOG.md`](docs/BLOG.md).
 
 | File | Controls |
 |---|---|
@@ -42,13 +44,32 @@ yarn dev
 | `GEMINI_API_KEY` | for the assistant | Server-only. Get one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `GEMINI_MODEL` | no | Defaults to `gemini-2.5-flash` |
 | `EMAIL_USER` / `EMAIL_PASS` | for the contact form | Gmail address + [App Password](https://myaccount.google.com/apppasswords) |
+| `DATABASE_URL` | for the blog and sign-in | Neon Postgres. Without it the site is unchanged and `/blog` shows an empty state |
+| `BETTER_AUTH_SECRET` | for sign-in | `openssl rand -base64 32` |
+| `GOOGLE_CLIENT_ID` / `_SECRET` | for sign-in | Google OAuth client. Free |
+| `ADMIN_EMAILS` | for `/admin` | Comma-separated. **Empty means nobody**, including you |
+| `GITHUB_TOKEN` / `GITHUB_REPO` | for the content editor | Fine-grained PAT, Contents write, this repo only |
 | `NEXT_PUBLIC_SITE_URL` | no | Canonical URL. Falls back to the Vercel deployment URL |
+
+Every one of the blog variables is optional in the sense that matters: with none
+of them set the site builds and behaves exactly as it did before the blog
+existed. See [`.env.example`](.env.example) for what each absence costs.
 
 These must also be set in **Vercel → Settings → Environment Variables** for the
 deployed site. `.env.local` is git-ignored and never leaves your machine.
 
 Without `GEMINI_API_KEY` the site builds and runs normally; the assistant
 returns a clear "not configured yet" message instead of failing.
+
+## The blog and admin panel
+
+An X-style feed at `/blog`, with Google sign-in, likes, comments and one level of
+replies. `/admin` manages posts, moderates comments, lists readers, and edits the
+portfolio content above.
+
+The design and its reasoning — why there are no transactions, why authorization
+is expressed as a SQL join, and which of the three admin guards are real — is in
+[`docs/BLOG.md`](docs/BLOG.md).
 
 ## Architecture
 
@@ -101,6 +122,11 @@ yarn dev     # development server
 yarn build   # production build (also validates content)
 yarn start   # serve the production build
 yarn lint    # eslint
+yarn test    # vitest
+
+yarn db:migrate   # apply src/lib/db/schema.sql (idempotent)
+yarn seed:blog    # two example posts (re-runnable)
+yarn ingest       # rebuild the assistant's embeddings after a content change
 ```
 
 ## Brand
