@@ -9,14 +9,15 @@ import { Button } from "@/components/ui/Button";
 import { navItems } from "@/lib/site";
 import { AlexLogo } from "@/components/brand/AlexLogo";
 import { profile } from "@/content";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { cn } from "@/lib/utils";
 
 /**
  * Full-height slide-over navigation for small screens.
  *
- * Handles the four things a dialog has to get right: Escape closes it, focus
- * moves into it and cannot leave while open, background scroll is locked, and
- * focus returns to the trigger on close.
+ * Escape, focus containment, scroll lock and focus restoration all come from
+ * `useFocusTrap`. `autoFocus` is on because the panel's links are mounted
+ * immediately, so the first Tab has somewhere sensible to land.
  */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -33,51 +34,12 @@ export function MobileNav() {
     setOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    if (!open) return;
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-
-    // Move focus into the panel so the first Tab lands somewhere sensible.
-    panelRef.current?.querySelector<HTMLElement>("a, button")?.focus();
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        close();
-        return;
-      }
-
-      if (event.key !== "Tab" || !panelRef.current) return;
-
-      const focusables = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusables.length === 0) return;
-
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      // Wrap focus at both ends so Tab cannot escape to the page behind.
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = overflow;
-      previouslyFocused?.focus();
-    };
-  }, [open, close]);
+  useFocusTrap({
+    active: open,
+    containerRef: panelRef,
+    onClose: close,
+    autoFocus: true,
+  });
 
   return (
     <>

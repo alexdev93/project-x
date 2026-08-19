@@ -1,6 +1,13 @@
 """
 Split the two-up illustrated portrait mockup into per-theme hero assets.
 
+DO NOT RE-RUN THIS WITHOUT READING THIS PARAGRAPH. public/portrait-dark.webp in
+the repository is no longer this script's output — it was hand-polished
+afterwards (commit cbbddcd, "portrait-dark picture polished"), which fixed the
+soft signature edge and the hair boundary that the automated derivation left
+behind. Running this script overwrites that file with the inferior automated
+version. If you only need the light asset, comment out the dark write first.
+
 Input is a single 1536x1024 image holding two design-mockup cards side by side —
 a light-mode card and a dark-mode card of the same illustrated portrait. Both
 carry annotation chrome that describes the design rather than being part of it:

@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import { AlexLogo } from "@/components/brand/AlexLogo";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { cn } from "@/lib/utils";
 
 /**
@@ -41,47 +42,10 @@ export function ChatLauncher() {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  useEffect(() => {
-    if (!open) return;
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        close();
-        return;
-      }
-
-      if (event.key !== "Tab" || !panelRef.current) return;
-
-      const focusables = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusables.length === 0) return;
-
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = overflow;
-      previouslyFocused?.focus();
-    };
-  }, [open, close]);
+  // `autoFocus` is deliberately off: the panel lazy-loads, so at open time the
+  // only focusable thing inside it belongs to a loading state that is about to
+  // be replaced. The composer takes focus itself once it mounts.
+  useFocusTrap({ active: open, containerRef: panelRef, onClose: close });
 
   if (pathname === "/ai") return null;
 

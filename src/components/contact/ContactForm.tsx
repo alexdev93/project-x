@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { AlertCircle, CheckCircle2, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { Field } from "@/components/ui/Field";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 
 type Status =
   | { kind: "idle" }
@@ -12,38 +14,6 @@ type Status =
   | { kind: "error"; message: string };
 
 type FieldErrors = Partial<Record<"name" | "email" | "subject" | "message", string[]>>;
-
-const fieldClass =
-  "w-full rounded-[var(--radius)] border border-line bg-surface px-3.5 py-2.5 text-base text-ink " +
-  "placeholder:text-ink-subtle transition-colors " +
-  "focus:border-accent focus:outline-none focus-visible:outline-none " +
-  "disabled:opacity-60";
-
-function Field({
-  id,
-  label,
-  error,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string[];
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-ink">
-        {label}
-      </label>
-      {children}
-      {error?.length ? (
-        <p id={`${id}-error`} role="alert" className="text-sm text-accent">
-          {error[0]}
-        </p>
-      ) : null}
-    </div>
-  );
-}
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -118,58 +88,50 @@ export function ContactForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field id="name" label="Name" error={fieldErrors.name}>
-          <input
+          <Input
             id="name"
             name="name"
             required
             autoComplete="name"
             disabled={submitting}
-            aria-invalid={Boolean(fieldErrors.name)}
-            aria-describedby={fieldErrors.name ? "name-error" : undefined}
-            className={fieldClass}
+            error={fieldErrors.name}
             placeholder="Your name"
           />
         </Field>
 
         <Field id="email" label="Email" error={fieldErrors.email}>
-          <input
+          <Input
             id="email"
             name="email"
             type="email"
             required
             autoComplete="email"
             disabled={submitting}
-            aria-invalid={Boolean(fieldErrors.email)}
-            aria-describedby={fieldErrors.email ? "email-error" : undefined}
-            className={fieldClass}
+            error={fieldErrors.email}
             placeholder="you@example.com"
           />
         </Field>
       </div>
 
       <Field id="subject" label="Subject" error={fieldErrors.subject}>
-        <input
+        <Input
           id="subject"
           name="subject"
           required
           disabled={submitting}
-          aria-invalid={Boolean(fieldErrors.subject)}
-          aria-describedby={fieldErrors.subject ? "subject-error" : undefined}
-          className={fieldClass}
+          error={fieldErrors.subject}
           placeholder="What's this about?"
         />
       </Field>
 
       <Field id="message" label="Message" error={fieldErrors.message}>
-        <textarea
+        <Textarea
           id="message"
           name="message"
           required
           rows={6}
           disabled={submitting}
-          aria-invalid={Boolean(fieldErrors.message)}
-          aria-describedby={fieldErrors.message ? "message-error" : undefined}
-          className={cn(fieldClass, "resize-y")}
+          error={fieldErrors.message}
           placeholder="A few sentences is plenty."
         />
       </Field>
