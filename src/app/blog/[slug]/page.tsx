@@ -7,7 +7,9 @@ import { Container } from "@/components/ui/Container";
 import { TechTagList } from "@/components/ui/Badge";
 import { PostBody } from "@/components/blog/PostBody";
 import { LikeButton } from "@/components/blog/LikeButton";
-import { getPost, getPublishedSlugs } from "@/lib/blog/service";
+import { CommentThread } from "@/components/blog/CommentThread";
+import { getPost, getPublishedSlugs, getThread } from "@/lib/blog/service";
+import { hasAuth } from "@/lib/auth/config";
 import { formatDate, machineDate } from "@/lib/format";
 import { absoluteUrl } from "@/lib/site";
 
@@ -57,6 +59,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function PostPage({ params }: Params) {
   const post = await getPost(params.slug);
   if (!post) notFound();
+
+  /**
+   * The thread is read with no viewer, which is what keeps this page cacheable:
+   * one rendering serves every reader. Which comments belong to the person
+   * reading is decided in the browser — see CommentActions.
+   */
+  const comments = await getThread(post.id, null);
 
   return (
     <article className="py-14 sm:py-20">
@@ -109,6 +118,12 @@ export default async function PostPage({ params }: Params) {
         <div className="mt-12 max-w-[68ch] border-t border-line pt-8">
           <LikeButton slug={post.slug} initialCount={post.likeCount} />
         </div>
+
+        <CommentThread
+          slug={post.slug}
+          comments={comments}
+          canComment={hasAuth()}
+        />
       </Container>
     </article>
   );

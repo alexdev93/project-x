@@ -1,6 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, LayoutDashboard } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  LayoutDashboard,
+  MessageSquare,
+  Users,
+} from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { AdminNavLink } from "./AdminNavLink";
 
@@ -17,13 +23,15 @@ import { AdminNavLink } from "./AdminNavLink";
  */
 
 /**
- * Only sections that exist. Comment moderation, readers and the site-content
- * editor join this list in the commits that build them — a navigation item
- * pointing at a 404 is worse than one that is not there yet.
+ * Only sections that exist. The site-content editor joins this list in the
+ * commit that builds it — a navigation item pointing at a 404 is worse than one
+ * that is not there yet.
  */
 const SECTIONS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/admin/posts", label: "Posts", icon: FileText },
+  { href: "/admin/comments", label: "Comments", icon: MessageSquare },
+  { href: "/admin/users", label: "Readers", icon: Users },
 ];
 
 export function AdminShell({
