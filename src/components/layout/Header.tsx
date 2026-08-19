@@ -9,6 +9,7 @@ import { navItems } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
 import { AlexLogo } from "@/components/brand/AlexLogo";
+import { UserMenu } from "@/components/auth/UserMenu";
 
 /** True once the page has scrolled far enough to warrant a divider. */
 function useScrolled(threshold = 8): boolean {
@@ -83,6 +84,10 @@ export function Header({ wordmark }: { wordmark: string }) {
 
           <div className="flex items-center gap-1">
             <ThemeToggle />
+            {/* Reads the session client-side on purpose: a server read here
+                would call headers() and opt every prerendered page out of
+                static rendering to draw one avatar. */}
+            <UserMenu />
             <MobileNav />
           </div>
         </div>
