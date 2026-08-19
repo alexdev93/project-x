@@ -13,12 +13,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:migrate": "tsx scripts/db-migrate.ts",
-    "ingest": "tsx scripts/ingest-knowledge.ts"
+    "ingest": "tsx scripts/ingest-knowledge.ts",
+    "seed:blog": "tsx scripts/seed-blog.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.44",
     "@neondatabase/serverless": "^1.1.0",
     "ai": "^7.0.66",
+    "better-auth": "^1.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.17",
     "lucide-react": "^1.31.0",

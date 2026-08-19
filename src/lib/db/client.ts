@@ -1,17 +1,33 @@
 import { neon } from "@neondatabase/serverless";
 
 /**
- * Postgres access for the knowledge base.
+ * Postgres access for the application's own queries.
  *
  * Uses Neon's HTTP driver rather than a TCP pool. Serverless functions are
  * short-lived and can scale to many concurrent instances, and a pool per
  * instance exhausts Postgres connection slots quickly. The HTTP driver issues
  * one stateless request per query, which is the right shape for this workload —
- * a handful of small reads per chat message.
+ * a handful of small reads per chat message, and a single statement per blog
+ * write.
+ *
+ * The consequence worth stating plainly: **there are no transactions here.**
+ * Every write in src/lib/db/* is therefore a single statement whose effect
+ * depends on current state rather than on a value read a moment earlier. See the
+ * header of schema.sql for what that means in practice.
+ *
+ * One exception exists, and it is not this file's. Better Auth reaches the
+ * database through Kysely, whose Postgres dialect acquires a client with
+ * `pool.connect()` — something Neon's `poolQueryViaFetch` shortcut does not
+ * cover, since it only intercepts `pool.query()`. So src/lib/auth/server.ts
+ * constructs its own WebSocket-backed `Pool`, capped at one connection and
+ * touched only by `/api/auth/*` requests. That is the sole place in the project
+ * with a real connection, it is deliberate, and it is confined to one file so it
+ * stays visible.
  *
  * DATABASE_URL is optional by design. When it is unset the assistant runs
- * without retrieval, so a missing database degrades citations rather than
- * breaking the chat. See `hasVectorStore` in lib/ai/config.
+ * without retrieval and the blog renders an empty state, so a missing database
+ * degrades features rather than breaking pages. See `hasVectorStore` in
+ * lib/ai/config and `hasBlog` in lib/blog/config.
  */
 
 export class DatabaseNotConfiguredError extends Error {
