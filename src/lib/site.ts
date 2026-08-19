@@ -20,9 +20,19 @@ export const siteName = `${profile.name} — ${profile.role}`;
 
 export type NavItem = { href: string; label: string };
 
-/** Primary navigation, in order. Used by both the header and the footer. */
+/**
+ * Primary navigation, in order. Used by both the header and the footer.
+ *
+ * "Writing" is listed unconditionally, even though the blog needs a database
+ * that is optional by design. This is a module-scope constant imported by client
+ * components, so gating it on server configuration would need either a public
+ * environment variable or prop-drilling through three components — where
+ * rendering an empty state at /blog costs nothing and reads better than a
+ * missing menu item.
+ */
 export const navItems: NavItem[] = [
   { href: "/projects", label: "Work" },
+  { href: "/blog", label: "Writing" },
   { href: "/about", label: "About" },
   { href: "/experience", label: "Experience" },
   { href: "/ai", label: "Ask AI" },

@@ -26,6 +26,38 @@ import type { CommentNode, Page, Post, PostSummary } from "./types";
  * navigation.
  */
 
+/**
+ * Put the Dates back after a cached read.
+ *
+ * `unstable_cache` round-trips its value through JSON, so every `Date` the data
+ * layer produced comes back as an ISO **string** — with the type still claiming
+ * `Date`, because the cache wrapper is generic over whatever it was given. The
+ * symptom is a `toISOString is not a function` crash at render time, on the
+ * *second* request rather than the first, which is a genuinely nasty thing to
+ * debug in production.
+ *
+ * So every value that crosses the cache boundary is revived here, and the domain
+ * types stay honest: a `PostSummary` always holds real `Date`s, whatever path it
+ * arrived by.
+ */
+function reviveDate(value: Date | string | null): Date | null {
+  if (value === null) return null;
+  return value instanceof Date ? value : new Date(value);
+}
+
+function revivePost<T extends PostSummary>(post: T): T {
+  return {
+    ...post,
+    publishedAt: reviveDate(post.publishedAt),
+    ...("createdAt" in post
+      ? {
+          createdAt: reviveDate((post as unknown as Post).createdAt) as Date,
+          updatedAt: reviveDate((post as unknown as Post).updatedAt) as Date,
+        }
+      : {}),
+  };
+}
+
 function warn(what: string, error: unknown): void {
   // Server-side only, and never in a response body. The message is enough to
   // diagnose from function logs without leaking anything to a visitor.
@@ -72,7 +104,8 @@ export async function getFeed(page: number): Promise<Page<PostSummary>> {
   );
 
   try {
-    return await read(page);
+    const result = await read(page);
+    return { ...result, items: result.items.map(revivePost) };
   } catch (error) {
     warn("feed", error);
     return { ...EMPTY_PAGE, page };
@@ -91,7 +124,7 @@ export async function getRecent(): Promise<PostSummary[]> {
   );
 
   try {
-    return await read(homeCount);
+    return (await read(homeCount)).map(revivePost);
   } catch (error) {
     warn("recent posts", error);
     return [];
@@ -112,7 +145,8 @@ export async function getPost(slug: string): Promise<Post | null> {
   );
 
   try {
-    return await read(slug);
+    const post = await read(slug);
+    return post ? revivePost(post) : null;
   } catch (error) {
     warn(`post ${slug}`, error);
     return null;
@@ -132,7 +166,12 @@ export async function getPublishedSlugs(): Promise<
   if (!hasBlog()) return [];
 
   try {
-    return await listPublishedSlugs();
+    // Uncached, so these are still real Dates — but revived anyway so a future
+    // decision to cache this cannot reintroduce the bug quietly.
+    return (await listPublishedSlugs()).map((row) => ({
+      ...row,
+      publishedAt: new Date(row.publishedAt),
+    }));
   } catch (error) {
     warn("published slugs", error);
     return [];
