@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { TechTagList } from "@/components/ui/Badge";
 import { PostBody } from "@/components/blog/PostBody";
+import { LikeButton } from "@/components/blog/LikeButton";
 import { getPost, getPublishedSlugs } from "@/lib/blog/service";
 import { formatDate, machineDate } from "@/lib/format";
 import { absoluteUrl } from "@/lib/site";
@@ -101,6 +102,12 @@ export default async function PostPage({ params }: Params) {
 
         <div className="mt-10">
           <PostBody>{post.body}</PostBody>
+        </div>
+
+        {/* The count comes from the cached page; whether *this* reader liked it
+            is fetched by the button. See its note on why that split exists. */}
+        <div className="mt-12 max-w-[68ch] border-t border-line pt-8">
+          <LikeButton slug={post.slug} initialCount={post.likeCount} />
         </div>
       </Container>
     </article>

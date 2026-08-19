@@ -24,13 +24,23 @@ export function errorResponse(
   status: number,
   error: string,
   extra?: Record<string, unknown>,
+  /** Seconds, for a 429. Omitted otherwise — the header is meaningless then. */
+  retryAfterSeconds?: number,
 ): NextResponse {
   return NextResponse.json(
     { success: false, error, ...extra },
-    // Authenticated responses must never sit in a shared cache. Applied to
-    // every error too, since a 429 or a 401 cached against a URL would be
-    // served to the next visitor.
-    { status, headers: { "Cache-Control": "no-store" } },
+    {
+      status,
+      headers: {
+        // Authenticated responses must never sit in a shared cache. Applied to
+        // every error too, since a 429 or a 401 cached against a URL would be
+        // served to the next visitor.
+        "Cache-Control": "no-store",
+        ...(retryAfterSeconds
+          ? { "Retry-After": String(retryAfterSeconds) }
+          : {}),
+      },
+    },
   );
 }
 
