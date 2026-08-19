@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { ChatLauncher } from "@/components/chat/ChatLauncher";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
 import { siteName, siteUrl } from "@/lib/site";
@@ -62,14 +63,15 @@ export default function RootLayout({
       <body className="min-h-dvh bg-canvas font-sans text-ink antialiased">
         <ThemeProvider>
           <SkipLink />
-          <div className="flex min-h-dvh flex-col">
-            <Header wordmark={profile.name} />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <SiteFooter />
-          </div>
-          <ChatLauncher />
+          {/* Passed as slots rather than imported by SiteChrome, so SiteFooter
+              stays a server component. See that file's note. */}
+          <SiteChrome
+            header={<Header wordmark={profile.name} />}
+            footer={<SiteFooter />}
+            launcher={<ChatLauncher />}
+          >
+            {children}
+          </SiteChrome>
         </ThemeProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { isAdmin } from "./admin";
 import { hasAuth, missingAuthVars } from "./config";
 import { getAuth } from "./server";
@@ -106,6 +107,26 @@ export async function getSessionFromRequest(
   request: Request,
 ): Promise<SessionUser | null> {
   return read(request.headers);
+}
+
+/**
+ * Guard an admin *page*, not just its layout.
+ *
+ * This exists because of a measured failure, not a hunch. The layout's own
+ * `notFound()` renders the not-found boundary — but Next renders a layout and
+ * its page **concurrently**, so the page's body had already executed its data
+ * reads and its markup reached the response. A visitor who was not an
+ * administrator received the dashboard's counts. The layout guard governs
+ * chrome; it does not gate anything the page itself does.
+ *
+ * So every admin page calls this first, before touching data. It throws Next's
+ * not-found signal, so nothing after it runs, and the caller reads as a single
+ * line at the top of the component.
+ */
+export async function requireAdminPage(): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user?.isAdmin) notFound();
+  return user;
 }
 
 /**
