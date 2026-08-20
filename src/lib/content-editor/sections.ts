@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   aiConfigSchema,
+  appSchema,
   educationSchema,
   experienceSchema,
   profileSchema,
@@ -18,15 +19,16 @@ import {
  * would guarantee they drift, and the symptom would be a deploy that fails after
  * a save has already been committed.
  *
- * Two files carry a single object and four carry an array, which the `array`
- * flag records — the editor needs to know whether it is editing one thing or a
- * list, and so does the validator.
+ * Two files carry a single object and five carry an array — the schema alone
+ * tells the editor and the validator which, since an array schema and an
+ * object schema fail `safeParse` differently on the wrong shape.
  */
 
 export type SectionKey =
   | "profile"
   | "experience"
   | "projects"
+  | "apps"
   | "skills"
   | "education"
   | "ai";
@@ -62,6 +64,13 @@ export const SECTIONS: Record<SectionKey, Section> = {
     label: "Projects",
     description: "Case studies, including the long-form chapters.",
     schema: z.array(projectSchema),
+  },
+  apps: {
+    key: "apps",
+    file: "src/content/apps.json",
+    label: "Apps",
+    description: "Downloadable apps, including the download link once one exists.",
+    schema: z.array(appSchema),
   },
   skills: {
     key: "skills",

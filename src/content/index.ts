@@ -1,5 +1,6 @@
 import { z } from "zod";
 import aiJson from "./ai.json";
+import appsJson from "./apps.json";
 import educationJson from "./education.json";
 import experienceJson from "./experience.json";
 import profileJson from "./profile.json";
@@ -7,11 +8,13 @@ import projectsJson from "./projects.json";
 import skillsJson from "./skills.json";
 import {
   aiConfigSchema,
+  appSchema,
   educationSchema,
   experienceSchema,
   profileSchema,
   projectSchema,
   skillGroupSchema,
+  type App,
   type Experience,
   type Project,
   type ProjectCategory,
@@ -58,6 +61,10 @@ export const projects = parse(
   .slice()
   .sort((a, b) => b.weight - a.weight);
 
+export const apps = parse(z.array(appSchema), appsJson, "apps.json")
+  .slice()
+  .sort((a, b) => b.weight - a.weight);
+
 export const skillGroups = parse(
   z.array(skillGroupSchema),
   skillsJson,
@@ -84,6 +91,10 @@ export function getProjectBySlug(slug: string): Project | undefined {
 
 export function getProjectSlugs(): string[] {
   return projects.map((project) => project.slug);
+}
+
+export function getAppBySlug(slug: string): App | undefined {
+  return apps.find((app) => app.slug === slug);
 }
 
 const categoryLabels: Record<ProjectCategory, string> = {

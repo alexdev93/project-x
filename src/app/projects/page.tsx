@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { projects } from "@/content";
+import { AppCard } from "@/components/apps/AppCard";
+import { apps, projects } from "@/content";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -29,6 +30,25 @@ export default function ProjectsPage() {
           </StaggerItem>
         ))}
       </Stagger>
+
+      {apps.length > 0 ? (
+        <div className="mt-20 sm:mt-24">
+          <SectionHeader
+            as="h2"
+            eyebrow="Also shipped"
+            title="Apps"
+            description="Things you can install, not just read about."
+          />
+
+          <Stagger className="mt-10 grid gap-4 sm:grid-cols-2">
+            {apps.map((app) => (
+              <StaggerItem key={app.slug} className="h-full">
+                <AppCard app={app} />
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
+      ) : null}
     </Section>
   );
 }
