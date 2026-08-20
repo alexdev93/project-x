@@ -5,9 +5,9 @@
   "role": "Senior Full Stack Engineer & AI Product Developer",
   "tagline": "From database to interface, I build systems that stay up — and the AI agents that make them smarter.",
   "bio": [
-    "I'm a software engineer working across backend services, platform infrastructure, and — most recently — applied AI. Most of my work sits where those meet: designing a service, containerising it, making sure it can be deployed and observed without ceremony, and now building the agents and retrieval systems that sit in front of that data.",
-    "I currently hold two roles at once. At Safaricom Ethiopia I'm a Senior Backend Engineer on telecom fintech transaction services — microservices behind M-PESA LiteApp and USSD mobile money, where correctness and fault recovery matter more than almost anything else. In parallel, I work remotely for Universal Perk, a Texas-based company, building AI products end to end: Creva AI, Dasguzo, and other SaaS tools, from backend and auth through to the interfaces people actually use.",
-    "Before that I ran CI/CD and Kubernetes operations for a bank's core banking applications at Lion International Bank, and built full-stack features at Addis Software. I work mainly in Java and Spring Boot, TypeScript and Node.js, with Docker and Kubernetes for delivery — and I've been building agentic and retrieval-augmented systems long enough that this portfolio's own AI assistant is one of them, not just a description of the skill."
+    "I'm a software engineer working across backend services, platform infrastructure, and most recently applied AI. Most of my work sits where those meet: designing a service, containerising it, making sure it can be deployed and observed without ceremony, and now building the agents and retrieval systems that sit in front of that data.",
+    "I currently hold two roles at once. At Safaricom Ethiopia I'm a Senior Backend Engineer on telecom fintech transaction services microservices behind M-PESA LiteApp and USSD mobile money, where correctness and fault recovery matter more than almost anything else. In parallel, I work remotely for Universal Perk, a Texas-based company, building AI products end to end: Creva AI, Dasguzo, and other SaaS tools, from backend and auth through to the interfaces people actually use.",
+    "Before that I ran CI/CD and Kubernetes operations for a bank's core banking applications at Lion International Bank, and built full-stack features at Addis Software. I work mainly in Java and Spring Boot, TypeScript and Node.js, with Docker and Kubernetes for delivery and I've been building agentic and retrieval-augmented systems long enough that this portfolio's own AI assistant is one of them, not just a description of the skill."
   ],
   "focusAreas": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "title": "Distributed systems",
-      "description": "Decomposing applications into services with their own configuration, discovery, gateway and logging concerns — and keeping the seams between them explicit."
+      "description": "Decomposing applications into services with their own configuration, discovery, gateway and logging concerns and keeping the seams between them explicit."
     },
     {
       "title": "AI systems",
