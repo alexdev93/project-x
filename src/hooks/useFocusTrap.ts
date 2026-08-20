@@ -40,8 +40,30 @@ export function useFocusTrap({
     if (!active) return;
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
+
+    // Plain `overflow: hidden` on <body> does not reliably stop background
+    // scroll on iOS Safari — if the page has any rubber-band momentum left
+    // over from the tap that opened this overlay, it keeps scrolling behind
+    // it, which is what reads as the panel "jumping" on open. Pinning the
+    // body in place at its current scroll offset, then restoring both the
+    // styles and the scroll position on close, is the standard fix — an
+    // `overflow` toggle alone only ever worked some of the time by luck.
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const previousStyle = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
 
     if (autoFocus) {
       containerRef.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
@@ -77,7 +99,22 @@ export function useFocusTrap({
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = overflow;
+
+      body.style.position = previousStyle.position;
+      body.style.top = previousStyle.top;
+      body.style.left = previousStyle.left;
+      body.style.right = previousStyle.right;
+      body.style.width = previousStyle.width;
+      body.style.overflow = previousStyle.overflow;
+      // Pinning the body with `position: fixed` drops the browser's own
+      // scroll position, so it has to be restored by hand — without this the
+      // page silently jumps to the top the moment the overlay closes.
+      // `behavior: "instant"` overrides the site-wide `scroll-behavior:
+      // smooth` (globals.css) on purpose: restoring where the page already
+      // was should be invisible, not a second visible scroll animation
+      // layered on top of the overlay's own exit transition.
+      window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
+
       previouslyFocused?.focus();
     };
   }, [active, autoFocus, containerRef, onClose]);
