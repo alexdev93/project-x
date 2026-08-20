@@ -2,16 +2,16 @@
 
 import React, { useCallback, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { LogOut, Shield } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { authClient, useSession } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
-import { SignInButton } from "./SignInButton";
 
 /**
- * The signed-in visitor's avatar and menu, or a sign-in button.
+ * The signed-in visitor's avatar and menu. Renders nothing for a signed-out
+ * visitor — sign-in lives next to the actions that need it (the comment box,
+ * via SignInButton/SignInPrompt), not in the header.
  *
  * Rendered in the header, which is a client component on every page — including
  * the statically prerendered ones. That is the whole reason the session is read
@@ -27,7 +27,6 @@ import { SignInButton } from "./SignInButton";
 
 export function UserMenu() {
   const { data, isPending } = useSession();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -40,16 +39,12 @@ export function UserMenu() {
   // Nothing until we know. See the note above about the alternative.
   if (isPending) return <div className="size-8" aria-hidden />;
 
-  if (!data?.user) {
-    return (
-      <SignInButton
-        size="sm"
-        label="Sign in"
-        // Come back to whatever page they were reading.
-        callbackURL={pathname}
-      />
-    );
-  }
+  // Signed-out visitors get no sign-in affordance in the header at all — it
+  // stays where it's actually needed, next to the comment box (CommentForm)
+  // and anywhere else a visitor is about to do something that requires it.
+  // The header only ever shows the account menu, and only once there is an
+  // account to show.
+  if (!data?.user) return null;
 
   const user = data.user;
   // Present only because the customSession plugin computes it on the server.
