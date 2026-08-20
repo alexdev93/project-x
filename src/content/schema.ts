@@ -157,6 +157,43 @@ export const projectSchema = z.object({
 });
 
 /* -------------------------------------------------------------------------- */
+/* Apps                                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A downloadable app — distinct from `projects`: `category` there is a closed
+ * enum of *engineering domains*, and there is no download-link or icon
+ * concept on a project at all. This is a sibling content type, not a variant.
+ */
+export const appSchema = z.object({
+  slug,
+  name: z.string().min(1),
+  /** One line for the card. */
+  tagline: z.string().min(1),
+  /** Longer optional blurb. Empty means "not written yet", same as narrative. */
+  description: narrative,
+  platform: z.enum(["android"]),
+  /** Free text, e.g. "1.0.0" — nothing here builds the app, so this is typed by hand. */
+  version: z.string().min(1).optional(),
+  tech: z.array(z.string().min(1)).min(1),
+  repo: z
+    .object({
+      visibility: z.enum(["public", "private"]),
+      href: url.optional(),
+      name: z.string().min(1),
+    })
+    .optional(),
+  /**
+   * Absent until there's somewhere real to send visitors — the card hides its
+   * download button rather than shipping a dead link.
+   */
+  downloadUrl: url.optional(),
+  /** Path under /public. Absent falls back to a lettermark badge. */
+  icon: z.string().min(1).optional(),
+  weight: z.number().int().default(0),
+});
+
+/* -------------------------------------------------------------------------- */
 /* Skills                                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -218,6 +255,7 @@ export type Profile = z.infer<typeof profileSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type ProjectCategory = Project["category"];
+export type App = z.infer<typeof appSchema>;
 export type SkillGroup = z.infer<typeof skillGroupSchema>;
 export type SkillDepth = z.infer<typeof skillDepth>;
 export type Education = z.infer<typeof educationSchema>;

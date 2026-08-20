@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "spendguard",
+    "name": "SpendGuard",
+    "tagline": "Expense tracking that reads your bank SMS so you don't have to type it in.",
+    "description": "An Android app that watches for transaction alerts from Ethiopian banks and mobile money providers — Telebirr, CBE, BOA, Enat Bank, Dashen Bank, Awash Bank and M-Pesa — and turns each one into a categorized transaction automatically. Everything is stored on-device; there's no account and no server. Tracks spending against goals and shows where the money actually went.",
+    "platform": "android",
+    "version": "1.0.0",
+    "tech": ["Flutter", "Hive", "Provider"],
+    "repo": {
+      "visibility": "private",
+      "name": "spendguard"
+    },
+    "icon": "/apps/spendguard/icon.svg",
+    "weight": 0
+  }
+]

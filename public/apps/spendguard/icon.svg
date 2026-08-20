@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="spendguard-icon-title">
+  <title id="spendguard-icon-title">SpendGuard icon</title>
+
+  <!-- App-icon square: a fixed-color asset, not theme-reactive, same as any
+       real launcher icon would be. Colors are the site's own accent tones so
+       it still reads as belonging to this portfolio. -->
+  <rect width="128" height="128" rx="28" fill="#a64a24" />
+
+  <!-- Shield: "guard" over the money the coin represents. -->
+  <path
+    d="M64 28 L93 39 V63 C93 85 80 98 64 106 C48 98 35 85 35 63 V39 Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M64 36 L86 45 V63 C86 80 76 90 64 97 C52 90 42 80 42 63 V45 Z"
+    fill="#d97b4f"
+  />
+
+  <!-- Coin: the thing being guarded. -->
+  <circle cx="64" cy="66" r="15" fill="#ffffff" />
+  <circle cx="64" cy="66" r="15" fill="none" stroke="#a64a24" stroke-width="2.5" />
+  <path
+    d="M64 58.5 V73.5 M60 61.5 H67 C68.7 61.5 70 62.7 70 64.2 C70 65.7 68.7 66.8 67 66.8 H61 C59.3 66.8 58 68 58 69.5 C58 71 59.3 72.2 61 72.2 H68"
+    fill="none"
+    stroke="#a64a24"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
