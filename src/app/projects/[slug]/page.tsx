@@ -73,7 +73,9 @@ export default function ProjectPage({ params }: Params) {
 
         <header className="mt-10">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge tone="accent">{projectCategoryLabel(project.category)}</Badge>
+            <Badge tone="accent">
+              {projectCategoryLabel(project.category)}
+            </Badge>
             {project.repo?.visibility === "private" ? (
               <Badge tone="quiet">
                 <Lock aria-hidden />
@@ -191,7 +193,10 @@ export default function ProjectPage({ params }: Params) {
         </div>
 
         {others.length > 0 ? (
-          <nav aria-label="More projects" className="mt-20 border-t border-line pt-10">
+          <nav
+            aria-label="More projects"
+            className="mt-20 border-t border-line pt-10"
+          >
             <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
               More work
             </h2>
@@ -200,9 +205,11 @@ export default function ProjectPage({ params }: Params) {
                 <li key={other.slug}>
                   <Link
                     href={`/projects/${other.slug}`}
-                    className="block rounded-[var(--radius-lg)] border border-line p-5 transition-colors hover:border-line-strong hover:bg-surface-raised"
+                    className="block rounded-lg border border-line p-5 transition-colors hover:border-line-strong hover:bg-surface-raised"
                   >
-                    <p className="font-display text-xl text-ink">{other.name}</p>
+                    <p className="font-display text-xl text-ink">
+                      {other.name}
+                    </p>
                     <p className="mt-1.5 line-clamp-2 text-sm text-ink-muted">
                       {other.summary}
                     </p>
