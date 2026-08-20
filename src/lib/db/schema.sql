@@ -115,9 +115,14 @@ CREATE TABLE IF NOT EXISTS "auth_verification" (
 -- generator's own choices.
 CREATE INDEX IF NOT EXISTS "auth_session_userId_idx" ON "auth_session" ("userId");
 CREATE INDEX IF NOT EXISTS "auth_account_userId_idx" ON "auth_account" ("userId");
-CREATE UNIQUE INDEX IF NOT EXISTS "auth_account_issuer_accountId_idx"
-  ON "auth_account" ("issuer", "accountId");
 CREATE INDEX IF NOT EXISTS "auth_verification_identifier_idx" ON "auth_verification" ("identifier");
+-- The unique index on "auth_account" ("issuer", "accountId") is created in the
+-- Evolutions section below, not here: on a database old enough to need the
+-- Evolutions ALTER to add "issuer" in the first place, an index statement at
+-- this point in the file would run before that ALTER does and fail with
+-- "column issuer does not exist". Keeping both statements together, after the
+-- column is guaranteed to exist, is what makes this file order-safe for both
+-- a fresh database and one carried forward from before "issuer" existed.
 
 
 -- ---------------------------------------------------------------------------
