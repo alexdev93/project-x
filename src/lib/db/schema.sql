@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS "auth_session" (
 
 CREATE TABLE IF NOT EXISTS "auth_account" (
   "id"                    TEXT NOT NULL PRIMARY KEY,
+  "issuer"                TEXT NOT NULL DEFAULT '',
   "accountId"             TEXT NOT NULL,
   "providerId"            TEXT NOT NULL,
   "userId"                TEXT NOT NULL REFERENCES "auth_user" ("id") ON DELETE CASCADE,
@@ -114,6 +115,8 @@ CREATE TABLE IF NOT EXISTS "auth_verification" (
 -- generator's own choices.
 CREATE INDEX IF NOT EXISTS "auth_session_userId_idx" ON "auth_session" ("userId");
 CREATE INDEX IF NOT EXISTS "auth_account_userId_idx" ON "auth_account" ("userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "auth_account_issuer_accountId_idx"
+  ON "auth_account" ("issuer", "accountId");
 CREATE INDEX IF NOT EXISTS "auth_verification_identifier_idx" ON "auth_verification" ("identifier");
 
 
@@ -225,4 +228,13 @@ CREATE TABLE IF NOT EXISTS blocked_users (
 -- re-run. Column removals and type changes stay manual and deliberate, recorded
 -- here with the date they were applied.
 --
--- (none yet)
+-- 2026-08-20 — "auth_account" was first transcribed missing the "issuer"
+-- column, which better-auth@1.7.1 requires (accounts are keyed by
+-- (issuer, accountId), not just (providerId, accountId) — see
+-- https://better-auth.com/docs/guides/1-7-upgrade-guide#account-identity-is-scoped-by-issuer).
+-- The omission surfaced in production as `column auth_account.issuer does not
+-- exist` on every Google callback. The CREATE TABLE above is already fixed for
+-- new databases; this statement carries existing ones forward.
+ALTER TABLE "auth_account" ADD COLUMN IF NOT EXISTS "issuer" TEXT NOT NULL DEFAULT '';
+CREATE UNIQUE INDEX IF NOT EXISTS "auth_account_issuer_accountId_idx"
+  ON "auth_account" ("issuer", "accountId");
