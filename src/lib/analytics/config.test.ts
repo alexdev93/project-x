@@ -1,24 +1,24 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getPostHogHost, getPostHogKey, hasAnalytics } from "./config";
+import { getPostHogHost, getPostHogToken, hasAnalytics } from "./config";
 
 afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("getPostHogKey", () => {
+describe("getPostHogToken", () => {
   it("is undefined when unset", () => {
-    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "");
-    expect(getPostHogKey()).toBeUndefined();
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "");
+    expect(getPostHogToken()).toBeUndefined();
   });
 
   it("trims the value", () => {
-    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "  phc_abc123  ");
-    expect(getPostHogKey()).toBe("phc_abc123");
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "  phc_abc123  ");
+    expect(getPostHogToken()).toBe("phc_abc123");
   });
 
   it("treats a whitespace-only value as unset", () => {
-    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "   ");
-    expect(getPostHogKey()).toBeUndefined();
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "   ");
+    expect(getPostHogToken()).toBeUndefined();
   });
 });
 
@@ -35,13 +35,13 @@ describe("getPostHogHost", () => {
 });
 
 describe("hasAnalytics", () => {
-  it("is false with no key configured", () => {
-    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "");
+  it("is false with no token configured", () => {
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "");
     expect(hasAnalytics()).toBe(false);
   });
 
-  it("is true once a key is set", () => {
-    vi.stubEnv("NEXT_PUBLIC_POSTHOG_KEY", "phc_abc123");
+  it("is true once a token is set", () => {
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "phc_abc123");
     expect(hasAnalytics()).toBe(true);
   });
 });

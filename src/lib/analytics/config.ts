@@ -27,8 +27,8 @@ const DEFAULT_HOST = "https://us.i.posthog.com";
  * would silently read as `undefined` on every client, no error, no signal.
  */
 
-export function getPostHogKey(): string | undefined {
-  const value = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();
+export function getPostHogToken(): string | undefined {
+  const value = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN?.trim();
   return value ? value : undefined;
 }
 
@@ -37,7 +37,7 @@ export function getPostHogHost(): string {
   return value ? value : DEFAULT_HOST;
 }
 
-/** True once a project key is configured. */
+/** True once a project token is configured. */
 export function hasAnalytics(): boolean {
-  return Boolean(getPostHogKey());
+  return Boolean(getPostHogToken());
 }
