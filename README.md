@@ -50,6 +50,8 @@ yarn dev
 | `ADMIN_EMAILS` | for `/admin` | Comma-separated. **Empty means nobody**, including you |
 | `GITHUB_TOKEN` / `GITHUB_REPO` | for the content editor | Fine-grained PAT, Contents write, this repo only |
 | `NEXT_PUBLIC_SITE_URL` | no | Canonical URL. Falls back to the Vercel deployment URL |
+| `NEXT_PUBLIC_POSTHOG_KEY` | for analytics | Page views, clicks and events. Free at [posthog.com](https://posthog.com) |
+| `NEXT_PUBLIC_POSTHOG_HOST` | no | Defaults to PostHog's US cloud; use the EU host if your project is there |
 
 Every one of the blog variables is optional in the sense that matters: with none
 of them set the site builds and behaves exactly as it did before the blog
