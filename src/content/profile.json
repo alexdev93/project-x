@@ -3,7 +3,7 @@
   "shortName": "Alex",
   "displayName": "Alemayehu Mekonen",
   "role": "Senior Full Stack Engineer & AI Product Developer",
-  "tagline": "From database to interface, I build systems that stay up — and the AI agents that make them smarter.",
+  "tagline": "From database to interface, I build systems that stay up and the AI agents that make them smarter.",
   "bio": [
     "I'm a software engineer working across backend services, platform infrastructure, and most recently applied AI. Most of my work sits where those meet: designing a service, containerising it, making sure it can be deployed and observed without ceremony, and now building the agents and retrieval systems that sit in front of that data.",
     "I currently hold two roles at once. At Safaricom Ethiopia I'm a Senior Backend Engineer on telecom fintech transaction services microservices behind M-PESA LiteApp and USSD mobile money, where correctness and fault recovery matter more than almost anything else. In parallel, I work remotely for Universal Perk, a Texas-based company, building AI products end to end: Creva AI, Dasguzo, and other SaaS tools, from backend and auth through to the interfaces people actually use.",
@@ -20,7 +20,7 @@
     },
     {
       "title": "AI systems",
-      "description": "Retrieval-augmented generation, tool-calling agents, and prompt design — built end to end, not just integrated against an API."
+      "description": "Retrieval-augmented generation, tool-calling agents, and prompt design built end to end, not just integrated against an API."
     },
     {
       "title": "Delivery and operations",
