@@ -65,7 +65,11 @@
     "featured": true,
     "year": "2025–2026",
     "role": "Full-stack engineering",
-    "tech": ["TypeScript", "Node.js", "React"],
+    "tech": [
+      "TypeScript",
+      "Node.js",
+      "React"
+    ],
     "repo": {
       "visibility": "private",
       "name": "alexdev93/zemen-hub"
@@ -93,17 +97,21 @@
   {
     "slug": "api-gateway",
     "name": "API Gateway",
-    "summary": "A standalone Java gateway service — the routing and entry-point layer that sits in front of a set of backend services.",
+    "summary": "A standalone Java gateway service the routing and entry-point layer that sits in front of a set of backend services.",
     "category": "backend",
     "weight": 70,
     "featured": true,
     "year": "2025",
     "role": "Backend engineering",
-    "tech": ["Java", "Spring Boot", "Spring Cloud Gateway"],
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "Spring Cloud Gateway"
+    ],
     "repo": {
       "visibility": "public",
-      "name": "alexdev93/api-gateway",
-      "href": "https://github.com/alexdev93/api-gateway"
+      "href": "https://github.com/alexdev93/api-gateway",
+      "name": "alexdev93/api-gateway"
     },
     "problem": "",
     "approach": "",
@@ -121,11 +129,16 @@
     "featured": false,
     "year": "2025–2026",
     "role": "DevOps",
-    "tech": ["Docker", "Docker Compose", "Kubernetes", "Nginx"],
+    "tech": [
+      "Docker",
+      "Docker Compose",
+      "Kubernetes",
+      "Nginx"
+    ],
     "repo": {
       "visibility": "public",
-      "name": "alexdev93/motomo_docker",
-      "href": "https://github.com/alexdev93/motomo_docker"
+      "href": "https://github.com/alexdev93/motomo_docker",
+      "name": "alexdev93/motomo_docker"
     },
     "problem": "",
     "approach": "",
@@ -156,7 +169,14 @@
     "featured": true,
     "year": "2025–2026",
     "role": "Full-stack engineering, remote",
-    "tech": ["React", "Next.js", "Node.js", "MongoDB", "Redis", "TypeScript"],
+    "tech": [
+      "React",
+      "Next.js",
+      "Node.js",
+      "MongoDB",
+      "Redis",
+      "TypeScript"
+    ],
     "repo": {
       "visibility": "private",
       "name": "alexdev93/alv-ai-backend"
@@ -169,7 +189,7 @@
     "components": [
       {
         "name": "alv-ai-backend",
-        "description": "Backend service for AI-product features — authentication, integrations and API surface."
+        "description": "Backend service for AI-product features authentication, integrations and API surface."
       },
       {
         "name": "creva-ai-dashboard",
@@ -199,8 +219,8 @@
     ],
     "repo": {
       "visibility": "public",
-      "name": "alexdev93/project-x",
-      "href": "https://github.com/alexdev93/project-x"
+      "href": "https://github.com/alexdev93/project-x",
+      "name": "alexdev93/project-x"
     },
     "problem": "",
     "approach": "",
