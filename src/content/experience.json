@@ -10,26 +10,41 @@
     "summary": "Backend microservices behind M-PESA LiteApp and USSD mobile money, where correctness and fault recovery are the job.",
     "highlights": [
       "Build and maintain backend microservices for M-PESA LiteApp, supporting secure merchant payments, transaction orchestration, settlements and retry workflows for high-volume financial services.",
-      "Develop backend services for USSD-based mobile money operations — balance checks, transfers and merchant payments — with reliable fault recovery for low-bandwidth telecom users.",
+      "Develop backend services for USSD-based mobile money operations balance checks, transfers and merchant payments with reliable fault recovery for low-bandwidth telecom users.",
       "Work in a telecom fintech environment where transaction integrity and graceful degradation under load are non-negotiable."
     ],
-    "tech": ["Microservices", "Spring Boot", "Redis", "Kubernetes", "PostgreSQL", "REST", "SOAP"]
+    "tech": [
+      "Microservices",
+      "Spring Boot",
+      "Redis",
+      "Kubernetes",
+      "PostgreSQL",
+      "REST",
+      "SOAP"
+    ]
   },
   {
     "id": "universal-perk",
     "company": "Universal Perk",
     "title": "Full Stack Developer",
     "kind": "employment",
-    "location": "Remote — Texas, USA",
+    "location": "Remote Texas, USA",
     "start": "2025-06",
     "end": null,
-    "summary": "AI product engineering, remote for a US company — owning delivery end to end rather than one layer of it.",
+    "summary": "AI product engineering, remote for a US company owning delivery end to end rather than one layer of it.",
     "highlights": [
       "Built and launched Creva AI, Dasguzo and other SaaS products, owning frontend, backend services, authentication and cloud deployment end to end.",
       "Developed scalable business platforms and integrations with secure APIs, caching and workflow automation for reliable production delivery.",
       "Working concurrently with a full-time role at Safaricom, across time zones, on AI-product rather than telecom-infrastructure problems."
     ],
-    "tech": ["React", "Next.js", "Node.js", "MongoDB", "Redis", "REST APIs"]
+    "tech": [
+      "React",
+      "Next.js",
+      "Node.js",
+      "MongoDB",
+      "Redis",
+      "REST APIs"
+    ]
   },
   {
     "id": "lion-international-bank",
@@ -45,7 +60,14 @@
       "Developed and managed monitoring, logging, backup and fault-recovery systems for critical banking services, aimed at high availability and fast incident response.",
       "Administered business-critical banking applications where downtime is measured against service commitments, not convenience."
     ],
-    "tech": ["Kubernetes", "Docker", "CI/CD", "Linux", "PostgreSQL", "Prometheus"]
+    "tech": [
+      "Kubernetes",
+      "Docker",
+      "CI/CD",
+      "Linux",
+      "PostgreSQL",
+      "Prometheus"
+    ]
   },
   {
     "id": "addis-software",
@@ -61,7 +83,11 @@
       "Built IoT integrations for real-time device monitoring and telemetry.",
       "Worked across the stack from schema design through to deployment."
     ],
-    "tech": ["React", "Node.js", "MongoDB"]
+    "tech": [
+      "React",
+      "Node.js",
+      "MongoDB"
+    ]
   },
   {
     "id": "safaricom-apprenticeship",
@@ -71,11 +97,15 @@
     "location": "Addis Ababa, Ethiopia",
     "start": "2024-03",
     "end": "2024-05",
-    "summary": "A two-month backend apprenticeship — the stint that led to the senior role he holds there now.",
+    "summary": "A two-month backend apprenticeship the stint that led to the senior role he holds there now.",
     "highlights": [
       "Completed a two-month apprenticeship term in backend development, certified by Safaricom Telecommunications Ethiopia.",
       "Built and maintained backend services in a telecom environment, with authentication and observability treated as first-class concerns."
     ],
-    "tech": ["Java", "Spring Boot", "REST APIs"]
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "REST APIs"
+    ]
   }
 ]
