@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { ChatLauncher } from "@/components/chat/ChatLauncher";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
 import { siteName, siteUrl } from "@/lib/site";
@@ -61,6 +62,7 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className="min-h-dvh bg-canvas font-sans text-ink antialiased">
+        <PostHogProvider />
         <ThemeProvider>
           <SkipLink />
           {/* Passed as slots rather than imported by SiteChrome, so SiteFooter
