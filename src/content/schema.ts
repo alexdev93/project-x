@@ -186,8 +186,14 @@ export const appSchema = z.object({
   /**
    * Absent until there's somewhere real to send visitors — the card hides its
    * download button rather than shipping a dead link.
+   *
+   * A path on this site (e.g. an `/api/apps/*` proxy route for a private
+   * repo's release), not necessarily an external URL — hence a plain string
+   * rather than the `url` schema.
    */
-  downloadUrl: url.optional(),
+  downloadUrl: z.string().min(1).optional(),
+  /** External link to the app's privacy policy. Store listings require one for any app that reads user data. */
+  privacyUrl: url.optional(),
   /** Path under /public. Absent falls back to a lettermark badge. */
   icon: z.string().min(1).optional(),
   weight: z.number().int().default(0),

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Download, Lock } from "lucide-react";
 import { Badge, TechTagList } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
@@ -6,9 +7,17 @@ import { Card, CardBody } from "@/components/ui/Card";
 import type { App } from "@/content";
 
 /**
- * Unlike ProjectCard, this is not a stretched-link card — there is no detail
- * page per app, so the download button (when there is somewhere to send
- * visitors) is the only interactive element.
+ * Stretched-link card like ProjectCard: the whole card, including the button,
+ * leads to the app's detail page rather than downloading anything directly.
+ *
+ * That's deliberate, not just simplicity: this card is rendered on a
+ * statically-built page, so any version text here would be whatever
+ * `apps.json` says at build time — which is exactly the mismatch this design
+ * replaced (a stale "v1.0.0" next to a button that actually fetched
+ * whatever's newest on GitHub). The detail page fetches live, so it's the
+ * only place a version number is shown, and routing the button there first
+ * also means a visitor sees the privacy policy before installing something
+ * that reads their SMS.
  */
 
 const platformLabel: Record<App["platform"], string> = {
@@ -17,7 +26,7 @@ const platformLabel: Record<App["platform"], string> = {
 
 export function AppCard({ app }: { app: App }) {
   return (
-    <Card className="flex flex-col">
+    <Card interactive className="relative flex flex-col">
       <CardBody className="flex flex-1 flex-col gap-4">
         <div className="flex items-start gap-4">
           <AppIcon app={app} />
@@ -34,7 +43,9 @@ export function AppCard({ app }: { app: App }) {
             </div>
 
             <h3 className="mt-2 font-display text-xl leading-tight text-ink">
-              {app.name}
+              <Link href={`/apps/${app.slug}`} className="after:absolute after:inset-0">
+                {app.name}
+              </Link>
             </h3>
           </div>
         </div>
@@ -47,21 +58,16 @@ export function AppCard({ app }: { app: App }) {
 
         <div className="mt-1 flex flex-wrap items-center gap-3 border-t border-line pt-4">
           {app.downloadUrl ? (
-            <ButtonLink
-              href={app.downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-            >
+            // relative z-10: sits above the card's own stretched link so it
+            // stays its own click target, even though both currently point
+            // at the same place.
+            <ButtonLink href={`/apps/${app.slug}`} size="sm" className="relative z-10">
               <Download aria-hidden />
-              Download {app.platform === "android" ? "APK" : ""}
+              View & download
             </ButtonLink>
           ) : (
             <span className="text-sm text-ink-subtle">Download coming soon</span>
           )}
-          {app.version ? (
-            <span className="font-mono text-xs text-ink-subtle">v{app.version}</span>
-          ) : null}
         </div>
       </CardBody>
     </Card>

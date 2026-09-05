@@ -13,8 +13,10 @@
     ],
     "repo": {
       "visibility": "private",
-      "name": "spendguard"
+      "name": "alexdev93/spendguard"
     },
+    "downloadUrl": "/api/apps/spendguard/download",
+    "privacyUrl": "https://alexdev93.github.io/spendguard-privacy/",
     "icon": "/apps/spendguard/icon.svg",
     "weight": 0
   }
