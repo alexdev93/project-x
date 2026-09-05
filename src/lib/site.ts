@@ -13,7 +13,10 @@ export const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ??
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000")
+    // PORT here is the same variable that actually moves the dev server (see
+    // the dotenv-cli wrapper on the `dev`/`start` scripts) — one source of
+    // truth for "what port is this running on" rather than a second guess.
+    : `http://localhost:${process.env.PORT ?? 3000}`)
 ).replace(/\/$/, "");
 
 export const siteName = `${profile.name} — ${profile.role}`;
