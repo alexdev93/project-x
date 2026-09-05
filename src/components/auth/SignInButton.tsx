@@ -36,8 +36,11 @@ export function SignInButton({
   async function start() {
     setState("pending");
     try {
-      await signInWithGoogle(callbackURL);
-      // On success the browser navigates away, so there is nothing to reset.
+      const { error } = await signInWithGoogle(callbackURL);
+      // A failed request resolves rather than throws (see signInWithGoogle) —
+      // check it explicitly, or a 503 leaves this spinning forever. On
+      // success the browser navigates away, so there is nothing to reset.
+      if (error) setState("error");
     } catch {
       setState("error");
     }

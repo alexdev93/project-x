@@ -26,8 +26,16 @@ export const { useSession, signIn, signOut } = authClient;
  * leading slash: `//evil.test` is a protocol-relative URL, which a naive
  * `startsWith("/")` accepts and a browser treats as another origin. That is the
  * whole open-redirect class, closed in one place.
+ *
+ * Resolves `{ error: true }` rather than throwing on a failed request —
+ * `signIn.social` itself resolves `{ data, error }` instead of rejecting
+ * (Better Auth's client only rejects on a genuine network failure), and a
+ * caller that only wraps this in try/catch would never see a 503. This is the
+ * one place that needs to know Better Auth's response shape; callers just
+ * check `.error`.
  */
-export function signInWithGoogle(callbackURL = "/"): Promise<unknown> {
+export async function signInWithGoogle(callbackURL = "/"): Promise<{ error: boolean }> {
   const safe = /^\/(?!\/)/.test(callbackURL) ? callbackURL : "/";
-  return signIn.social({ provider: "google", callbackURL: safe });
+  const result = await signIn.social({ provider: "google", callbackURL: safe });
+  return { error: Boolean(result?.error) };
 }
