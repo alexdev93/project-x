@@ -39,3 +39,26 @@ export async function signInWithGoogle(callbackURL = "/"): Promise<{ error: bool
   const result = await signIn.social({ provider: "google", callbackURL: safe });
   return { error: Boolean(result?.error) };
 }
+
+/**
+ * Attach a LinkedIn account to the *current* admin session, so the publish
+ * flow has something to post through. Not a sign-in — `linkSocial` hits
+ * `/link-social`, which operates on the session already present in the
+ * request, unlike `signIn.social` which can create a new one. Only makes
+ * sense to call while already signed in as the admin.
+ */
+export async function linkLinkedIn(callbackURL = "/admin"): Promise<{ error: boolean }> {
+  const safe = /^\/(?!\/)/.test(callbackURL) ? callbackURL : "/admin";
+  const result = await authClient.linkSocial({ provider: "linkedin", callbackURL: safe });
+  return { error: Boolean(result?.error) };
+}
+
+/**
+ * Detach the linked LinkedIn account. Does not touch the admin's session.
+ * `accountId` is Better Auth's own row id (from `getLinkedInAccount`), not
+ * LinkedIn's — `/unlink-account` selects by the former.
+ */
+export async function unlinkLinkedIn(accountId: string): Promise<{ error: boolean }> {
+  const result = await authClient.unlinkAccount({ accountId });
+  return { error: Boolean(result?.error) };
+}

@@ -1,7 +1,15 @@
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
-import { publishPost, setPinnedPost, unpublishPost } from "@/lib/db/posts";
+import {
+  getPostForAdmin,
+  publishPost,
+  setPinnedPost,
+  unpublishPost,
+} from "@/lib/db/posts";
 import { revalidateFeed, revalidatePost } from "@/lib/blog/invalidate";
+import { getLinkedInAccount } from "@/lib/linkedin/account";
+import { shareLinkOnLinkedIn } from "@/lib/linkedin/share";
+import { absoluteUrl } from "@/lib/site";
 import {
   checkRequest,
   databaseError,
@@ -41,15 +49,32 @@ export async function POST(request: Request, { params }: Params) {
   try {
     switch (parsed.data.action) {
       case "publish": {
+        // Read before publishing: this is the only way to tell a genuine
+        // draft -> published transition from a click on an already-published
+        // post, which `publishPost` itself treats identically (see its own
+        // comment on `published_at`). Only the former should ever post to
+        // LinkedIn — a re-publish must not share the same post twice.
+        const before = await getPostForAdmin(params.id);
+
         const published = await publishPost(params.id);
         if (!published) return notFound();
 
         revalidatePost(published.slug);
         revalidateFeed();
+
+        const linkedIn = await shareNewlyPublishedPost({
+          request,
+          wasAlreadyPublished: before?.status === "published",
+          slug: published.slug,
+          title: before?.title || published.slug,
+          excerpt: before?.excerpt,
+        });
+
         return okResponse({
           status: "published",
           slug: published.slug,
           publishedAt: published.publishedAt.toISOString(),
+          linkedIn,
         });
       }
 
@@ -83,5 +108,52 @@ export async function POST(request: Request, { params }: Params) {
     }
   } catch (error) {
     return databaseError(error, "admin/posts/[id]/status");
+  }
+}
+
+type LinkedInShareResult = "shared" | "not_connected" | "skipped" | "failed";
+
+/**
+ * Best effort, by design: a LinkedIn hiccup must never fail the publish
+ * itself, since the post is already live on the site by the time this runs.
+ * The caller surfaces the result so the UI can say so when it doesn't work,
+ * rather than the owner discovering it wasn't shared some other way.
+ */
+async function shareNewlyPublishedPost({
+  request,
+  wasAlreadyPublished,
+  slug,
+  title,
+  excerpt,
+}: {
+  request: Request;
+  wasAlreadyPublished: boolean;
+  slug: string;
+  title: string;
+  excerpt?: string;
+}): Promise<LinkedInShareResult> {
+  if (wasAlreadyPublished) return "skipped";
+
+  try {
+    const account = await getLinkedInAccount(request.headers);
+    if (!account) return "not_connected";
+
+    await shareLinkOnLinkedIn({
+      headers: request.headers,
+      accountId: account.accountId,
+      memberId: account.memberId,
+      commentary: title,
+      url: absoluteUrl(`/blog/${slug}`),
+      title,
+      description: excerpt,
+    });
+
+    return "shared";
+  } catch (error) {
+    console.error(
+      `[posts/publish] LinkedIn share failed for ${slug}:`,
+      error instanceof Error ? error.message : error,
+    );
+    return "failed";
   }
 }

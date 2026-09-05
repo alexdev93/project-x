@@ -2,9 +2,14 @@ import "server-only";
 
 import { Pool } from "@neondatabase/serverless";
 import { betterAuth } from "better-auth";
-import { customSession } from "better-auth/plugins";
+import { customSession, genericOAuth } from "better-auth/plugins";
 import { isAdmin } from "./admin";
-import { getAuthBaseUrl, getAuthSecret, getGoogleCredentials } from "./config";
+import {
+  getAuthBaseUrl,
+  getAuthSecret,
+  getGoogleCredentials,
+  getLinkedInCredentials,
+} from "./config";
 
 /**
  * The Better Auth instance. Google sign-in and nothing else.
@@ -50,6 +55,7 @@ let instance: ReturnType<typeof create> | null = null;
 function create() {
   const secret = getAuthSecret();
   const google = getGoogleCredentials();
+  const linkedin = getLinkedInCredentials();
   const connectionString = process.env.DATABASE_URL;
 
   if (!secret || !google || !connectionString) {
@@ -81,11 +87,16 @@ function create() {
     account: {
       modelName: "auth_account",
       /**
-       * A no-op today, because Google is the only provider. It is here so that
-       * adding a second one later cannot silently enable email-based
-       * auto-linking — which would let whoever controls the same address on the
-       * other provider take over an existing account. Do not delete this as
-       * dead config.
+       * Governs *implicit* linking — a new sign-in auto-attaching to an
+       * existing user because it reports the same verified email. Left off so
+       * that never happens silently, which would let whoever controls a
+       * matching address on another provider take over an existing account.
+       *
+       * LinkedIn below is not signed into and is never auto-linked this way —
+       * it's attached to an already-authenticated admin session via the
+       * explicit `/link-social` endpoint (see `linkLinkedIn` in client.ts),
+       * which operates on the current session's user directly and doesn't
+       * go anywhere near this setting. Do not delete this as dead config.
        */
       accountLinking: { enabled: false },
     },
@@ -107,6 +118,49 @@ function create() {
         session,
         user: { ...user, isAdmin: isAdmin(user) },
       })),
+
+      /**
+       * LinkedIn, registered as a generic OAuth2/OIDC provider rather than a
+       * built-in `socialProviders` entry — this version of Better Auth ships
+       * no first-class LinkedIn integration. Nobody signs *in* with it; the
+       * admin links it from an existing session (`linkLinkedIn`) purely so
+       * the publish flow has a token to post through (`src/lib/linkedin/`).
+       *
+       * `pkce: false`: LinkedIn's authorization endpoint doesn't support PKCE,
+       * and sending an unrecognized `code_challenge` risks a stricter
+       * implementation rejecting the request outright.
+       *
+       * `accountSubject` reads the OIDC `sub` claim explicitly. Without a
+       * `discoveryUrl` this plugin defaults to a plain-OAuth `id` field, which
+       * LinkedIn's userinfo response doesn't have — only `sub` — so the
+       * account would fail to key correctly without this override.
+       */
+      ...(linkedin
+        ? [
+            genericOAuth({
+              config: [
+                {
+                  providerId: "linkedin",
+                  clientId: linkedin.clientId,
+                  clientSecret: linkedin.clientSecret,
+                  authorizationUrl: "https://www.linkedin.com/oauth/v2/authorization",
+                  tokenUrl: "https://www.linkedin.com/oauth/v2/accessToken",
+                  userInfoUrl: "https://api.linkedin.com/v2/userinfo",
+                  scopes: ["openid", "profile", "email", "w_member_social"],
+                  pkce: false,
+                  accountSubject: ({ profile }) =>
+                    String((profile as { sub: string }).sub),
+                  mapProfileToUser: (profile) => ({
+                    name: profile.name as string | undefined,
+                    email: profile.email as string | undefined,
+                    image: profile.picture as string | undefined,
+                    emailVerified: Boolean(profile.email_verified),
+                  }),
+                },
+              ],
+            }),
+          ]
+        : []),
     ],
   });
 }

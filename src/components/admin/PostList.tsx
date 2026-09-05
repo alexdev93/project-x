@@ -66,6 +66,17 @@ export function PostList({ initialPosts }: { initialPosts: Post[] }) {
           };
         }),
       );
+
+      // The publish itself succeeded — the site already shows the post — so
+      // a LinkedIn hiccup is a note next to a published post, not an error
+      // on the action that just worked.
+      if (result.linkedIn === "failed") {
+        setErrors((current) => ({
+          ...current,
+          [post.id]:
+            "Published, but sharing to LinkedIn failed — check the connection in Overview.",
+        }));
+      }
     } catch {
       setErrors((current) => ({
         ...current,

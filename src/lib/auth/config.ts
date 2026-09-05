@@ -31,6 +31,20 @@ export function getGoogleCredentials():
 }
 
 /**
+ * Optional. Unlike Google, this isn't how anyone signs in to /admin — it's
+ * linked *from* an already-signed-in admin session, to give the publish flow
+ * something to post through. Missing either variable just disables that link
+ * button; sign-in itself is unaffected.
+ */
+export function getLinkedInCredentials():
+  | { clientId: string; clientSecret: string }
+  | undefined {
+  const clientId = read("LINKEDIN_CLIENT_ID");
+  const clientSecret = read("LINKEDIN_CLIENT_SECRET");
+  return clientId && clientSecret ? { clientId, clientSecret } : undefined;
+}
+
+/**
  * The base URL Better Auth builds callbacks against.
  *
  * Derived from `siteUrl` rather than a BETTER_AUTH_URL variable of its own. A

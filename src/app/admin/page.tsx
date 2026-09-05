@@ -1,12 +1,15 @@
 import React from "react";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { FileText, MessageSquare, PenLine, Users } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
+import { LinkedInConnection } from "@/components/admin/LinkedInConnection";
 import { countPostsByStatus } from "@/lib/db/posts";
 import { countPendingComments } from "@/lib/db/comments";
 import { countUsers } from "@/lib/db/users";
 import { hasBlog } from "@/lib/blog/config";
 import { requireAdminPage } from "@/lib/auth/session";
+import { getLinkedInAccount } from "@/lib/linkedin/account";
 
 /**
  * The overview.
@@ -29,6 +32,7 @@ export default async function AdminOverviewPage() {
   await requireAdminPage();
 
   const stats = await readStats();
+  const linkedIn = await getLinkedInAccount(headers()).catch(() => null);
 
   return (
     <div className="flex flex-col gap-8">
@@ -76,6 +80,11 @@ export default async function AdminOverviewPage() {
           icon={<Users aria-hidden className="size-4" />}
         />
       </div>
+
+      <LinkedInConnection
+        connected={Boolean(linkedIn)}
+        accountId={linkedIn?.accountId}
+      />
     </div>
   );
 }
