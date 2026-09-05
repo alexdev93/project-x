@@ -121,6 +121,34 @@
     "components": []
   },
   {
+    "slug": "core-data-lib",
+    "name": "core-data-lib",
+    "summary": "A reflection-once, annotation-driven data access library for PostgreSQL over R2DBC. Define an entity, extend a repository base class, and get filtering, sorting, free-text search, pagination and joined relations for free, with hand-rolled parameterized SQL underneath instead of JPA/Hibernate. Published on Maven Central as a drop-in Spring Boot autoconfiguration.",
+    "category": "backend",
+    "weight": 65,
+    "featured": true,
+    "year": "2026",
+    "role": "Library design and engineering",
+    "tech": [
+      "Java",
+      "Spring Boot",
+      "R2DBC",
+      "PostgreSQL",
+      "Maven"
+    ],
+    "repo": {
+      "visibility": "public",
+      "href": "https://github.com/alexdev93/core-data-lib",
+      "name": "alexdev93/core-data-lib"
+    },
+    "problem": "",
+    "approach": "",
+    "architecture": "",
+    "outcome": "",
+    "decisions": [],
+    "components": []
+  },
+  {
     "slug": "container-infrastructure",
     "name": "Container & Deployment Infrastructure",
     "summary": "Docker Compose and deployment configuration maintained as its own concern, separate from the applications it runs.",
