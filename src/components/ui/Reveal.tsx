@@ -74,7 +74,12 @@ export function Reveal({
       className={cn(className)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15, margin: "0px 0px -80px 0px" }}
+      // amount: 0 fires on the first pixel of intersection rather than a
+      // fixed share of the element's area. A ratio like 0.15 never resolves
+      // once wrapped content is much taller than the viewport (a long
+      // markdown section, say) — that much of it can never be onscreen at
+      // once, so the element stays at its hidden state forever.
+      viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
       variants={buildVariants(direction, reduced)}
       transition={reduced ? undefined : { delay }}
     >
