@@ -87,18 +87,34 @@ function create() {
     account: {
       modelName: "auth_account",
       /**
-       * Governs *implicit* linking — a new sign-in auto-attaching to an
-       * existing user because it reports the same verified email. Left off so
-       * that never happens silently, which would let whoever controls a
-       * matching address on another provider take over an existing account.
+       * `enabled: false` was the first version of this — measured wrong.
+       * Better Auth applies the same flag to *explicit* linking
+       * (`/link-social`, what `linkLinkedIn` in client.ts calls) as it does to
+       * *implicit* linking, so `enabled: false` also blocked the LinkedIn
+       * connect button with "Unable to link account - untrusted provider"
+       * (confirmed in the production logs, not guessed).
        *
-       * LinkedIn below is not signed into and is never auto-linked this way —
-       * it's attached to an already-authenticated admin session via the
-       * explicit `/link-social` endpoint (see `linkLinkedIn` in client.ts),
-       * which operates on the current session's user directly and doesn't
-       * go anywhere near this setting. Do not delete this as dead config.
+       * What actually needs to stay off is `disableImplicitLinking`'s
+       * scenario: a *new sign-in* auto-attaching to an existing user because
+       * it reports the same verified email — that's what would let whoever
+       * controls a matching address on another provider take over an
+       * existing account. That path is independent of `enabled` and of
+       * `trustedProviders`, so it stays disabled here regardless of either.
+       *
+       * `trustedProviders` + `allowDifferentEmails` only affect the explicit
+       * path: LinkedIn is deliberately trusted (so linking doesn't also
+       * require an already-verified LinkedIn email) and allowed to have a
+       * different email than the admin's Google sign-in — the admin already
+       * proved who they are by reaching this button from an authenticated
+       * session; requiring the two providers to share an email besides is
+       * friction with no security benefit here.
        */
-      accountLinking: { enabled: false },
+      accountLinking: {
+        enabled: true,
+        disableImplicitLinking: true,
+        trustedProviders: ["google", "linkedin"],
+        allowDifferentEmails: true,
+      },
     },
     verification: { modelName: "auth_verification" },
 
