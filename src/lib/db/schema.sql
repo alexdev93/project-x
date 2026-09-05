@@ -243,3 +243,14 @@ CREATE TABLE IF NOT EXISTS blocked_users (
 ALTER TABLE "auth_account" ADD COLUMN IF NOT EXISTS "issuer" TEXT NOT NULL DEFAULT '';
 CREATE UNIQUE INDEX IF NOT EXISTS "auth_account_issuer_accountId_idx"
   ON "auth_account" ("issuer", "accountId");
+
+-- 2026-09-06 — LinkedIn cross-posting. linkedin_post_urn identifies the post
+-- LinkedIn created (e.g. "urn:li:share:...") so an edit or unpublish can
+-- update or delete that exact post instead of leaving a stale copy up, or
+-- creating a duplicate. The attachment columns are the chosen image or
+-- document for the *next* share — set from the editor before publish, kept
+-- across drafts, independent of whether a share has actually happened yet.
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_post_urn TEXT;
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_attachment_urn TEXT;
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_attachment_kind TEXT
+  CHECK (linkedin_attachment_kind IS NULL OR linkedin_attachment_kind IN ('image', 'document'));
