@@ -49,7 +49,11 @@ export function CoverImageField({
 
       setUrl(result.url);
       setState("idle");
-      setNote(result.relinked ? "Updated — the live LinkedIn post now uses this." : null);
+      setNote(
+        result.relinked
+          ? "Updated — the live LinkedIn post now uses this."
+          : "Saved.",
+      );
     } catch {
       setState("error");
       setNote("Couldn't reach the server.");
