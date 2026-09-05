@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { LinkedInAttachmentField } from "@/components/admin/LinkedInAttachmentField";
 import { slugify } from "@/lib/blog/text";
 import type { Post } from "@/lib/blog/types";
 
@@ -32,7 +33,14 @@ type Status =
 
 type FieldErrors = Partial<Record<"title" | "slug" | "body" | "excerpt" | "tags", string[]>>;
 
-export function PostEditor({ post }: { post?: Post }) {
+export function PostEditor({
+  post,
+  linkedInAttachment,
+}: {
+  post?: Post;
+  /** Only meaningful once the post exists — see the edit page. */
+  linkedInAttachment?: { kind: "image" | "document" } | null;
+}) {
   const router = useRouter();
   const editing = Boolean(post);
 
@@ -221,6 +229,10 @@ export function PostEditor({ post }: { post?: Post }) {
           autoComplete="off"
         />
       </Field>
+
+      {editing ? (
+        <LinkedInAttachmentField postId={post!.id} initial={linkedInAttachment ?? null} />
+      ) : null}
 
       {status.kind === "error" ? (
         <p

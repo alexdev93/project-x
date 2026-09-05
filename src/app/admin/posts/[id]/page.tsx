@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { PostEditor } from "@/components/admin/PostEditor";
-import { getPostForAdmin } from "@/lib/db/posts";
+import { getLinkedInPostState, getPostForAdmin } from "@/lib/db/posts";
 import { hasBlog } from "@/lib/blog/config";
 import { requireAdminPage } from "@/lib/auth/session";
 import { formatDateTime } from "@/lib/format";
@@ -36,6 +36,8 @@ export default async function EditPostPage({
 
   if (!post) notFound();
 
+  const linkedIn = await getLinkedInPostState(params.id).catch(() => null);
+
   return (
     <div className="flex max-w-3xl flex-col gap-8">
       <header>
@@ -60,7 +62,12 @@ export default async function EditPostPage({
         </p>
       </header>
 
-      <PostEditor post={post} />
+      <PostEditor
+        post={post}
+        linkedInAttachment={
+          linkedIn?.attachmentKind ? { kind: linkedIn.attachmentKind } : null
+        }
+      />
     </div>
   );
 }

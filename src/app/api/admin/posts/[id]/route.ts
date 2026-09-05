@@ -1,8 +1,14 @@
 import { requireAdmin } from "@/lib/auth/session";
 import { postInputSchema } from "@/lib/blog/schema";
 import { excerpt, readingMinutes } from "@/lib/blog/text";
-import { deletePost, updatePost } from "@/lib/db/posts";
+import {
+  deletePost,
+  getLinkedInPostState,
+  updatePost,
+} from "@/lib/db/posts";
 import { revalidateFeed, revalidatePost } from "@/lib/blog/invalidate";
+import { getLinkedInAccount } from "@/lib/linkedin/account";
+import { deleteLinkedInPost, updateLinkedInPostCommentary } from "@/lib/linkedin/share";
 import {
   checkRequest,
   databaseError,
@@ -36,6 +42,11 @@ export async function PATCH(request: Request, { params }: Params) {
   const { slug, title, body, tags } = parsed.data;
 
   try {
+    // Read before writing: the only way to know whether the title actually
+    // changed, which is what decides whether the live LinkedIn post (if any)
+    // needs its text updated.
+    const before = await getLinkedInPostState(params.id);
+
     const updated = await updatePost(params.id, {
       slug,
       title,
@@ -54,6 +65,10 @@ export async function PATCH(request: Request, { params }: Params) {
     // invalidation covers the index, and the old URL 404s on its next request.
     revalidateFeed();
 
+    if (before?.postUrn && before.status === "published" && before.title !== title) {
+      await syncLinkedInCommentary(request, before.postUrn, title);
+    }
+
     return okResponse({ post: updated });
   } catch (error) {
     return databaseError(error, "admin/posts/[id]");
@@ -71,6 +86,8 @@ export async function DELETE(request: Request, { params }: Params) {
   if (!sameOrigin(request)) return errorResponse(400, "Invalid request.");
 
   try {
+    const before = await getLinkedInPostState(params.id);
+
     const deleted = await deletePost(params.id);
     if (!deleted) return notFound();
 
@@ -78,8 +95,61 @@ export async function DELETE(request: Request, { params }: Params) {
     revalidatePost(deleted.slug);
     revalidateFeed();
 
+    if (before?.postUrn) {
+      await removeFromLinkedInBestEffort(request, params.id, before.postUrn);
+    }
+
     return okResponse({ deleted: deleted.slug });
   } catch (error) {
     return databaseError(error, "admin/posts/[id]");
+  }
+}
+
+/**
+ * Best effort, same reasoning throughout this feature: the edit or delete
+ * already succeeded on this site by the time either of these runs, so a
+ * LinkedIn hiccup here must never surface as the site-side action having
+ * failed. Only `commentary` is updatable through LinkedIn's API — an edited
+ * excerpt or a changed attachment on an already-shared post has no API path
+ * to reflect there; only the headline text does.
+ */
+async function syncLinkedInCommentary(
+  request: Request,
+  urn: string,
+  title: string,
+): Promise<void> {
+  try {
+    const account = await getLinkedInAccount(request.headers);
+    if (!account) return;
+
+    await updateLinkedInPostCommentary({
+      headers: request.headers,
+      accountId: account.accountId,
+      urn,
+      commentary: title,
+    });
+  } catch (error) {
+    console.error(
+      "[posts/edit] LinkedIn commentary update failed:",
+      error instanceof Error ? error.message : error,
+    );
+  }
+}
+
+async function removeFromLinkedInBestEffort(
+  request: Request,
+  id: string,
+  urn: string,
+): Promise<void> {
+  try {
+    const account = await getLinkedInAccount(request.headers);
+    if (!account) return;
+
+    await deleteLinkedInPost({ headers: request.headers, accountId: account.accountId, urn });
+  } catch (error) {
+    console.error(
+      `[posts/delete] LinkedIn delete failed for ${id}:`,
+      error instanceof Error ? error.message : error,
+    );
   }
 }

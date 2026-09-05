@@ -1,14 +1,19 @@
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
 import {
-  getPostForAdmin,
+  getLinkedInPostState,
   publishPost,
+  setLinkedInPostUrn,
   setPinnedPost,
   unpublishPost,
 } from "@/lib/db/posts";
 import { revalidateFeed, revalidatePost } from "@/lib/blog/invalidate";
 import { getLinkedInAccount } from "@/lib/linkedin/account";
-import { shareLinkOnLinkedIn } from "@/lib/linkedin/share";
+import {
+  createLinkedInPost,
+  deleteLinkedInPost,
+  type LinkedInPostContent,
+} from "@/lib/linkedin/share";
 import { absoluteUrl } from "@/lib/site";
 import {
   checkRequest,
@@ -54,7 +59,7 @@ export async function POST(request: Request, { params }: Params) {
         // post, which `publishPost` itself treats identically (see its own
         // comment on `published_at`). Only the former should ever post to
         // LinkedIn — a re-publish must not share the same post twice.
-        const before = await getPostForAdmin(params.id);
+        const before = await getLinkedInPostState(params.id);
 
         const published = await publishPost(params.id);
         if (!published) return notFound();
@@ -64,10 +69,9 @@ export async function POST(request: Request, { params }: Params) {
 
         const linkedIn = await shareNewlyPublishedPost({
           request,
-          wasAlreadyPublished: before?.status === "published",
+          id: params.id,
+          before,
           slug: published.slug,
-          title: before?.title || published.slug,
-          excerpt: before?.excerpt,
         });
 
         return okResponse({
@@ -86,6 +90,9 @@ export async function POST(request: Request, { params }: Params) {
         // path is invalidated as well as the feed.
         revalidatePost(drafted.slug);
         revalidateFeed();
+
+        await removeFromLinkedIn(request, params.id);
+
         return okResponse({ status: "draft", slug: drafted.slug });
       }
 
@@ -121,32 +128,42 @@ type LinkedInShareResult = "shared" | "not_connected" | "skipped" | "failed";
  */
 async function shareNewlyPublishedPost({
   request,
-  wasAlreadyPublished,
+  id,
+  before,
   slug,
-  title,
-  excerpt,
 }: {
   request: Request;
-  wasAlreadyPublished: boolean;
+  id: string;
+  before: Awaited<ReturnType<typeof getLinkedInPostState>>;
   slug: string;
-  title: string;
-  excerpt?: string;
 }): Promise<LinkedInShareResult> {
-  if (wasAlreadyPublished) return "skipped";
+  if (before?.status === "published") return "skipped";
 
   try {
     const account = await getLinkedInAccount(request.headers);
     if (!account) return "not_connected";
 
-    await shareLinkOnLinkedIn({
+    const title = before?.title || slug;
+    const url = absoluteUrl(`/blog/${slug}`);
+
+    const content: LinkedInPostContent = before?.attachmentUrn
+      ? {
+          type: "media",
+          urn: before.attachmentUrn,
+          title,
+          altText: before.excerpt || undefined,
+        }
+      : { type: "article", url, title, description: before?.excerpt };
+
+    const urn = await createLinkedInPost({
       headers: request.headers,
       accountId: account.accountId,
       memberId: account.memberId,
       commentary: title,
-      url: absoluteUrl(`/blog/${slug}`),
-      title,
-      description: excerpt,
+      content,
     });
+
+    await setLinkedInPostUrn(id, urn);
 
     return "shared";
   } catch (error) {
@@ -155,5 +172,33 @@ async function shareNewlyPublishedPost({
       error instanceof Error ? error.message : error,
     );
     return "failed";
+  }
+}
+
+/**
+ * Removes the LinkedIn copy of a post being unpublished. Best effort, same
+ * reasoning as the share itself: the post is already off this site by the
+ * time this runs, so a LinkedIn failure here must not surface as the
+ * unpublish having failed.
+ */
+async function removeFromLinkedIn(request: Request, id: string): Promise<void> {
+  try {
+    const state = await getLinkedInPostState(id);
+    if (!state?.postUrn) return;
+
+    const account = await getLinkedInAccount(request.headers);
+    if (!account) return;
+
+    await deleteLinkedInPost({
+      headers: request.headers,
+      accountId: account.accountId,
+      urn: state.postUrn,
+    });
+    await setLinkedInPostUrn(id, null);
+  } catch (error) {
+    console.error(
+      `[posts/unpublish] LinkedIn delete failed for ${id}:`,
+      error instanceof Error ? error.message : error,
+    );
   }
 }

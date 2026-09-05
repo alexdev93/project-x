@@ -354,3 +354,80 @@ export async function countPostsByStatus(): Promise<{
     published: rows.find((row) => row.status === "published")?.n ?? 0,
   };
 }
+
+/**
+ * LinkedIn cross-posting state.
+ *
+ * Kept out of `Post`/`PostSummary` deliberately — those types flow into the
+ * public blog pages, and this is an admin-only sync concern with no reader
+ * ever needing it. A dedicated row shape here means adding a LinkedIn field
+ * never risks widening what a public page can see.
+ */
+export type LinkedInPostState = {
+  slug: string;
+  status: PostStatus;
+  title: string;
+  excerpt: string;
+  /** Set once this post has been shared; identifies which LinkedIn post to
+   * update or delete on a later edit/unpublish. */
+  postUrn: string | null;
+  /** The attachment chosen for the *next* share, independent of whether one
+   * has happened yet — set from the editor before publish. */
+  attachmentUrn: string | null;
+  attachmentKind: "image" | "document" | null;
+};
+
+export async function getLinkedInPostState(
+  id: string,
+): Promise<LinkedInPostState | null> {
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT slug, status, title, excerpt, linkedin_post_urn,
+           linkedin_attachment_urn, linkedin_attachment_kind
+    FROM posts WHERE id = ${id}
+  `) as {
+    slug: string;
+    status: string;
+    title: string;
+    excerpt: string;
+    linkedin_post_urn: string | null;
+    linkedin_attachment_urn: string | null;
+    linkedin_attachment_kind: string | null;
+  }[];
+
+  const row = rows[0];
+  if (!row) return null;
+
+  return {
+    slug: row.slug,
+    status: row.status as PostStatus,
+    title: row.title,
+    excerpt: row.excerpt,
+    postUrn: row.linkedin_post_urn,
+    attachmentUrn: row.linkedin_attachment_urn,
+    attachmentKind: row.linkedin_attachment_kind as "image" | "document" | null,
+  };
+}
+
+/** Records (or clears, passing `null`) the URN of the post LinkedIn created. */
+export async function setLinkedInPostUrn(
+  id: string,
+  urn: string | null,
+): Promise<void> {
+  const sql = getSql();
+  await sql`UPDATE posts SET linkedin_post_urn = ${urn} WHERE id = ${id}`;
+}
+
+/** Sets (or clears, passing `null`) the attachment queued for the next share. */
+export async function setLinkedInAttachment(
+  id: string,
+  attachment: { urn: string; kind: "image" | "document" } | null,
+): Promise<void> {
+  const sql = getSql();
+  await sql`
+    UPDATE posts SET
+      linkedin_attachment_urn = ${attachment?.urn ?? null},
+      linkedin_attachment_kind = ${attachment?.kind ?? null}
+    WHERE id = ${id}
+  `;
+}
