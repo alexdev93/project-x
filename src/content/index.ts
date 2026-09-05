@@ -116,6 +116,7 @@ export function hasCaseStudy(project: Project): boolean {
       project.approach ||
       project.architecture ||
       project.outcome ||
+      project.guide ||
       project.decisions.length,
   );
 }

@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { Badge, TechTagList } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { ProjectMarkdown } from "@/components/projects/ProjectMarkdown";
 import {
   getProjectBySlug,
   getProjectSlugs,
@@ -33,7 +34,7 @@ export function generateMetadata({ params }: Params): Metadata {
   };
 }
 
-/** A titled block of case-study prose. Renders nothing when unwritten. */
+/** A titled block of case-study Markdown. Renders nothing when unwritten. */
 function Chapter({ title, body }: { title: string; body: string }) {
   if (!body) return null;
 
@@ -42,10 +43,8 @@ function Chapter({ title, body }: { title: string; body: string }) {
       <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
         {title}
       </h2>
-      <div className="mt-5 max-w-[68ch] space-y-4 text-base leading-relaxed text-ink-muted sm:text-lg">
-        {body.split("\n\n").map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
+      <div className="mt-5">
+        <ProjectMarkdown>{body}</ProjectMarkdown>
       </div>
     </Reveal>
   );
@@ -127,6 +126,24 @@ export default function ProjectPage({ params }: Params) {
                 </dd>
               </div>
             ) : null}
+            {project.liveUrl ? (
+              <div>
+                <dt className="font-mono text-xs uppercase tracking-[0.08em] text-ink-subtle">
+                  Live
+                </dt>
+                <dd className="mt-1.5 text-sm">
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-accent hover:underline"
+                  >
+                    Visit
+                    <ExternalLink aria-hidden className="size-3.5" />
+                  </a>
+                </dd>
+              </div>
+            ) : null}
           </dl>
 
           <TechTagList items={project.tech} className="mt-8" />
@@ -180,6 +197,7 @@ export default function ProjectPage({ params }: Params) {
           ) : null}
 
           <Chapter title="Outcome" body={project.outcome} />
+          <Chapter title="Guide" body={project.guide} />
 
           {!hasCaseStudy(project) ? (
             <Reveal as="section" className="border-t border-line pt-10">

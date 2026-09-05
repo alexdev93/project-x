@@ -130,23 +130,62 @@
     "year": "2026",
     "role": "Library design and engineering",
     "tech": [
-      "Java",
+      "Java 17",
       "Spring Boot",
       "R2DBC",
       "PostgreSQL",
-      "Maven"
+      "Project Reactor",
+      "Maven",
+      "Lombok",
+      "GitHub Actions",
+      "Maven Central"
     ],
     "repo": {
-      "visibility": "public",
-      "href": "https://github.com/alexdev93/core-data-lib",
-      "name": "alexdev93/core-data-lib"
+      "visibility": "private",
+      "name": "alexdev93/common-db"
     },
-    "problem": "",
-    "approach": "",
-    "architecture": "",
-    "outcome": "",
-    "decisions": [],
-    "components": []
+    "problem": "Reactive Spring Boot services on R2DBC/Postgres have no JPA/Hibernate equivalent — every entity that needs filtering, sorting, search, pagination, or joins ends up with hand-rolled, repeated, easy-to-get-wrong parameterized SQL.",
+    "approach": "Built a small annotation-driven library with a reflection-once entity scanner, a composable filter/query API, a SQL builder that only joins tables a query actually touches, and a typed exception layer over Postgres SQLSTATEs — then wired it into Spring Boot as a zero-config autoconfiguration module.",
+    "architecture": "Two API layers share one execution engine. The high-level path — `Query<T>`, `Filters`, and `AbstractReactiveRepository` — is what a consuming service uses day to day: annotate an entity with `@Table`/`@Column`/`@Id`/`@Join`, extend the repository base class, and get parameterized CRUD, arbitrary filter trees, multi-field search, sorting, offset pagination and conditionally-joined relations for free. A join declared on the entity is only added to the generated SQL when a query actually references the field it's attached to.\n\nThe low-level path — `QueryContext`, `SqlBuilder`, `QueryExecutor` — is the same engine exposed directly, for callers who want to hand-build a query without going through the repository abstraction. A blocking facade sits on top of the reactive API for callers not on Project Reactor.\n\nEvery failure mode surfaces as one of eighteen typed `DatabaseException` subtypes, mapped from PostgreSQL SQLSTATEs (unique/foreign-key/check/exclusion violations, deadlocks, timeouts, permission errors, connection failures) rather than an opaque driver exception — callers can catch the base type or discriminate by subtype, and every repository call reports failure as a reactive `onError` signal rather than throwing synchronously.\n\nThe whole library wires into a consuming service through Spring Boot's own autoconfiguration mechanism (`CommonDbAutoConfiguration`, registered via `AutoConfiguration.imports`) with every bean marked `@ConditionalOnMissingBean`, so any piece — down to the field resolver — can be overridden by declaring a bean of the same type.",
+    "outcome": "Published, versioned library on Maven Central (`io.github.alexdev93:core-data-lib`) with a CI/CD pipeline (GitHub Actions) that auto-publishes snapshots from `develop` and cuts GPG-signed releases from tagged branches on `main`, following Gitflow.",
+    "decisions": [
+      {
+        "title": "Hand-rolled SQL over JPA/Hibernate",
+        "detail": "Reactive Spring Boot on R2DBC has no JPA/Hibernate equivalent, so the library generates parameterized SQL directly rather than adopting an ORM that doesn't support the reactive stack."
+      },
+      {
+        "title": "Reflection-once entity scanning",
+        "detail": "An entity's @Table/@Column/@Join metadata is read once via reflection and cached, not re-inspected on every query."
+      },
+      {
+        "title": "Conditional joins",
+        "detail": "A join declared on an entity is only added to the generated SQL when a query actually references the joined field, so a plain SELECT that never touches it stays join-free."
+      },
+      {
+        "title": "Gitflow release process",
+        "detail": "develop auto-publishes a -SNAPSHOT to Maven Central on every push; a tagged main release is GPG-signed and published via GitHub Actions — a moving target to track plus a stable, signed release train."
+      }
+    ],
+    "components": [
+      {
+        "name": "Query<T> + Filters",
+        "description": "The high-level, day-to-day API: annotation-driven entities, composable filters (eq/in/between/and/or/...), sorting, pagination and joined relations through AbstractReactiveRepository."
+      },
+      {
+        "name": "SqlBuilder + QueryExecutor",
+        "description": "The same engine exposed directly for hand-built SQL against QueryContext, for callers who want to bypass the repository abstraction."
+      },
+      {
+        "name": "DatabaseException hierarchy",
+        "description": "Eighteen typed exceptions mapping PostgreSQL SQLSTATEs — unique/FK/check/exclusion violations, deadlocks, timeouts, permission and connection errors — into a discriminable reactive error type."
+      },
+      {
+        "name": "CommonDbAutoConfiguration",
+        "description": "Zero-config Spring Boot autoconfiguration; every bean is @ConditionalOnMissingBean, so any piece can be overridden by declaring a bean of the same type."
+      }
+    ],
+    "liveUrl": "https://central.sonatype.com/artifact/io.github.alexdev93/core-data-lib",
+    "guide": "[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexdev93/core-data-lib.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.alexdev93/core-data-lib)\n[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)\n[![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://central.sonatype.com/artifact/io.github.alexdev93/core-data-lib)\n\nA reflection-once, annotation-driven data-access library for PostgreSQL over R2DBC — for anyone who wants to actually use it in a Spring Boot + R2DBC + PostgreSQL service, not just read about it.\n\n## Requirements\n\n- Java 17+\n- Maven 3.9+ (or Gradle 8+)\n- A consuming service already using Spring Boot 3.x/4.x with R2DBC\n\n## Install\n\nReleased versions are published on Maven Central — no extra repository configuration needed.\n\n**Maven** (`pom.xml`):\n\n```xml\n<dependency>\n    <groupId>io.github.alexdev93</groupId>\n    <artifactId>core-data-lib</artifactId>\n    <version>0.1.0</version>\n</dependency>\n\n<!-- the actual Postgres R2DBC driver — core-data-lib only depends on the R2DBC SPI -->\n<dependency>\n    <groupId>org.postgresql</groupId>\n    <artifactId>r2dbc-postgresql</artifactId>\n</dependency>\n```\n\n**Gradle** (`build.gradle`):\n\n```groovy\ndependencies {\n    implementation 'io.github.alexdev93:core-data-lib:0.1.0'\n    implementation 'org.postgresql:r2dbc-postgresql'\n}\n```\n\nTracking unreleased changes: `develop` publishes a `-SNAPSHOT` build to Central on every push (auto-expires after 90 days). Snapshots need the Central snapshot repository added explicitly, since Maven doesn't search snapshot repos by default:\n\n```xml\n<repositories>\n    <repository>\n        <id>central-snapshots</id>\n        <url>https://central.sonatype.com/repository/maven-snapshots/</url>\n        <releases><enabled>false</enabled></releases>\n        <snapshots><enabled>true</enabled></snapshots>\n    </repository>\n</repositories>\n```\n\nThe autoconfiguration is picked up automatically via Spring Boot's standard `AutoConfiguration.imports` mechanism — no `@Import` or `@ComponentScan` changes needed.\n\n## Connect the database\n\nStandard Spring Boot R2DBC config — the library doesn't invent its own connection mechanism:\n\n```yaml\nspring:\n  r2dbc:\n    url: r2dbc:postgresql://localhost:5432/mydb\n    username: postgres\n    password: secret\n```\n\n## Define an entity and a repository\n\n```java\n@Table(value = \"users\", alias = \"u\", defaultSort = \"createdAt\", defaultSortDirection = SortDirection.DESC)\npublic class User {\n\n    @Id\n    private UUID id;\n\n    @Column(filterable = true, sortable = true, searchable = true)\n    private String email;\n\n    @Column(searchable = true, searchMode = SearchMode.STARTS_WITH)\n    private String fullName;\n\n    private Instant createdAt; // @Column is optional — defaults to filterable+sortable+selectable\n\n    public User() {} // required — rows are mapped back via reflection\n}\n\n@Repository\npublic class UserRepository extends AbstractReactiveRepository<User, UUID> {\n    public UserRepository(QueryExecutor executor) {\n        super(User.class, executor);\n    }\n}\n```\n\n`QueryExecutor` is injected by Spring — nothing else to wire.\n\n## CRUD, filter, sort, search, paginate\n\n```java\nuserRepository.save(user);          // inserts if user.getId() == null, else updates by id\nuserRepository.findById(id);        // Mono<User>\nuserRepository.deleteById(id);      // Mono<Void>\n\nQuery<User> query = Query.of(User.class)\n        .filter(Filters.eq(\"status\", \"ACTIVE\"))\n        .search(\"john\", \"email\", \"fullName\")\n        .sortBy(\"createdAt\", DESC)\n        .page(0, 20);\n\nuserRepository.findPage(query);     // Mono<PageResult<User>>\n```\n\n`Filters` covers every operator: `eq, ne, gt, gte, lt, lte, like, startsWith, endsWith, in, notIn, between, isNull, isNotNull`, plus `and()`/`or()` for nested groups. `Query<T>` also builds straight from a JSON-bindable `QueryParams` for a `@ModelAttribute`-style REST endpoint.\n\n## Joined relations\n\nDeclare the join once on the entity, reference it from a field — it's only added to the generated SQL when a query actually touches that field:\n\n```java\n@Table(value = \"orders\", alias = \"o\", joins = {\n        @Join(name = \"customer\", table = \"customers\", alias = \"c\", on = \"o.customer_id = c.id\")\n})\npublic class Order {\n    @Column(join = \"customer\", name = \"c.name\", filterable = true, sortable = true)\n    private String customerName;\n}\n```\n\n## Not on Project Reactor?\n\n```java\nRepository<User, UUID> blocking = userRepository.blocking();\nUser user = blocking.findById(id).orElseThrow();\n```\n\n## Exception handling\n\nEverything thrown is a `DatabaseException` subtype — catch the base type or discriminate by subtype (`QueryValidationException`, `RecordNotFoundException`, `DatabaseDuplicateKeyException`, `ForeignKeyException`, `DeadlockException`, `QueryTimeoutDatabaseException`, and more). All of it surfaces as a reactive `onError` signal, never a synchronous throw:\n\n```java\nuserRepository.findPage(query)\n        .onErrorResume(QueryValidationException.class,\n                ex -> Mono.error(new ResponseStatusException(BAD_REQUEST, ex.getMessage())));\n```\n\n## Troubleshooting\n\n| Symptom | Cause |\n|---|---|\n| `No qualifying bean of type 'DatabaseClient'` | Added `spring-data-r2dbc` instead of `spring-boot-starter-data-r2dbc` — only the starter activates the autoconfiguration this library builds on. |\n| Snapshot dependency won't resolve | Missing the `central-snapshots` repository block — Maven doesn't search Central's snapshot repo by default. |\n| `field not filterable/sortable/searchable` | The field's `@Column` doesn't set the attribute you're using it for. |\n| A join doesn't show up in the generated SQL | Joins are only added when a query references a field marked `join = \"...\"` — a plain SELECT that never touches it won't pull it in. |\n\n## Getting the code\n\nThe library itself needs no repo access — it's a published, versioned Maven Central artifact, usable in any Spring Boot + R2DBC + Postgres project without ever touching the source.\n\nThe source repository ([github.com/alexdev93/common-db](https://github.com/alexdev93/common-db)) is currently **private**. To read the code, file an issue, or open a pull request, reach out with what you'd like to do — review the code, report a bug, propose a feature — so access can be scoped appropriately: **alemayehu.dev@gmail.com**.\n\nLicensed under Apache License 2.0.\n"
   },
   {
     "slug": "container-infrastructure",

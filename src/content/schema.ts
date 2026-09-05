@@ -131,11 +131,24 @@ export const projectSchema = z.object({
     })
     .optional(),
   liveUrl: url.optional(),
-  /** Long-form case study. Any empty field is skipped by the UI. */
+  /**
+   * Long-form case study. Any empty field is skipped by the UI. Rendered as
+   * Markdown — headings, lists, links, tables, code blocks and images (as an
+   * external URL; there is no upload, so `![alt](https://...)` is the only
+   * form this takes) all work. See ProjectMarkdown for exactly what's allowed.
+   */
   problem: narrative,
   approach: narrative,
   architecture: narrative,
   outcome: narrative,
+  /**
+   * A full usage/reference doc for visitors who want to actually use the
+   * thing, not just read about it — an install guide, an API walkthrough,
+   * troubleshooting. Same Markdown rendering as the chapters above; this
+   * field just expects to hold a lot more of it. Renders as its own section
+   * after Outcome.
+   */
+  guide: narrative,
   /** Named decisions with the reasoning behind them. */
   decisions: z
     .array(
