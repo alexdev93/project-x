@@ -52,6 +52,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       url: absoluteUrl(`/blog/${post.slug}`),
       publishedTime: post.publishedAt?.toISOString(),
       tags: post.tags,
+      images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
     },
   };
 }
@@ -108,6 +109,16 @@ export default async function PostPage({ params }: Params) {
             <TechTagList items={post.tags} className="mt-6" />
           ) : null}
         </header>
+
+        {post.coverImageUrl ? (
+          // A per-post external URL — see ProjectMarkdown for the same call.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.coverImageUrl}
+            alt=""
+            className="mt-10 aspect-[16/9] w-full rounded-[var(--radius)] border border-line object-cover"
+          />
+        ) : null}
 
         <div className="mt-10">
           <PostBody>{post.body}</PostBody>

@@ -35,6 +35,7 @@ type Row = {
   updated_at?: string;
   like_count?: number;
   comment_count?: number;
+  cover_image_url?: string | null;
   total?: number;
 };
 
@@ -56,6 +57,7 @@ function toSummary(row: Row): PostSummary {
     publishedAt: row.published_at ? new Date(row.published_at) : null,
     likeCount: row.like_count ?? 0,
     commentCount: row.comment_count ?? 0,
+    coverImageUrl: row.cover_image_url ?? null,
   };
 }
 
@@ -92,7 +94,7 @@ export async function listPublishedPosts({
   const sql = getSql();
   const rows = (await sql`
     SELECT p.id, p.slug, p.title, p.excerpt, p.tags, p.pinned,
-           p.reading_minutes, p.published_at,
+           p.reading_minutes, p.published_at, p.cover_image_url,
            (SELECT count(*) FROM post_reactions r
              WHERE r.post_id = p.id AND r.active)::int AS like_count,
            (SELECT count(*) FROM post_comments c
@@ -119,7 +121,7 @@ export async function listRecentPosts(limit: number): Promise<PostSummary[]> {
   const sql = getSql();
   const rows = (await sql`
     SELECT p.id, p.slug, p.title, p.excerpt, p.tags, p.pinned,
-           p.reading_minutes, p.published_at,
+           p.reading_minutes, p.published_at, p.cover_image_url,
            (SELECT count(*) FROM post_reactions r
              WHERE r.post_id = p.id AND r.active)::int AS like_count,
            (SELECT count(*) FROM post_comments c
@@ -138,7 +140,7 @@ export async function getPublishedPost(slug: string): Promise<Post | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT p.id, p.slug, p.title, p.excerpt, p.body, p.tags, p.status, p.pinned,
-           p.reading_minutes, p.published_at, p.created_at, p.updated_at,
+           p.reading_minutes, p.published_at, p.created_at, p.updated_at, p.cover_image_url,
            (SELECT count(*) FROM post_reactions r
              WHERE r.post_id = p.id AND r.active)::int AS like_count,
            (SELECT count(*) FROM post_comments c
@@ -177,7 +179,7 @@ export async function listAllPosts(): Promise<Post[]> {
   const sql = getSql();
   const rows = (await sql`
     SELECT p.id, p.slug, p.title, p.excerpt, p.body, p.tags, p.status, p.pinned,
-           p.reading_minutes, p.published_at, p.created_at, p.updated_at,
+           p.reading_minutes, p.published_at, p.created_at, p.updated_at, p.cover_image_url,
            (SELECT count(*) FROM post_reactions r
              WHERE r.post_id = p.id AND r.active)::int AS like_count,
            (SELECT count(*) FROM post_comments c
@@ -193,7 +195,7 @@ export async function getPostForAdmin(id: string): Promise<Post | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT p.id, p.slug, p.title, p.excerpt, p.body, p.tags, p.status, p.pinned,
-           p.reading_minutes, p.published_at, p.created_at, p.updated_at,
+           p.reading_minutes, p.published_at, p.created_at, p.updated_at, p.cover_image_url,
            (SELECT count(*) FROM post_reactions r
              WHERE r.post_id = p.id AND r.active)::int AS like_count,
            (SELECT count(*) FROM post_comments c
@@ -371,10 +373,14 @@ export type LinkedInPostState = {
   /** Set once this post has been shared; identifies which LinkedIn post to
    * update or delete on a later edit/unpublish. */
   postUrn: string | null;
-  /** The attachment chosen for the *next* share, independent of whether one
-   * has happened yet — set from the editor before publish. */
-  attachmentUrn: string | null;
-  attachmentKind: "image" | "document" | null;
+  /** The post's own cover image — see lib/media/blob.ts — and the LinkedIn
+   * image asset uploaded from that same file, used as an article share's
+   * thumbnail. Independent of whether a share has happened yet. */
+  coverImageUrl: string | null;
+  coverImageLinkedInUrn: string | null;
+  /** A document queued for the *next* share, LinkedIn-only — see
+   * lib/linkedin/content.ts for why it has no cover-image equivalent. */
+  documentUrn: string | null;
 };
 
 export async function getLinkedInPostState(
@@ -383,7 +389,7 @@ export async function getLinkedInPostState(
   const sql = getSql();
   const rows = (await sql`
     SELECT slug, status, title, excerpt, linkedin_post_urn,
-           linkedin_attachment_urn, linkedin_attachment_kind
+           cover_image_url, cover_image_linkedin_urn, linkedin_document_urn
     FROM posts WHERE id = ${id}
   `) as {
     slug: string;
@@ -391,8 +397,9 @@ export async function getLinkedInPostState(
     title: string;
     excerpt: string;
     linkedin_post_urn: string | null;
-    linkedin_attachment_urn: string | null;
-    linkedin_attachment_kind: string | null;
+    cover_image_url: string | null;
+    cover_image_linkedin_urn: string | null;
+    linkedin_document_urn: string | null;
   }[];
 
   const row = rows[0];
@@ -404,8 +411,9 @@ export async function getLinkedInPostState(
     title: row.title,
     excerpt: row.excerpt,
     postUrn: row.linkedin_post_urn,
-    attachmentUrn: row.linkedin_attachment_urn,
-    attachmentKind: row.linkedin_attachment_kind as "image" | "document" | null,
+    coverImageUrl: row.cover_image_url,
+    coverImageLinkedInUrn: row.cover_image_linkedin_urn,
+    documentUrn: row.linkedin_document_urn,
   };
 }
 
@@ -418,16 +426,25 @@ export async function setLinkedInPostUrn(
   await sql`UPDATE posts SET linkedin_post_urn = ${urn} WHERE id = ${id}`;
 }
 
-/** Sets (or clears, passing `null`) the attachment queued for the next share. */
-export async function setLinkedInAttachment(
+/** Sets (or clears, passing `null`) the post's cover image. */
+export async function setCoverImage(
   id: string,
-  attachment: { urn: string; kind: "image" | "document" } | null,
+  cover: { url: string; linkedInUrn: string | null } | null,
 ): Promise<void> {
   const sql = getSql();
   await sql`
     UPDATE posts SET
-      linkedin_attachment_urn = ${attachment?.urn ?? null},
-      linkedin_attachment_kind = ${attachment?.kind ?? null}
+      cover_image_url = ${cover?.url ?? null},
+      cover_image_linkedin_urn = ${cover?.linkedInUrn ?? null}
     WHERE id = ${id}
   `;
+}
+
+/** Sets (or clears, passing `null`) the document queued for the next share. */
+export async function setLinkedInDocument(
+  id: string,
+  urn: string | null,
+): Promise<void> {
+  const sql = getSql();
+  await sql`UPDATE posts SET linkedin_document_urn = ${urn} WHERE id = ${id}`;
 }

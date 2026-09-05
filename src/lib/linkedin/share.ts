@@ -20,12 +20,16 @@ const REST_HEADERS = {
 
 export type LinkedInPostContent =
   | {
-      /** A link preview card — LinkedIn fetches nothing itself; title and
-       * description come from this site's own content. */
+      /** A link preview card. LinkedIn does not fetch anything itself for
+       * this: title, description and thumbnail all come from this site's own
+       * content and its uploaded LinkedIn image asset, not from crawling the
+       * URL. */
       type: "article";
       url: string;
       title: string;
       description?: string;
+      /** A `urn:li:image:...` asset (see assets.ts) shown on the card. */
+      thumbnail?: string;
     }
   | {
       /** A single previously-uploaded image or document (see assets.ts). */
@@ -43,6 +47,7 @@ function buildContent(content: LinkedInPostContent): Record<string, unknown> {
         source: content.url,
         title: content.title,
         ...(content.description ? { description: content.description } : {}),
+        ...(content.thumbnail ? { thumbnail: content.thumbnail } : {}),
       },
     };
   }

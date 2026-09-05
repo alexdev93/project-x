@@ -9,12 +9,8 @@ import {
 } from "@/lib/db/posts";
 import { revalidateFeed, revalidatePost } from "@/lib/blog/invalidate";
 import { getLinkedInAccount } from "@/lib/linkedin/account";
-import {
-  createLinkedInPost,
-  deleteLinkedInPost,
-  type LinkedInPostContent,
-} from "@/lib/linkedin/share";
-import { absoluteUrl } from "@/lib/site";
+import { buildLinkedInContent } from "@/lib/linkedin/content";
+import { createLinkedInPost, deleteLinkedInPost } from "@/lib/linkedin/share";
 import {
   checkRequest,
   databaseError,
@@ -71,7 +67,6 @@ export async function POST(request: Request, { params }: Params) {
           request,
           id: params.id,
           before,
-          slug: published.slug,
         });
 
         return okResponse({
@@ -130,36 +125,28 @@ async function shareNewlyPublishedPost({
   request,
   id,
   before,
-  slug,
 }: {
   request: Request;
   id: string;
   before: Awaited<ReturnType<typeof getLinkedInPostState>>;
-  slug: string;
 }): Promise<LinkedInShareResult> {
   if (before?.status === "published") return "skipped";
+  // `publishPost` already succeeded on this id by the time this runs, so a
+  // missing `before` would mean the row vanished between that read and this
+  // one — not something to paper over with a fallback state.
+  if (!before) return "failed";
 
   try {
     const account = await getLinkedInAccount(request.headers);
     if (!account) return "not_connected";
 
-    const title = before?.title || slug;
-    const url = absoluteUrl(`/blog/${slug}`);
-
-    const content: LinkedInPostContent = before?.attachmentUrn
-      ? {
-          type: "media",
-          urn: before.attachmentUrn,
-          title,
-          altText: before.excerpt || undefined,
-        }
-      : { type: "article", url, title, description: before?.excerpt };
+    const { content, commentary } = buildLinkedInContent(before);
 
     const urn = await createLinkedInPost({
       headers: request.headers,
       accountId: account.accountId,
       memberId: account.memberId,
-      commentary: title,
+      commentary,
       content,
     });
 
@@ -168,7 +155,7 @@ async function shareNewlyPublishedPost({
     return "shared";
   } catch (error) {
     console.error(
-      `[posts/publish] LinkedIn share failed for ${slug}:`,
+      `[posts/publish] LinkedIn share failed for ${before.slug}:`,
       error instanceof Error ? error.message : error,
     );
     return "failed";

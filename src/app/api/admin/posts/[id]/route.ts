@@ -5,10 +5,13 @@ import {
   deletePost,
   getLinkedInPostState,
   updatePost,
+  type LinkedInPostState,
 } from "@/lib/db/posts";
 import { revalidateFeed, revalidatePost } from "@/lib/blog/invalidate";
 import { getLinkedInAccount } from "@/lib/linkedin/account";
+import { buildLinkedInContent } from "@/lib/linkedin/content";
 import { deleteLinkedInPost, updateLinkedInPostCommentary } from "@/lib/linkedin/share";
+import { deleteCoverImage } from "@/lib/media/blob";
 import {
   checkRequest,
   databaseError,
@@ -66,7 +69,7 @@ export async function PATCH(request: Request, { params }: Params) {
     revalidateFeed();
 
     if (before?.postUrn && before.status === "published" && before.title !== title) {
-      await syncLinkedInCommentary(request, before.postUrn, title);
+      await syncLinkedInCommentary(request, { ...before, title }, before.postUrn);
     }
 
     return okResponse({ post: updated });
@@ -95,6 +98,9 @@ export async function DELETE(request: Request, { params }: Params) {
     revalidatePost(deleted.slug);
     revalidateFeed();
 
+    if (before?.coverImageUrl) {
+      await deleteCoverImage(before.coverImageUrl);
+    }
     if (before?.postUrn) {
       await removeFromLinkedInBestEffort(request, params.id, before.postUrn);
     }
@@ -106,27 +112,30 @@ export async function DELETE(request: Request, { params }: Params) {
 }
 
 /**
- * Best effort, same reasoning throughout this feature: the edit or delete
- * already succeeded on this site by the time either of these runs, so a
- * LinkedIn hiccup here must never surface as the site-side action having
- * failed. Only `commentary` is updatable through LinkedIn's API — an edited
- * excerpt or a changed attachment on an already-shared post has no API path
- * to reflect there; only the headline text does.
+ * Best effort, same reasoning throughout this feature: the edit already
+ * succeeded on this site by the time this runs, so a LinkedIn hiccup here
+ * must never surface as the site-side save having failed. Only `commentary`
+ * is updatable through LinkedIn's API — an edited excerpt, cover image or
+ * document on an already-shared post has no API path to reflect there; only
+ * the text does, which is why a title change also carries the blog URL again
+ * when the live post is a document share (see lib/linkedin/content.ts).
  */
 async function syncLinkedInCommentary(
   request: Request,
+  state: LinkedInPostState,
   urn: string,
-  title: string,
 ): Promise<void> {
   try {
     const account = await getLinkedInAccount(request.headers);
     if (!account) return;
 
+    const { commentary } = buildLinkedInContent(state);
+
     await updateLinkedInPostCommentary({
       headers: request.headers,
       accountId: account.accountId,
       urn,
-      commentary: title,
+      commentary,
     });
   } catch (error) {
     console.error(

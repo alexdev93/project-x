@@ -62,12 +62,7 @@ export default async function EditPostPage({
         </p>
       </header>
 
-      <PostEditor
-        post={post}
-        linkedInAttachment={
-          linkedIn?.attachmentKind ? { kind: linkedIn.attachmentKind } : null
-        }
-      />
+      <PostEditor post={post} linkedInDocumentAttached={Boolean(linkedIn?.documentUrn)} />
     </div>
   );
 }

@@ -37,6 +37,9 @@ export type PostSummary = {
   publishedAt: Date | null;
   likeCount: number;
   commentCount: number;
+  /** Shown at the top of the post and used as its link-preview image
+   * everywhere it's shared, LinkedIn included. Null when none was set. */
+  coverImageUrl: string | null;
 };
 
 /** A post page: the summary plus the body. */

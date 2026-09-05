@@ -254,3 +254,27 @@ ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_post_urn TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_attachment_urn TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_attachment_kind TEXT
   CHECK (linkedin_attachment_kind IS NULL OR linkedin_attachment_kind IN ('image', 'document'));
+
+-- 2026-09-06 — cover image, and folding "image attachment" into it.
+--
+-- LinkedIn's article (link preview) and media (uploaded image/document)
+-- content types are mutually exclusive on a post, so sharing an attached
+-- image switched the post to media-only and lost the link back to this site
+-- entirely. The image also lived only on LinkedIn's own asset storage, so it
+-- never appeared on the post here either.
+--
+-- Fixed by giving a post one cover image of its own — stored in Vercel Blob,
+-- rendered on the post and used as its OG image — plus the LinkedIn image
+-- asset uploaded from that same file, kept only as the *thumbnail* on an
+-- always-article share. Every share now carries the post's URL, image or not.
+--
+-- A document has no portfolio-side equivalent to unify with, so it keeps its
+-- own column, narrowed from the old shared attachment pair; any existing
+-- attachment is cleared rather than migrated; it lived only on an
+-- already-published LinkedIn post; this project's blog had none, so nothing
+-- of value is lost.
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_document_urn TEXT;
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS cover_image_linkedin_urn TEXT;
+ALTER TABLE posts DROP COLUMN IF EXISTS linkedin_attachment_urn;
+ALTER TABLE posts DROP COLUMN IF EXISTS linkedin_attachment_kind;

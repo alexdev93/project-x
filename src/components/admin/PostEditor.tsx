@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { LinkedInAttachmentField } from "@/components/admin/LinkedInAttachmentField";
+import { CoverImageField } from "@/components/admin/CoverImageField";
+import { LinkedInDocumentField } from "@/components/admin/LinkedInDocumentField";
 import { slugify } from "@/lib/blog/text";
 import type { Post } from "@/lib/blog/types";
 
@@ -35,11 +36,11 @@ type FieldErrors = Partial<Record<"title" | "slug" | "body" | "excerpt" | "tags"
 
 export function PostEditor({
   post,
-  linkedInAttachment,
+  linkedInDocumentAttached,
 }: {
   post?: Post;
   /** Only meaningful once the post exists — see the edit page. */
-  linkedInAttachment?: { kind: "image" | "document" } | null;
+  linkedInDocumentAttached?: boolean;
 }) {
   const router = useRouter();
   const editing = Boolean(post);
@@ -231,7 +232,13 @@ export function PostEditor({
       </Field>
 
       {editing ? (
-        <LinkedInAttachmentField postId={post!.id} initial={linkedInAttachment ?? null} />
+        <>
+          <CoverImageField postId={post!.id} initialUrl={post!.coverImageUrl} />
+          <LinkedInDocumentField
+            postId={post!.id}
+            initialAttached={linkedInDocumentAttached ?? false}
+          />
+        </>
       ) : null}
 
       {status.kind === "error" ? (
