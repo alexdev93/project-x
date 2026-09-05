@@ -107,7 +107,10 @@ export default function AppPage({ params }: Params) {
             </div>
           ) : null}
 
-          <dl className="mt-10 grid grid-cols-2 gap-6 border-y border-line py-6 sm:grid-cols-3">
+          {/* Single column below sm: a repo name plus its external-link icon
+              wraps mid-link in a ~148px grid-cols-2 column, splitting the icon
+              from its text — stacking reads better than that at any length. */}
+          <dl className="mt-10 grid grid-cols-1 gap-6 border-y border-line py-6 sm:grid-cols-3">
             {app.repo ? (
               <div>
                 <dt className="font-mono text-xs uppercase tracking-[0.08em] text-ink-subtle">

@@ -91,7 +91,10 @@ export default function ProjectPage({ params }: Params) {
             {project.summary}
           </p>
 
-          <dl className="mt-10 grid grid-cols-2 gap-6 border-y border-line py-6 sm:grid-cols-3">
+          {/* Single column below sm: at grid-cols-2, a value like "Architecture
+              and backend engineering" wraps to three lines in a ~148px column,
+              which reads worse than just stacking the fields. */}
+          <dl className="mt-10 grid grid-cols-1 gap-6 border-y border-line py-6 sm:grid-cols-3">
             <div>
               <dt className="font-mono text-xs uppercase tracking-[0.08em] text-ink-subtle">
                 Year

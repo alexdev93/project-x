@@ -40,7 +40,10 @@ export default function ProjectsPage() {
             description="Things you can install, not just read about."
           />
 
-          <Stagger className="mt-10 grid gap-4 sm:grid-cols-2">
+          {/* md, not sm, so this jumps to two columns at the same breakpoint
+              as the project grid above it rather than a tablet-width portrait
+              view squeezing an icon+title+tags card into ~300px at sm. */}
+          <Stagger className="mt-10 grid gap-4 md:grid-cols-2">
             {apps.map((app) => (
               <StaggerItem key={app.slug} className="h-full">
                 <AppCard app={app} />
