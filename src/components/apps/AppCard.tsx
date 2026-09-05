@@ -42,7 +42,7 @@ export function AppCard({ app }: { app: App }) {
               ) : null}
             </div>
 
-            <h3 className="mt-2 font-display text-xl leading-tight text-ink">
+            <h3 className="mt-2 line-clamp-2 min-h-13 font-display text-xl leading-tight text-ink">
               <Link href={`/apps/${app.slug}`} className="after:absolute after:inset-0">
                 {app.name}
               </Link>
@@ -50,11 +50,16 @@ export function AppCard({ app }: { app: App }) {
           </div>
         </div>
 
-        <p className="flex-1 text-sm leading-relaxed text-ink-muted">
+        {/*
+         * No `flex-1` here on purpose — combined with `line-clamp`'s
+         * `display: -webkit-box` it stops Chrome from actually clipping the
+         * text (see ProjectCard). `min-h` reserves the same space instead.
+         */}
+        <p className="line-clamp-3 min-h-17 text-sm leading-relaxed text-ink-muted">
           {app.tagline}
         </p>
 
-        <TechTagList items={app.tech} />
+        <TechTagList items={app.tech.slice(0, 5)} className="h-14 overflow-hidden" />
 
         <div className="mt-1 flex flex-wrap items-center gap-3 border-t border-line pt-4">
           {app.downloadUrl ? (

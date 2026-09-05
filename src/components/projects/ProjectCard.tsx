@@ -35,7 +35,7 @@ export function ProjectCard({
           ) : null}
         </div>
 
-        <Heading className="mt-5 font-display text-2xl leading-tight text-ink">
+        <Heading className="mt-5 line-clamp-2 min-h-15 font-display text-2xl leading-tight text-ink">
           {/* Stretched link: the whole card is the hit area, but only the
               title is announced as the link target. */}
           <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0">
@@ -43,11 +43,19 @@ export function ProjectCard({
           </Link>
         </Heading>
 
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-muted">
+        {/*
+         * `line-clamp` sets `display: -webkit-box`, and pairing that with a
+         * flex-grow (`flex-1`) on the same element is unreliable in Chrome —
+         * the box reports a blockified `display: flow-root` and stops
+         * actually clipping, so long text overflows past the clamp instead
+         * of truncating. A fixed `min-h` reserves the same 3-line space
+         * without flex-grow fighting the clamp.
+         */}
+        <p className="mt-3 line-clamp-3 min-h-17 text-sm leading-relaxed text-ink-muted">
           {project.summary}
         </p>
 
-        <TechTagList items={project.tech.slice(0, 5)} className="mt-5" />
+        <TechTagList items={project.tech.slice(0, 5)} className="mt-5 h-14 overflow-hidden" />
 
         <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
           <span className="font-mono text-xs uppercase tracking-[0.08em] text-ink-subtle">

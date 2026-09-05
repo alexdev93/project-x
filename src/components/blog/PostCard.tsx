@@ -48,7 +48,9 @@ export function PostCard({
         <Heading
           className={cn(
             "font-display leading-tight text-ink",
-            untitled ? "text-lg font-normal" : "text-2xl",
+            untitled
+              ? "line-clamp-5 min-h-28 text-lg font-normal"
+              : "line-clamp-2 min-h-15 text-2xl",
           )}
         >
           <Link
@@ -60,13 +62,19 @@ export function PostCard({
         </Heading>
 
         {untitled ? null : (
-          <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-muted">
+          // No `flex-1` here — combined with `line-clamp`'s
+          // `display: -webkit-box` it stops Chrome from actually clipping
+          // the text (see ProjectCard). `min-h` reserves the same space.
+          <p className="mt-3 line-clamp-3 min-h-17 text-sm leading-relaxed text-ink-muted">
             {post.excerpt}
           </p>
         )}
 
         {post.tags.length > 0 ? (
-          <TechTagList items={post.tags} className="mt-5" />
+          <TechTagList
+            items={post.tags.slice(0, 5)}
+            className="mt-5 h-14 overflow-hidden"
+          />
         ) : null}
 
         <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-subtle">
