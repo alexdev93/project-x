@@ -1,0 +1,46 @@
+name: CI
+
+# Runs on every push and PR against main — lint, typecheck, tests, and a
+# production build. No secrets required: the app degrades every database read
+# to an empty result rather than throwing (see src/lib/blog/service.ts), so a
+# build with no DATABASE_URL succeeds the same way this repo's own sandbox
+# builds do. This is a correctness gate only — Vercel's own Git integration
+# builds and deploys the real thing separately (see deploy.yml's comment for
+# why the two are kept apart).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm exec next lint
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

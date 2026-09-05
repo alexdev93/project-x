@@ -1,0 +1,46 @@
+name: Migrate database
+
+# Applies src/lib/db/schema.sql to production whenever it changes on main,
+# so a schema change ships without a manual `pnpm db:migrate` from a machine
+# that happens to have DATABASE_URL. Every statement in that file is written
+# to be safe to re-run (see its own header comment), so running this on every
+# push that touches it — not just the push that first added a statement — is
+# intentional, not wasteful: a merge, a revert, or a hotfix branch all still
+# end up migrated correctly with no extra bookkeeping about what already ran.
+#
+# Requires a DATABASE_URL secret on this repo (Settings -> Secrets and
+# variables -> Actions -> New repository secret) with write access to the
+# production database. Nothing here can run without it — the job fails
+# loudly rather than silently skipping, since a schema change deployed
+# without its migration is exactly the failure mode this exists to prevent.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/db/schema.sql"
+  workflow_dispatch: {}
+
+concurrency:
+  group: migrate-production
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Apply schema.sql
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

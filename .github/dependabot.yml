@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      # Anything not explicitly grouped below still gets its own PR — patch
+      # bumps across a whole tree get lumped together, but a major bump (the
+      # kind actually worth reading about, like the Next.js 14->15 jump this
+      # repo is already overdue for) still shows up as its own PR.
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
