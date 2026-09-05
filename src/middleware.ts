@@ -10,8 +10,16 @@ import { NextResponse, type NextRequest } from "next/server";
  * verify a signature would mean a database round trip on every request.
  *
  * What it buys is the common case: an anonymous visitor who follows a stale link
- * to /admin is redirected home immediately instead of loading a shell that then
+ * to /admin is sent to sign in immediately instead of loading a shell that then
  * 404s. Anyone who forges the cookie gets exactly as far as the next check.
+ *
+ * **Sends to `/sign-in`, not `/`.** It used to redirect home, on the theory that
+ * an anonymous visitor here is almost always a stale link or a crawler. It
+ * missed the one visitor who is neither: the owner, signed out, with nowhere on
+ * the site to sign back in from — sign-in only otherwise lives next to the
+ * actions that need it (a comment box), so an owner who lands on /admin signed
+ * out with no blog post open had no way to ever get back in. `/sign-in` returns
+ * here (`callbackURL`) once they do.
  *
  * The two real boundaries are elsewhere and both re-derive authorization from
  * scratch: `requireAdmin()` at the top of every /api/admin/* handler, and the
@@ -32,8 +40,9 @@ export function middleware(request: NextRequest) {
 
   if (signedIn) return NextResponse.next();
 
-  const home = new URL("/", request.url);
-  return NextResponse.redirect(home);
+  const signIn = new URL("/sign-in", request.url);
+  signIn.searchParams.set("callbackURL", request.nextUrl.pathname);
+  return NextResponse.redirect(signIn);
 }
 
 export const config = {
