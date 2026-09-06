@@ -27,11 +27,15 @@ export function buildLinkedInContent(state: LinkedInPostState): {
   const title = state.title || state.slug;
   const caption = state.commentary?.trim() || title;
   const url = absoluteUrl(`/blog/${state.slug}`);
+  // Labeled, not a bare URL on its own line — matches how an author writing
+  // their own caption already links things ("Read more: <url>"), so the one
+  // link this app adds automatically doesn't stand out as the odd one out.
+  const withLink = `${caption}\n\nFull post: ${url}`;
 
   if (state.documentUrn) {
     return {
       content: { type: "media", urn: state.documentUrn, title },
-      commentary: `${caption}\n\n${url}`,
+      commentary: withLink,
     };
   }
 
@@ -42,14 +46,14 @@ export function buildLinkedInContent(state: LinkedInPostState): {
   if (images.length === 1) {
     return {
       content: { type: "media", urn: images[0].urn, altText: images[0].altText },
-      commentary: `${caption}\n\n${url}`,
+      commentary: withLink,
     };
   }
 
   if (images.length >= 2) {
     return {
       content: { type: "multiImage", images },
-      commentary: `${caption}\n\n${url}`,
+      commentary: withLink,
     };
   }
 

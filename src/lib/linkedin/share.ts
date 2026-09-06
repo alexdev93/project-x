@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getLinkedInAccessToken } from "./account";
+import { escapeLittleText } from "./little-text";
 
 /**
  * Creating, updating and deleting a LinkedIn post.
@@ -101,7 +102,7 @@ export async function createLinkedInPost({
     headers: { Authorization: `Bearer ${accessToken}`, ...REST_HEADERS },
     body: JSON.stringify({
       author: `urn:li:person:${memberId}`,
-      commentary,
+      commentary: escapeLittleText(commentary),
       visibility: "PUBLIC",
       distribution: {
         feedDistribution: "MAIN_FEED",
@@ -153,7 +154,7 @@ export async function updateLinkedInPostCommentary({
         "X-RestLi-Method": "PARTIAL_UPDATE",
         ...REST_HEADERS,
       },
-      body: JSON.stringify({ patch: { $set: { commentary } } }),
+      body: JSON.stringify({ patch: { $set: { commentary: escapeLittleText(commentary) } } }),
     },
   );
 
