@@ -151,7 +151,7 @@ export function formatYearMonth(value: string): string {
 
 export function formatDateRange(entry: Experience): string {
   const start = formatYearMonth(entry.start);
-  return entry.end ? `${start} — ${formatYearMonth(entry.end)}` : `${start} — Present`;
+  return entry.end ? `${start} - ${formatYearMonth(entry.end)}` : `${start} - Present`;
 }
 
 /**

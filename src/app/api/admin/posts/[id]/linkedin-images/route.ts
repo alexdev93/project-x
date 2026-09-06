@@ -50,7 +50,7 @@ export async function POST(request: Request, props: Params) {
     return errorResponse(400, "Choose an image file.");
   }
   if (file.size > MAX_BYTES) {
-    return errorResponse(413, "That image is too large — 4 MB max.");
+    return errorResponse(413, "That image is too large - 4 MB max.");
   }
 
   const altText = String(formData.get("altText") ?? "");
@@ -60,7 +60,7 @@ export async function POST(request: Request, props: Params) {
     if (!state) return notFound();
 
     if (!state.coverImageLinkedInUrn) {
-      return errorResponse(400, "Add a cover image first — it's always the first photo.");
+      return errorResponse(400, "Add a cover image first - it's always the first photo.");
     }
     if (state.extraImages.length >= MAX_EXTRA_IMAGES) {
       return errorResponse(400, `That's the most photos this gallery supports (${MAX_EXTRA_IMAGES + 1}).`);

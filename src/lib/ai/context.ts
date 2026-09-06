@@ -65,7 +65,7 @@ function buildContext(): string {
       "## Experience (most recent first)",
       ...experiences.map((entry) =>
         [
-          `### ${entry.title} — ${entry.company}`,
+          `### ${entry.title} - ${entry.company}`,
           `Period: ${formatDateRange(entry)}`,
           `Type: ${entry.kind}`,
           entry.location ? `Location: ${entry.location}` : null,

@@ -32,7 +32,7 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: Params): Promise<Metadata> {
   const params = await props.params;
   return {
-    title: `Writing — page ${params.page}`,
+    title: `Writing - page ${params.page}`,
     // Deliberately not indexed: the posts themselves are what a search engine
     // should surface, and a paginated slice of excerpts competes with them.
     robots: { index: false, follow: true },

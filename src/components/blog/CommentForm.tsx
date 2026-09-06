@@ -161,7 +161,7 @@ export function CommentForm({
 
       {status.kind === "pending" ? (
         <p role="status" className="text-sm text-ink-muted">
-          Thanks — that&apos;s waiting for approval and will appear once it is
+          Thanks, that&apos;s waiting for approval and will appear once it is
           reviewed.
         </p>
       ) : null}

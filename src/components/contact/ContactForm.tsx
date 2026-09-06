@@ -67,7 +67,7 @@ export function ContactForm() {
         <div>
           <p className="font-display text-2xl text-ink">Message sent</p>
           <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-            Thanks {status.name} — it landed. I&apos;ll reply to the address you
+            Thanks {status.name}, it landed. I&apos;ll reply to the address you
             gave, usually within a couple of days.
           </p>
         </div>

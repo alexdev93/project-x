@@ -24,7 +24,7 @@ export default async function AdminContentPage() {
         <h1 className="font-display text-3xl text-ink">Site content</h1>
         <p className="mt-1 max-w-[60ch] text-sm text-ink-muted">
           The text on your portfolio pages. Saving writes a commit to the
-          repository, which starts a deployment — changes are live a minute or
+          repository, which starts a deployment, and changes are live a minute or
           two later, and every edit can be undone from the repository&apos;s
           history.
         </p>

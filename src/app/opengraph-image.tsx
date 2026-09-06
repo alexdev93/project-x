@@ -3,7 +3,7 @@ import { profile } from "@/content";
 import { ICON_PATHS, ICON_STROKE, ICON_VIEW_BOX } from "@/components/brand/geometry";
 
 export const runtime = "nodejs";
-export const alt = `${profile.name} — ${profile.role}`;
+export const alt = `${profile.name} - ${profile.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

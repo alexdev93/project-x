@@ -50,7 +50,7 @@ export async function POST(request: Request, props: Params) {
     return errorResponse(400, "Choose an image file.");
   }
   if (file.size > MAX_BYTES) {
-    return errorResponse(413, "That image is too large — 4 MB max.");
+    return errorResponse(413, "That image is too large - 4 MB max.");
   }
 
   try {

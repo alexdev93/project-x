@@ -182,7 +182,7 @@ export function PostEditor({
           onInput={onTitleInput}
           disabled={saving}
           error={fieldErrors.title}
-          placeholder="Optional — a short thought needs no headline"
+          placeholder="Optional - a short thought needs no headline"
           autoComplete="off"
         />
       </Field>

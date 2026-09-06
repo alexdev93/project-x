@@ -41,7 +41,7 @@ export async function POST(request: Request, props: Params) {
     return errorResponse(400, "Missing file.");
   }
   if (file.size > MAX_BYTES) {
-    return errorResponse(413, "That file is too large — 4 MB max.");
+    return errorResponse(413, "That file is too large - 4 MB max.");
   }
 
   const account = await getLinkedInAccount(request.headers);

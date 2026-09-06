@@ -43,12 +43,12 @@ export function Header({ wordmark }: { wordmark: string }) {
         <div className="flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
-            aria-label={`${wordmark} — home`}
+            aria-label={`${wordmark} - home`}
             className="text-ink transition-opacity hover:opacity-70"
           >
             {/* Mark only — the wordmark would repeat the name the hero already
                 states. The link carries the accessible name, so the logo stays
-                hidden from assistive tech and "Alex — home" is announced once.
+                hidden from assistive tech and "Alex - home" is announced once.
 
                 Sized larger than the old lockup on purpose: the icon's ink
                 fills 45/64 of its viewBox, where the lockup scaled the mark to

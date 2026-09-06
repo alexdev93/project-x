@@ -50,7 +50,7 @@ export function LinkedInCaptionField({
       }
 
       setState("idle");
-      setNote(result.synced ? "Updated — the live LinkedIn post now uses this." : "Saved.");
+      setNote(result.synced ? "Updated - the live LinkedIn post now uses this." : "Saved.");
     } catch {
       setState("error");
       setNote("Couldn't reach the server.");
@@ -74,7 +74,7 @@ export function LinkedInCaptionField({
         defaultValue={initialCommentary}
         disabled={busy}
         maxLength={MAX_LENGTH}
-        placeholder="Write the post the way you'd actually post it on LinkedIn — hashtags, mentions, line breaks all work. The blog link is added automatically."
+        placeholder="Write the post the way you'd actually post it on LinkedIn - hashtags, mentions, line breaks all work. The blog link is added automatically."
         className="mt-3"
       />
 
