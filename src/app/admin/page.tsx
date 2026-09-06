@@ -32,7 +32,7 @@ export default async function AdminOverviewPage() {
   await requireAdminPage();
 
   const stats = await readStats();
-  const linkedIn = await getLinkedInAccount(headers()).catch(() => null);
+  const linkedIn = await getLinkedInAccount(await headers()).catch(() => null);
 
   return (
     <div className="flex flex-col gap-8">

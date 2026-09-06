@@ -27,7 +27,9 @@ export function useFocusTrap({
   autoFocus = false,
 }: {
   active: boolean;
-  containerRef: RefObject<HTMLElement>;
+  // React 19: `useRef<HTMLDivElement>(null)` is `RefObject<HTMLDivElement | null>`,
+  // not `RefObject<HTMLDivElement>` — the null lives in the type argument now.
+  containerRef: RefObject<HTMLElement | null>;
   onClose: () => void;
   /**
    * Move focus to the first focusable child on open. Right for a panel whose

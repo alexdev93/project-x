@@ -26,7 +26,6 @@ try {
   process.exit(1);
 }
 
-const INK = "#1a1714";
 const PAPER = "#f5f1ea";
 const CANVAS_DARK = "#14120f";
 const MUTED = "#a79e93";

@@ -99,7 +99,7 @@ async function read(requestHeaders: Headers): Promise<SessionUser | null> {
  * reach for this.
  */
 export async function getCurrentUser(): Promise<SessionUser | null> {
-  return read(headers());
+  return read(await headers());
 }
 
 /** The current user in a route handler. No dynamic-rendering implication. */

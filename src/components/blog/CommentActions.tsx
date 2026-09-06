@@ -47,9 +47,13 @@ export function CommentActions({
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Captured once at mount rather than read fresh on every render: `Date.now()`
+  // is impure, and this is already the soft, best-effort check (see above) —
+  // a mount-time snapshot is all that check needs.
+  const [now] = useState(() => Date.now());
 
   const mine = session?.user?.id === authorId;
-  const age = Date.now() - new Date(comment.createdAt).getTime();
+  const age = now - new Date(comment.createdAt).getTime();
   const editable = age <= EDIT_WINDOW_MINUTES * 60_000;
 
   async function save(event: React.FormEvent<HTMLFormElement>) {
