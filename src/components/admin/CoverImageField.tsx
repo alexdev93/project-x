@@ -18,9 +18,13 @@ import { Button } from "@/components/ui/Button";
 export function CoverImageField({
   postId,
   initialUrl,
+  onChange,
 }: {
   postId: string;
   initialUrl: string | null;
+  /** Told about every upload/remove — see PostEditor: the gallery field
+   * needs to know whether a cover image exists, live, not just at load. */
+  onChange?: (url: string | null) => void;
 }) {
   const [url, setUrl] = useState(initialUrl);
   const [state, setState] = useState<"idle" | "busy" | "error">("idle");
@@ -48,6 +52,7 @@ export function CoverImageField({
       }
 
       setUrl(result.url);
+      onChange?.(result.url);
       setState("idle");
       setNote(
         result.relinked
@@ -77,6 +82,7 @@ export function CoverImageField({
       }
 
       setUrl(null);
+      onChange?.(null);
       setState("idle");
       setNote(result.relinked ? "Removed — the live LinkedIn post now shows a plain link." : null);
     } catch {

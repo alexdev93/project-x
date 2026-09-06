@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -42,6 +42,13 @@ export function LinkedInGalleryField({
   const [state, setState] = useState<"idle" | "busy" | "error">("idle");
   const [note, setNote] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
+
+  // Removing the cover image cascades to clear the gallery server-side (see
+  // setCoverImage) — mirror that here so the list doesn't show photos that
+  // no longer exist the moment the cover disappears in this same session.
+  useEffect(() => {
+    if (!hasCoverImage) setImages([]);
+  }, [hasCoverImage]);
 
   async function upload(file: File) {
     setState("busy");

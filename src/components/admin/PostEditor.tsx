@@ -55,6 +55,9 @@ export function PostEditor({
   const editing = Boolean(post);
 
   const [tab, setTab] = useState<"blog" | "linkedin">("blog");
+  // Lifted out of CoverImageField: the gallery field needs to know whether a
+  // cover image exists *live*, not just at page load — see its onChange.
+  const [coverImageUrl, setCoverImageUrl] = useState(post?.coverImageUrl ?? null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [deleting, setDeleting] = useState(false);
@@ -259,10 +262,14 @@ export function PostEditor({
 
       {editing ? (
         <div hidden={tab !== "linkedin"} className="flex flex-col gap-5">
-          <CoverImageField postId={post!.id} initialUrl={post!.coverImageUrl} />
+          <CoverImageField
+            postId={post!.id}
+            initialUrl={post!.coverImageUrl}
+            onChange={setCoverImageUrl}
+          />
           <LinkedInGalleryField
             postId={post!.id}
-            hasCoverImage={Boolean(post!.coverImageUrl)}
+            hasCoverImage={Boolean(coverImageUrl)}
             initialImages={linkedIn?.extraImages ?? []}
           />
           <LinkedInCaptionField postId={post!.id} initialCommentary={linkedIn?.commentary ?? ""} />
