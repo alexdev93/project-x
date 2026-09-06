@@ -2,7 +2,7 @@ import "server-only";
 
 import { Pool } from "@neondatabase/serverless";
 import { betterAuth } from "better-auth";
-import { customSession, genericOAuth } from "better-auth/plugins";
+import { bearer, customSession, genericOAuth, oauthPopup } from "better-auth/plugins";
 import { isAdmin } from "./admin";
 import {
   getAuthBaseUrl,
@@ -134,6 +134,19 @@ function create() {
         session,
         user: { ...user, isAdmin: isAdmin(user) },
       })),
+
+      /**
+       * Lets a signed-out reader sign in from inside a blog post (to like or
+       * comment) without ever navigating the page away: `signIn.popup` on the
+       * client opens Google sign-in in a real popup window, and this plugin
+       * swaps the OAuth callback's redirect for a completion page that posts
+       * the result back to the opener and closes itself. `bearer` is paired
+       * per the plugin's own guidance — inert here since nothing on this site
+       * runs embedded in a cross-origin iframe, but it silences a startup
+       * warning that assumes it might be.
+       */
+      oauthPopup(),
+      bearer(),
 
       /**
        * LinkedIn, registered as a generic OAuth2/OIDC provider rather than a

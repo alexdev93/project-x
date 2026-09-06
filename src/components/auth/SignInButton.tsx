@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { signInWithGoogle } from "@/lib/auth/client";
+import { signInWithGoogle, signInWithGooglePopup } from "@/lib/auth/client";
 
 /**
  * Google sign-in.
@@ -21,12 +21,26 @@ import { signInWithGoogle } from "@/lib/auth/client";
 
 export function SignInButton({
   callbackURL,
+  mode = "redirect",
   label = "Sign in with Google",
   size = "md",
   className,
 }: {
-  /** Where to land after the round trip. Same-origin paths only; see the client. */
+  /**
+   * Where to land after the round trip. Same-origin paths only; see the
+   * client. Used as the redirect target in "redirect" mode, and as the
+   * fallback target if "popup" mode's popup gets blocked.
+   */
   callbackURL?: string;
+  /**
+   * "popup" signs in through a real popup window, so the page underneath
+   * never navigates away — use it wherever there's page state worth keeping
+   * (an in-progress comment, a post someone is reading). Falls back to a
+   * full-page redirect automatically if the browser blocks the popup.
+   * "redirect" (the default) is right for a dedicated destination like
+   * /sign-in, where there's nothing on the page to preserve.
+   */
+  mode?: "redirect" | "popup";
   label?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -36,6 +50,29 @@ export function SignInButton({
   async function start() {
     setState("pending");
     try {
+      if (mode === "popup") {
+        const { error, blocked, cancelled } = await signInWithGooglePopup();
+        if (!error) {
+          // The session is already live; the caller's own session hook picks
+          // it up and re-renders, so there's nothing further to do here.
+          setState("idle");
+          return;
+        }
+        if (cancelled) {
+          // The visitor closed the popup themselves — not a failure worth an
+          // error message, just back to the button as if nothing happened.
+          setState("idle");
+          return;
+        }
+        if (blocked) {
+          const { error: redirectError } = await signInWithGoogle(callbackURL);
+          if (redirectError) setState("error");
+          return;
+        }
+        setState("error");
+        return;
+      }
+
       const { error } = await signInWithGoogle(callbackURL);
       // A failed request resolves rather than throws (see signInWithGoogle) —
       // check it explicitly, or a 503 leaves this spinning forever. On
