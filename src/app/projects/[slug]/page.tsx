@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { Badge, TechTagList } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
-import { ProjectMarkdown } from "@/components/projects/ProjectMarkdown";
+import { Chapter } from "@/components/projects/Chapter";
 import {
   getProjectBySlug,
   getProjectSlugs,
@@ -32,22 +32,6 @@ export function generateMetadata({ params }: Params): Metadata {
     description: project.summary,
     openGraph: { title: project.name, description: project.summary },
   };
-}
-
-/** A titled block of case-study Markdown. Renders nothing when unwritten. */
-function Chapter({ title, body }: { title: string; body: string }) {
-  if (!body) return null;
-
-  return (
-    <Reveal as="section" className="border-t border-line pt-10">
-      <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
-        {title}
-      </h2>
-      <div className="mt-5">
-        <ProjectMarkdown>{body}</ProjectMarkdown>
-      </div>
-    </Reveal>
-  );
 }
 
 export default function ProjectPage({ params }: Params) {
@@ -206,7 +190,7 @@ export default function ProjectPage({ params }: Params) {
             <Reveal as="section" className="border-t border-line pt-10">
               <p className="max-w-[62ch] text-base leading-relaxed text-ink-subtle">
                 A full write-up of this project is still to come. In the
-                meantime, the stack and structure above give the shape of it —
+                meantime, the stack and structure above give the shape of it,
                 and the assistant can answer questions about the work.
               </p>
             </Reveal>

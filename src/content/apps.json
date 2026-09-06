@@ -5,11 +5,13 @@
     "tagline": "Expense tracking that reads your bank SMS so you don't have to type it in.",
     "description": "An Android app that watches for transaction alerts from Ethiopian banks and mobile money providers Telebirr, CBE, BOA, Enat Bank, Dashen Bank, Awash Bank and M-Pesa and turns each one into a categorized transaction automatically. Everything is stored on-device; there's no account and no server. Tracks spending against goals and shows where the money actually went.",
     "platform": "android",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "tech": [
       "Flutter",
+      "Kotlin",
       "Hive",
-      "Provider"
+      "Provider",
+      "SQLite"
     ],
     "repo": {
       "visibility": "private",
@@ -18,6 +20,55 @@
     "downloadUrl": "/api/apps/spendguard/download",
     "privacyUrl": "https://alexdev93.github.io/spendguard-privacy/",
     "icon": "/apps/spendguard/icon.svg",
-    "weight": 0
+    "weight": 0,
+    "problem": "Ethiopian banks and mobile money providers have no unified API and no shared transaction format, so a personal finance app either asks for manual entry (unreliable, gets abandoned) or a cloud backend that reads financial SMS off the device (a genuine privacy risk for account balances and transaction history). Neither is acceptable for something meant to track money.",
+    "approach": "Read transaction SMS on-device only, through a staged parser pipeline: detect script (Latin or Ethiopic, since Telebirr and the banks write English while M-Pesa writes Amharic), identify the sending institution against a registry of about thirty five banks and wallets, run a per-institution template where one exists, fall back to a generic keyword parser otherwise, then enrich with the balance the SMS itself states. No account, no server, no analytics.",
+    "architecture": "Clean layering: domain entities and repository interfaces, Hive-backed repository implementations, a core layer holding the parsing pipeline and finance calculators as pure functions with no Flutter dependency, and features on top for onboarding, dashboard, transactions, goals, reports and settings, each with its own ChangeNotifier providers.\n\nSMS capture itself sits entirely on the native Android side, not in Dart: a manifest-declared BroadcastReceiver for SMS_RECEIVED (the same mechanism the Messages app uses, and the OS starts it whether or not SpendGuard is currently running) reassembles multi-part messages and writes them into a local SQLite staging table, which Flutter drains over a MethodChannel and hands to the same parser pipeline used everywhere else. Balances are never typed in: BalanceCalculator computes each account as a starting balance plus signed transactions after a given date, and every time an SMS states a fresh balance, that figure rebases the starting point directly.",
+    "outcome": "Shipped, installable APK covering roughly thirty five Ethiopian banks and mobile money providers, with bilingual English and Amharic support (including the framework's own date pickers and system dialogs, not just app strings), light and dark themes, and savings goals with a computed contribution roadmap. Runs entirely on-device: no account, no backend, nothing to leak.",
+    "guide": "## Features\n\n- **Automatic transaction capture** in the foreground and background, in English and Amharic, from SMS only, no notification-access permission required.\n- **Staged parser** covering Telebirr, M-Pesa, and roughly thirty more Ethiopian banks and wallets.\n- **Real balances** anchored to the figure each bank's own SMS states, not typed in and kept accurate by hand.\n- **Savings goals with a roadmap**: target dates, contribution history, required run rate, and an on-track or behind pace.\n- **Spending alerts** for a daily limit and for goals falling behind, generated in-app.\n- **Searchable transaction history**, filterable by type, category, institution and date range.\n- **Reports**: daily, weekly and monthly summaries, a six-month income-versus-expense trend, top categories, savings rate.\n- **Bilingual interface**, English or አማርኛ, following the device language by default and switchable in Settings.\n- **Light and dark theme.**\n\n## Getting started\n\nRequirements: the Flutter SDK (Dart 3.11 or newer) and an Android device or emulator, since SMS capture is entirely native Android and needs a real SMS provider to read from.\n\n```bash\nflutter pub get\nflutter run\nflutter test\nflutter analyze\n```\n\nIf a Hive model annotated with `@HiveType` changes, regenerate its adapter:\n\n```bash\ndart run build_runner build --delete-conflicting-outputs\n```\n\nOn first launch, grant the SMS permission when prompted; that is the only permission the app asks for, and it is entirely optional. Declining it just means transactions get added manually instead.\n\n## Testing\n\n```bash\nflutter test\n```\n\nCoverage includes the parser (Telebirr and M-Pesa fixtures, the pipeline, institution identification), the balance and goal-roadmap calculators, the spending-limit evaluator, transaction deduplication, and the transaction query and filter helpers.",
+    "decisions": [
+      {
+        "title": "SMS only, no notification access",
+        "detail": "Transaction data comes from SMS alone. No notification-listener permission is requested at all, which is both a smaller privacy footprint and a single, well-understood capture path instead of two overlapping ones."
+      },
+      {
+        "title": "Native-side SMS capture, not a Dart plugin",
+        "detail": "Earlier versions tried a telephony plugin stream, a native notification listener, and a Dart background isolate for capturing SMS while the app was closed; all three were removed. Capture is now a plain Android BroadcastReceiver writing into a local SQLite table, which fires identically whether the app is open, backgrounded, or not running at all, so there is no separate code path for any of those cases."
+      },
+      {
+        "title": "Balances anchored to the bank's own statement, not manual entry",
+        "detail": "Every account starts at zero and is rebased to a real balance the first time that institution's SMS states one, in English or Amharic. There is no manual starting-balance field anywhere in the app, and nothing for a user to keep in sync by hand."
+      },
+      {
+        "title": "Hand-written localization, not generated ARB catalogs",
+        "detail": "Each supported language implements one AppStrings interface directly, so a missing translation is a compile error rather than a silently blank string at runtime, which is the guarantee ARB-based tooling does not give by default."
+      },
+      {
+        "title": "Deduplication as a database constraint first",
+        "detail": "The raw SMS table has a unique constraint on address, body and date that silently ignores a repeat insert, so a broadcast firing twice for one logical message cannot double-count. A second, independent heuristic layer above it also catches near-duplicates that vary slightly in text but share a reference number, provider and amount within a short window."
+      }
+    ],
+    "components": [
+      {
+        "name": "Parser pipeline",
+        "description": "Script detection, institution identification against a registry of about thirty five banks and wallets, per-institution templates, a generic fallback, and balance enrichment, run as one ordered pipeline behind a single SmsParser facade."
+      },
+      {
+        "name": "Finance calculators",
+        "description": "Pure, dependency-free functions for account balances, savings-goal roadmaps and spending-limit evaluation, unit-tested in isolation from the rest of the app."
+      },
+      {
+        "name": "Native SMS bridge",
+        "description": "A Kotlin BroadcastReceiver and local SQLite staging table on the Android side, exposed to Flutter over a single MethodChannel; nothing on the native side parses a message, it only stores and forwards raw text."
+      },
+      {
+        "name": "Data and domain layer",
+        "description": "Hive-backed repositories implementing plain domain interfaces, so the parsing and finance logic above never depends on how a transaction is actually persisted."
+      },
+      {
+        "name": "Localization",
+        "description": "An abstract AppStrings interface implemented once per language, resolved from the widget tree for UI code and separately for the background code that generates spending alerts and notifications."
+      }
+    ]
   }
 ]

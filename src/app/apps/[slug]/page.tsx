@@ -9,7 +9,8 @@ import { Card } from "@/components/ui/Card";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { DownloadButton } from "@/components/apps/DownloadButton";
-import { apps, getAppBySlug, type App } from "@/content";
+import { Chapter } from "@/components/projects/Chapter";
+import { apps, getAppBySlug, hasAppCaseStudy, type App } from "@/content";
 import { canFetchAppReleases, listApkReleases, type ReleaseInfo } from "@/lib/apps/releases";
 import { formatDate } from "@/lib/format";
 
@@ -162,6 +163,65 @@ export default function AppPage({ params }: Params) {
               <Suspense fallback={<BrandLoader compact message="Checking the latest release" />}>
                 <DownloadSection app={app} downloadUrl={app.downloadUrl} />
               </Suspense>
+            </Reveal>
+          ) : null}
+
+          <Chapter title="The problem" body={app.problem} />
+          <Chapter title="Approach" body={app.approach} />
+          <Chapter title="Architecture" body={app.architecture} />
+
+          {app.components.length > 0 ? (
+            <Reveal as="section" className="border-t border-line pt-10">
+              <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
+                Components
+              </h2>
+              <Stagger className="mt-6 grid gap-3 sm:grid-cols-2">
+                {app.components.map((component) => (
+                  <StaggerItem key={component.name} className="h-full">
+                    <Card className="h-full p-5">
+                      <p className="font-mono text-sm text-accent">
+                        {component.name}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                        {component.description}
+                      </p>
+                    </Card>
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </Reveal>
+          ) : null}
+
+          {app.decisions.length > 0 ? (
+            <Reveal as="section" className="border-t border-line pt-10">
+              <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
+                Decisions
+              </h2>
+              <dl className="mt-6 space-y-6">
+                {app.decisions.map((decision) => (
+                  <div key={decision.title}>
+                    <dt className="font-display text-xl text-ink">
+                      {decision.title}
+                    </dt>
+                    <dd className="mt-2 max-w-[68ch] text-base leading-relaxed text-ink-muted">
+                      {decision.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          ) : null}
+
+          <Chapter title="Outcome" body={app.outcome} />
+          <Chapter title="Guide" body={app.guide} />
+
+          {!hasAppCaseStudy(app) ? (
+            <Reveal as="section" className="border-t border-line pt-10">
+              <p className="max-w-[62ch] text-base leading-relaxed text-ink-subtle">
+                A full write-up of this app is still to come. In the
+                meantime, the stack and structure above give the shape of it,
+                and the assistant can answer questions about the work.
+              </p>
             </Reveal>
           ) : null}
         </div>

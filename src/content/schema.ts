@@ -209,6 +209,32 @@ export const appSchema = z.object({
   privacyUrl: url.optional(),
   /** Path under /public. Absent falls back to a lettermark badge. */
   icon: z.string().min(1).optional(),
+  /**
+   * Long-form case study, same fields and same rendering as a project's (see
+   * projectSchema above) — an app is a sibling content type, not a lesser
+   * one, and gets the identical depth once there's something to write.
+   */
+  problem: narrative,
+  approach: narrative,
+  architecture: narrative,
+  outcome: narrative,
+  guide: narrative,
+  decisions: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        detail: z.string().min(1),
+      }),
+    )
+    .default([]),
+  components: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().min(1),
+      }),
+    )
+    .default([]),
   weight: z.number().int().default(0),
 });
 

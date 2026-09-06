@@ -121,6 +121,13 @@ export function hasCaseStudy(project: Project): boolean {
   );
 }
 
+/** Same check as `hasCaseStudy`, for an app's identical case-study fields. */
+export function hasAppCaseStudy(app: App): boolean {
+  return Boolean(
+    app.problem || app.approach || app.architecture || app.outcome || app.guide || app.decisions.length,
+  );
+}
+
 const MONTHS = [
   "Jan",
   "Feb",
