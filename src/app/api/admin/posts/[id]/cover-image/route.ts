@@ -10,9 +10,14 @@ import { errorResponse, notFound, okResponse, sameOrigin } from "@/lib/http/guar
 /**
  * A post's cover image: stored in Vercel Blob so it can be shown on the post
  * itself, plus the same file uploaded to LinkedIn's own asset storage for use
- * as an article share's thumbnail (see lib/linkedin/content.ts). The two
- * uploads are independent — a post can have a cover image before LinkedIn is
- * even connected, it just shares without a thumbnail until one exists.
+ * as the first photo of a real LinkedIn image/gallery post (see
+ * lib/linkedin/content.ts — not a link-preview thumbnail). The two uploads
+ * are independent — a post can have a cover image before LinkedIn is even
+ * connected, it just shares without one until it's connected.
+ *
+ * Removing the cover image also clears every extra gallery photo (see
+ * setCoverImage) — the gallery is always this image followed by the extras,
+ * so there is nothing for the extras to follow without it.
  *
  * If the post is already published and already shared, saving or removing
  * the image also replaces the live LinkedIn post — see relinkLinkedInPost for

@@ -62,7 +62,14 @@ export default async function EditPostPage({
         </p>
       </header>
 
-      <PostEditor post={post} linkedInDocumentAttached={Boolean(linkedIn?.documentUrn)} />
+      <PostEditor
+        post={post}
+        linkedIn={{
+          documentAttached: Boolean(linkedIn?.documentUrn),
+          commentary: linkedIn?.commentary ?? "",
+          extraImages: linkedIn?.extraImages ?? [],
+        }}
+      />
     </div>
   );
 }

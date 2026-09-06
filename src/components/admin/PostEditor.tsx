@@ -8,7 +8,10 @@ import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { CoverImageField } from "@/components/admin/CoverImageField";
+import { LinkedInCaptionField } from "@/components/admin/LinkedInCaptionField";
 import { LinkedInDocumentField } from "@/components/admin/LinkedInDocumentField";
+import { LinkedInGalleryField } from "@/components/admin/LinkedInGalleryField";
+import { cn } from "@/lib/utils";
 import { slugify } from "@/lib/blog/text";
 import type { Post } from "@/lib/blog/types";
 
@@ -34,17 +37,24 @@ type Status =
 
 type FieldErrors = Partial<Record<"title" | "slug" | "body" | "excerpt" | "tags", string[]>>;
 
+type LinkedInInitial = {
+  documentAttached: boolean;
+  commentary: string;
+  extraImages: { urn: string; altText: string }[];
+};
+
 export function PostEditor({
   post,
-  linkedInDocumentAttached,
+  linkedIn,
 }: {
   post?: Post;
   /** Only meaningful once the post exists — see the edit page. */
-  linkedInDocumentAttached?: boolean;
+  linkedIn?: LinkedInInitial;
 }) {
   const router = useRouter();
   const editing = Boolean(post);
 
+  const [tab, setTab] = useState<"blog" | "linkedin">("blog");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [deleting, setDeleting] = useState(false);
@@ -146,6 +156,21 @@ export function PostEditor({
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+      {editing ? (
+        <div className="flex gap-6 border-b border-line" role="tablist">
+          <TabButton active={tab === "blog"} onClick={() => setTab("blog")}>
+            Blog post
+          </TabButton>
+          <TabButton active={tab === "linkedin"} onClick={() => setTab("linkedin")}>
+            LinkedIn
+          </TabButton>
+        </div>
+      ) : null}
+
+      {/* `hidden`, not conditional rendering — the fields below are
+          uncontrolled (defaultValue + FormData on submit), so unmounting
+          them on a tab switch would discard whatever was typed. */}
+      <div hidden={editing && tab !== "blog"} className="flex flex-col gap-5">
       <Field id="title" label="Title" error={fieldErrors.title}>
         <Input
           id="title"
@@ -230,15 +255,22 @@ export function PostEditor({
           autoComplete="off"
         />
       </Field>
+      </div>
 
       {editing ? (
-        <>
+        <div hidden={tab !== "linkedin"} className="flex flex-col gap-5">
           <CoverImageField postId={post!.id} initialUrl={post!.coverImageUrl} />
+          <LinkedInGalleryField
+            postId={post!.id}
+            hasCoverImage={Boolean(post!.coverImageUrl)}
+            initialImages={linkedIn?.extraImages ?? []}
+          />
+          <LinkedInCaptionField postId={post!.id} initialCommentary={linkedIn?.commentary ?? ""} />
           <LinkedInDocumentField
             postId={post!.id}
-            initialAttached={linkedInDocumentAttached ?? false}
+            initialAttached={linkedIn?.documentAttached ?? false}
           />
-        </>
+        </div>
       ) : null}
 
       {status.kind === "error" ? (
@@ -278,5 +310,32 @@ export function PostEditor({
         ) : null}
       </div>
     </form>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={cn(
+        "-mb-px border-b-2 px-1 pb-3 text-sm font-medium transition-colors",
+        active
+          ? "border-accent text-ink"
+          : "border-transparent text-ink-subtle hover:text-ink",
+      )}
+    >
+      {children}
+    </button>
   );
 }

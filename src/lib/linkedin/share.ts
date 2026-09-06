@@ -21,23 +21,28 @@ const REST_HEADERS = {
 export type LinkedInPostContent =
   | {
       /** A link preview card. LinkedIn does not fetch anything itself for
-       * this: title, description and thumbnail all come from this site's own
-       * content and its uploaded LinkedIn image asset, not from crawling the
-       * URL. */
+       * this: title and description come from this site's own content, not
+       * from crawling the URL. Used only when there's neither an image nor a
+       * document to share — see lib/linkedin/content.ts. */
       type: "article";
       url: string;
       title: string;
       description?: string;
-      /** A `urn:li:image:...` asset (see assets.ts) shown on the card. */
-      thumbnail?: string;
     }
   | {
-      /** A single previously-uploaded image or document (see assets.ts). */
+      /** A single previously-uploaded image or document (see assets.ts) —
+       * a real LinkedIn photo/document post, not a link-preview thumbnail. */
       type: "media";
       urn: string;
       /** Required by LinkedIn for a document; optional for an image. */
       title?: string;
       altText?: string;
+    }
+  | {
+      /** 2-20 previously-uploaded images, shown as LinkedIn's native photo
+       * carousel. LinkedIn organic-only; no sponsored equivalent. */
+      type: "multiImage";
+      images: { urn: string; altText?: string }[];
     };
 
 function buildContent(content: LinkedInPostContent): Record<string, unknown> {
@@ -47,7 +52,17 @@ function buildContent(content: LinkedInPostContent): Record<string, unknown> {
         source: content.url,
         title: content.title,
         ...(content.description ? { description: content.description } : {}),
-        ...(content.thumbnail ? { thumbnail: content.thumbnail } : {}),
+      },
+    };
+  }
+
+  if (content.type === "multiImage") {
+    return {
+      multiImage: {
+        images: content.images.map((image) => ({
+          id: image.urn,
+          ...(image.altText ? { altText: image.altText } : {}),
+        })),
       },
     };
   }

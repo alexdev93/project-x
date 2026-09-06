@@ -68,7 +68,15 @@ export async function PATCH(request: Request, { params }: Params) {
     // invalidation covers the index, and the old URL 404s on its next request.
     revalidateFeed();
 
-    if (before?.postUrn && before.status === "published" && before.title !== title) {
+    // A custom caption (see the LinkedIn tab) makes the title irrelevant to
+    // what LinkedIn shows — only re-sync from a title change when no
+    // caption has been written.
+    if (
+      before?.postUrn &&
+      before.status === "published" &&
+      !before.commentary?.trim() &&
+      before.title !== title
+    ) {
       await syncLinkedInCommentary(request, { ...before, title }, before.postUrn);
     }
 

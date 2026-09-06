@@ -6,39 +6,55 @@ import { absoluteUrl } from "@/lib/site";
 
 /**
  * The one place that decides how a post is represented on LinkedIn, built
- * from the same state every create, edit-sync and relink call reads — so an
- * image, a document, or a plain link all resolve the same way regardless of
- * which route triggered the share.
+ * from the same state every create, edit-sync and relink call reads — so a
+ * gallery, a document, or a plain link all resolve the same way regardless
+ * of which route triggered the share.
  *
- * A document takes over the post's content, since LinkedIn allows only one
- * content type per post, so the URL back to this site moves into the
- * commentary text instead, which LinkedIn auto-links. Everything else shares
- * as an article: the post's own URL, with its cover image (if any) as the
- * card's thumbnail. Either way the share always points back at this exact
- * post.
+ * A photo or a document takes over the post's content, since LinkedIn allows
+ * only one content type per post — and, critically, that content type is a
+ * *real* LinkedIn photo/gallery/document post, not a link-preview card with
+ * a thumbnail: LinkedIn's article and media content types are mutually
+ * exclusive, and a thumbnail bolted onto a link card reads nothing like an
+ * ordinary LinkedIn photo post. So the URL back to this site moves into the
+ * commentary text instead, which LinkedIn auto-links — exactly like a
+ * document share already worked. Only a post with neither a photo nor a
+ * document falls back to a plain article link preview.
  */
 export function buildLinkedInContent(state: LinkedInPostState): {
   content: LinkedInPostContent;
   commentary: string;
 } {
   const title = state.title || state.slug;
+  const caption = state.commentary?.trim() || title;
   const url = absoluteUrl(`/blog/${state.slug}`);
 
   if (state.documentUrn) {
     return {
       content: { type: "media", urn: state.documentUrn, title },
-      commentary: `${title}\n\n${url}`,
+      commentary: `${caption}\n\n${url}`,
+    };
+  }
+
+  const images = state.coverImageLinkedInUrn
+    ? [{ urn: state.coverImageLinkedInUrn, altText: title }, ...state.extraImages]
+    : [];
+
+  if (images.length === 1) {
+    return {
+      content: { type: "media", urn: images[0].urn, altText: images[0].altText },
+      commentary: `${caption}\n\n${url}`,
+    };
+  }
+
+  if (images.length >= 2) {
+    return {
+      content: { type: "multiImage", images },
+      commentary: `${caption}\n\n${url}`,
     };
   }
 
   return {
-    content: {
-      type: "article",
-      url,
-      title,
-      description: state.excerpt || undefined,
-      thumbnail: state.coverImageLinkedInUrn || undefined,
-    },
-    commentary: title,
+    content: { type: "article", url, title, description: state.excerpt || undefined },
+    commentary: caption,
   };
 }

@@ -278,3 +278,35 @@ ALTER TABLE posts ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
 ALTER TABLE posts ADD COLUMN IF NOT EXISTS cover_image_linkedin_urn TEXT;
 ALTER TABLE posts DROP COLUMN IF EXISTS linkedin_attachment_urn;
 ALTER TABLE posts DROP COLUMN IF EXISTS linkedin_attachment_kind;
+
+-- 2026-09-07 — a real LinkedIn post: a caption independent of the post's
+-- title, and a photo gallery beyond the single cover image.
+--
+-- linkedin_commentary is optional; buildLinkedInContent falls back to the
+-- post's title when it's empty, exactly as before this column existed.
+--
+-- The share itself also stopped using cover_image_linkedin_urn as an
+-- article-card *thumbnail* — LinkedIn's article and media content types are
+-- mutually exclusive, and a thumbnail-on-a-link-card reads nothing like a
+-- normal LinkedIn photo post. It's now the first photo of a real image or
+-- multiImage post instead, with the blog URL folded into the commentary
+-- text (auto-linked by LinkedIn) the same way an attached document already
+-- worked — see lib/linkedin/content.ts.
+--
+-- post_linkedin_images holds only the *additional* photos: the first photo
+-- in any LinkedIn image post is always the cover image above, which stays
+-- the one photo also stored in Blob and shown on the blog page itself.
+-- These extras are LinkedIn-only, same reasoning as linkedin_document_urn —
+-- there's no portfolio-side gallery to keep them in sync with.
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS linkedin_commentary TEXT;
+
+CREATE TABLE IF NOT EXISTS post_linkedin_images (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  post_id      UUID NOT NULL REFERENCES posts (id) ON DELETE CASCADE,
+  -- 0-based position among the *extra* photos — the second LinkedIn image
+  -- overall is position 0 here, since the first is always the cover image.
+  position     SMALLINT NOT NULL,
+  linkedin_urn TEXT NOT NULL,
+  alt_text     TEXT NOT NULL DEFAULT '',
+  UNIQUE (post_id, position)
+);

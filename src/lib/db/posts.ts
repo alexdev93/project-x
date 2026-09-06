@@ -365,6 +365,9 @@ export async function countPostsByStatus(): Promise<{
  * ever needing it. A dedicated row shape here means adding a LinkedIn field
  * never risks widening what a public page can see.
  */
+/** One extra (non-cover) LinkedIn gallery photo. */
+export type LinkedInExtraImage = { urn: string; altText: string };
+
 export type LinkedInPostState = {
   slug: string;
   status: PostStatus;
@@ -373,11 +376,20 @@ export type LinkedInPostState = {
   /** Set once this post has been shared; identifies which LinkedIn post to
    * update or delete on a later edit/unpublish. */
   postUrn: string | null;
+  /** The custom LinkedIn caption. Empty/null falls back to the post's
+   * title — see lib/linkedin/content.ts. Independent of the blog title on
+   * purpose: a LinkedIn caption reads nothing like a blog headline. */
+  commentary: string | null;
   /** The post's own cover image — see lib/media/blob.ts — and the LinkedIn
-   * image asset uploaded from that same file, used as an article share's
-   * thumbnail. Independent of whether a share has happened yet. */
+   * image asset uploaded from that same file: the first photo of a real
+   * LinkedIn image/multiImage post, not a link-card thumbnail (see
+   * lib/linkedin/content.ts). Independent of whether a share has happened. */
   coverImageUrl: string | null;
   coverImageLinkedInUrn: string | null;
+  /** Additional gallery photos, in display order, LinkedIn-only — see the
+   * schema.sql note on post_linkedin_images for why they have no cover-image
+   * equivalent on this site. */
+  extraImages: LinkedInExtraImage[];
   /** A document queued for the *next* share, LinkedIn-only — see
    * lib/linkedin/content.ts for why it has no cover-image equivalent. */
   documentUrn: string | null;
@@ -388,18 +400,24 @@ export async function getLinkedInPostState(
 ): Promise<LinkedInPostState | null> {
   const sql = getSql();
   const rows = (await sql`
-    SELECT slug, status, title, excerpt, linkedin_post_urn,
-           cover_image_url, cover_image_linkedin_urn, linkedin_document_urn
-    FROM posts WHERE id = ${id}
+    SELECT p.slug, p.status, p.title, p.excerpt, p.linkedin_post_urn,
+           p.linkedin_commentary,
+           p.cover_image_url, p.cover_image_linkedin_urn, p.linkedin_document_urn,
+           (SELECT COALESCE(json_agg(json_build_object('urn', i.linkedin_urn, 'altText', i.alt_text)
+                             ORDER BY i.position), '[]'::json)
+             FROM post_linkedin_images i WHERE i.post_id = p.id) AS extra_images
+    FROM posts p WHERE p.id = ${id}
   `) as {
     slug: string;
     status: string;
     title: string;
     excerpt: string;
     linkedin_post_urn: string | null;
+    linkedin_commentary: string | null;
     cover_image_url: string | null;
     cover_image_linkedin_urn: string | null;
     linkedin_document_urn: string | null;
+    extra_images: LinkedInExtraImage[];
   }[];
 
   const row = rows[0];
@@ -411,8 +429,10 @@ export async function getLinkedInPostState(
     title: row.title,
     excerpt: row.excerpt,
     postUrn: row.linkedin_post_urn,
+    commentary: row.linkedin_commentary,
     coverImageUrl: row.cover_image_url,
     coverImageLinkedInUrn: row.cover_image_linkedin_urn,
+    extraImages: row.extra_images,
     documentUrn: row.linkedin_document_urn,
   };
 }
@@ -426,7 +446,13 @@ export async function setLinkedInPostUrn(
   await sql`UPDATE posts SET linkedin_post_urn = ${urn} WHERE id = ${id}`;
 }
 
-/** Sets (or clears, passing `null`) the post's cover image. */
+/**
+ * Sets (or clears, passing `null`) the post's cover image.
+ *
+ * Clearing it also clears every extra gallery photo: the gallery is always
+ * `[cover, ...extras]` (see lib/linkedin/content.ts), so a cover-less post
+ * cannot carry extras — they would have no first photo to follow.
+ */
 export async function setCoverImage(
   id: string,
   cover: { url: string; linkedInUrn: string | null } | null,
@@ -438,6 +464,40 @@ export async function setCoverImage(
       cover_image_linkedin_urn = ${cover?.linkedInUrn ?? null}
     WHERE id = ${id}
   `;
+  if (!cover) await sql`DELETE FROM post_linkedin_images WHERE post_id = ${id}`;
+}
+
+/** Sets (or clears, passing an empty string) the custom LinkedIn caption. */
+export async function setLinkedInCommentary(id: string, commentary: string): Promise<void> {
+  const sql = getSql();
+  await sql`UPDATE posts SET linkedin_commentary = ${commentary || null} WHERE id = ${id}`;
+}
+
+/**
+ * Replaces the full list of extra (non-cover) gallery photos, in order.
+ *
+ * Whole-list replacement rather than a single add/remove — the caller
+ * always has the current list in hand (see the linkedin-images route), so
+ * this can stay one straightforward statement per position instead of
+ * position-shifting arithmetic for a removal in the middle. Trims any
+ * stale tail first so shrinking the list actually shrinks it.
+ */
+export async function setLinkedInExtraImages(
+  id: string,
+  images: LinkedInExtraImage[],
+): Promise<void> {
+  const sql = getSql();
+  await sql`
+    DELETE FROM post_linkedin_images WHERE post_id = ${id} AND position >= ${images.length}
+  `;
+  for (const [position, image] of images.entries()) {
+    await sql`
+      INSERT INTO post_linkedin_images (post_id, position, linkedin_urn, alt_text)
+      VALUES (${id}, ${position}, ${image.urn}, ${image.altText})
+      ON CONFLICT (post_id, position)
+      DO UPDATE SET linkedin_urn = EXCLUDED.linkedin_urn, alt_text = EXCLUDED.alt_text
+    `;
+  }
 }
 
 /** Sets (or clears, passing `null`) the document queued for the next share. */
