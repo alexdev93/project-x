@@ -68,10 +68,10 @@ describe("authorization", () => {
     const { GET, PUT } = await load();
 
     const read = await GET(new Request(`${SITE}/api/admin/content/profile`), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
     const write = await PUT(put({ data: validProfile, sha: "abc" }), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
 
     expect(read.status).toBe(404);
@@ -85,7 +85,7 @@ describe("authorization", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: {}, sha: "abc" }, "../../secrets"), {
-      params: { section: "../../secrets" },
+      params: Promise.resolve({ section: "../../secrets" }),
     });
 
     expect(response.status).toBe(404);
@@ -104,7 +104,7 @@ describe("validation before committing", () => {
 
     const response = await PUT(
       put({ data: { name: "", role: 42 }, sha: "abc" }),
-      { params: { section: "profile" } },
+      { params: Promise.resolve({ section: "profile" }) },
     );
     const body = await response.json();
 
@@ -119,7 +119,7 @@ describe("validation before committing", () => {
 
     const body = await (
       await PUT(put({ data: { ...validProfile, email: "not-an-email" }, sha: "abc" }), {
-        params: { section: "profile" },
+        params: Promise.resolve({ section: "profile" }),
       })
     ).json();
 
@@ -130,7 +130,7 @@ describe("validation before committing", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: { not: "an array" }, sha: "abc" }, "projects"), {
-      params: { section: "projects" },
+      params: Promise.resolve({ section: "projects" }),
     });
 
     expect(response.status).toBe(400);
@@ -141,7 +141,7 @@ describe("validation before committing", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: validProfile, sha: "abc" }), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
 
     expect(response.status).toBe(200);
@@ -155,7 +155,7 @@ describe("validation before committing", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: validProfile }), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
 
     expect(response.status).toBe(400);
@@ -175,7 +175,7 @@ describe("failure handling", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: validProfile, sha: "old" }), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
     const body = await response.json();
 
@@ -188,7 +188,7 @@ describe("failure handling", () => {
     const { PUT } = await load();
 
     const response = await PUT(put({ data: validProfile, sha: "abc" }), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
     const text = JSON.stringify(await response.json());
 
@@ -204,7 +204,7 @@ describe("failure handling", () => {
     const { GET } = await load();
 
     const response = await GET(new Request(`${SITE}/api/admin/content/profile`), {
-      params: { section: "profile" },
+      params: Promise.resolve({ section: "profile" }),
     });
 
     expect(response.status).toBe(503);

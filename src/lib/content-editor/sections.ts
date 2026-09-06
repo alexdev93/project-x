@@ -64,8 +64,8 @@ export const SECTIONS: Record<SectionKey, Section> = {
     label: "Projects",
     description:
       "Case studies, including the long-form chapters and the guide field. " +
-      "Those render as Markdown — headings, lists, links, tables, code blocks " +
-      "and images (as a URL — there's no upload, so `![alt](https://...)` " +
+      "Those render as Markdown - headings, lists, links, tables, code blocks " +
+      "and images (as a URL, there's no upload, so `![alt](https://...)` " +
       "linking to something already hosted elsewhere is the only form that " +
       "takes) all work.",
     schema: z.array(projectSchema),

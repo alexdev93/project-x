@@ -10,7 +10,7 @@ export function FocusAreas() {
       <SectionHeader
         eyebrow="What I do"
         title="Four areas, one system"
-        description="Most of my work sits where backend, infrastructure and delivery meet — the parts of a system that are expensive to change once they're wrong."
+        description="Most of my work sits where backend, infrastructure and delivery meet: the parts of a system that are expensive to change once they're wrong."
       />
 
       <Stagger className="mt-14 grid gap-4 sm:grid-cols-2">

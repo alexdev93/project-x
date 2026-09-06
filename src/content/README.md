@@ -18,7 +18,7 @@ validates them.
 ## Validation
 
 Content is checked against the schema **at build time**. If a required field is
-missing or a value is the wrong type, `yarn build` fails with the exact path:
+missing or a value is the wrong type, `pnpm build` fails with the exact path:
 
 ```
 Invalid content in src/content/projects.json:

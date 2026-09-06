@@ -54,7 +54,7 @@ export function ContentEditor({
         kind: "error",
         message:
           error instanceof Error
-            ? `That isn't valid JSON — ${error.message}`
+            ? `That isn't valid JSON: ${error.message}`
             : "That isn't valid JSON.",
       });
       return;

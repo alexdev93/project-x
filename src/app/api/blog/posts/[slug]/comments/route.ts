@@ -1,3 +1,4 @@
+import { flattenError } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { getBlogConfig, hasBlog } from "@/lib/blog/config";
 import { initialCommentStatus } from "@/lib/blog/policy";
@@ -35,9 +36,10 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   const checked = await checkRequest(request, { maxBytes: 32 * 1024 });
@@ -47,7 +49,7 @@ export async function POST(request: Request, { params }: Params) {
   const parsed = commentInputSchema().safeParse(checked.body);
   if (!parsed.success) {
     return errorResponse(400, "Please check your comment and try again.", {
-      fieldErrors: parsed.error.flatten().fieldErrors,
+      fieldErrors: flattenError(parsed.error).fieldErrors,
     });
   }
 

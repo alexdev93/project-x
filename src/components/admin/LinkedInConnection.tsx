@@ -37,7 +37,7 @@ export function LinkedInConnection({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p className="text-sm font-medium text-ink">LinkedIn</p>
         <p className="mt-1 text-sm text-ink-muted">

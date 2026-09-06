@@ -17,11 +17,12 @@ import { SECTIONS, isSectionKey } from "@/lib/content-editor/sections";
  * or two tabs — editing at once.
  */
 
-export default async function ContentSectionPage({
-  params,
-}: {
-  params: { section: string };
-}) {
+export default async function ContentSectionPage(
+  props: {
+    params: Promise<{ section: string }>;
+  }
+) {
+  const params = await props.params;
   await requireAdminPage();
 
   if (!isSectionKey(params.section)) notFound();
@@ -65,7 +66,7 @@ export default async function ContentSectionPage({
           sha={file.sha}
         />
       ) : (
-        <p className="rounded-[var(--radius)] border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent">
+        <p className="rounded-(--radius) border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent">
           Couldn&apos;t load this file from GitHub. Check that GITHUB_TOKEN and
           GITHUB_REPO are set and that the token can read this repository.
         </p>

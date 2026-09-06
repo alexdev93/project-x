@@ -41,7 +41,7 @@ export function Prose({
         "[&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-5",
         "[&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-5",
         "[&_li]:mt-2 [&_li]:pl-1",
-        "marker:[&_li]:text-ink-subtle",
+        "[&_li]:marker:text-ink-subtle",
 
         "[&_blockquote]:mt-6 [&_blockquote]:border-l-2 [&_blockquote]:border-accent/40",
         "[&_blockquote]:pl-5 [&_blockquote]:italic",

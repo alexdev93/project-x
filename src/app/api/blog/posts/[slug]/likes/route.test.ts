@@ -17,7 +17,7 @@ vi.mock("@/lib/auth/session", () => ({ requireUser, getSessionFromRequest }));
 vi.mock("@/lib/db/reactions", () => ({ toggleReaction, getReactionState }));
 
 const SITE = "https://example.test";
-const params = { params: { slug: "a-post" } };
+const params = { params: Promise.resolve({ slug: "a-post" }) };
 
 beforeEach(() => {
   vi.resetModules();

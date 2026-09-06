@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteName,
-    // Page titles render as "Projects — Alemayehu Mekonen".
-    template: `%s — ${profile.name}`,
+    // Page titles render as "Projects - Alemayehu Mekonen".
+    template: `%s - ${profile.name}`,
   },
   description: profile.tagline,
   authors: [{ name: profile.name, url: siteUrl }],

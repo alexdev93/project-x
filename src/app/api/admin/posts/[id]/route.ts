@@ -1,3 +1,4 @@
+import { flattenError } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
 import { postInputSchema } from "@/lib/blog/schema";
 import { excerpt, readingMinutes } from "@/lib/blog/text";
@@ -26,9 +27,10 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 
@@ -38,7 +40,7 @@ export async function PATCH(request: Request, { params }: Params) {
   const parsed = postInputSchema().safeParse(checked.body);
   if (!parsed.success) {
     return errorResponse(400, "Please check the form and try again.", {
-      fieldErrors: parsed.error.flatten().fieldErrors,
+      fieldErrors: flattenError(parsed.error).fieldErrors,
     });
   }
 
@@ -86,7 +88,8 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 

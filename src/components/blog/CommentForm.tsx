@@ -23,6 +23,11 @@ import { useSession } from "@/lib/auth/client";
  * The exception is a comment held for approval, where a refresh would show
  * nothing to anyone but its author. That case gets an explicit note instead,
  * because a comment that silently vanishes reads as a bug.
+ *
+ * `SignInButton`'s `mode="popup"` signs a reader in without navigating away
+ * from the post: `useSession()` picks up the new session reactively once the
+ * popup closes, this component re-renders past the "sign in" branch, and the
+ * composer below appears in its place, still on the same page.
  */
 
 type Status =
@@ -67,7 +72,7 @@ export function CommentForm({
         <p className="text-sm text-ink-muted">
           {parentId ? "Sign in to reply." : "Sign in to join the conversation."}
         </p>
-        <SignInButton size="sm" callbackURL={`/blog/${slug}`} />
+        <SignInButton size="sm" mode="popup" callbackURL={`/blog/${slug}`} />
       </div>
     );
   }
@@ -152,7 +157,7 @@ export function CommentForm({
       {status.kind === "error" ? (
         <p
           role="alert"
-          className="flex items-start gap-2.5 rounded-[var(--radius)] border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent"
+          className="flex items-start gap-2.5 rounded-(--radius) border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent"
         >
           <AlertCircle aria-hidden className="mt-0.5 size-4 shrink-0" />
           {status.message}
@@ -161,7 +166,7 @@ export function CommentForm({
 
       {status.kind === "pending" ? (
         <p role="status" className="text-sm text-ink-muted">
-          Thanks — that&apos;s waiting for approval and will appear once it is
+          Thanks, that&apos;s waiting for approval and will appear once it is
           reviewed.
         </p>
       ) : null}

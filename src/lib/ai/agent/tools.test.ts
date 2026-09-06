@@ -118,7 +118,7 @@ describe("getExperience", () => {
       roles: { company: string; period: string; tech: string[] }[];
     };
     expect(result.roles.length).toBeGreaterThan(0);
-    expect(result.roles[0].period).toMatch(/Present|—/);
+    expect(result.roles[0].period).toMatch(/Present|-/);
   });
 });
 

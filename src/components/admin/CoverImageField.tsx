@@ -56,7 +56,7 @@ export function CoverImageField({
       setState("idle");
       setNote(
         result.relinked
-          ? "Updated — the live LinkedIn post now uses this."
+          ? "Updated - the live LinkedIn post now uses this."
           : "Saved.",
       );
     } catch {
@@ -84,7 +84,7 @@ export function CoverImageField({
       setUrl(null);
       onChange?.(null);
       setState("idle");
-      setNote(result.relinked ? "Removed — the live LinkedIn post now shows a plain link." : null);
+      setNote(result.relinked ? "Removed - the live LinkedIn post now shows a plain link." : null);
     } catch {
       setState("error");
       setNote("Couldn't reach the server.");

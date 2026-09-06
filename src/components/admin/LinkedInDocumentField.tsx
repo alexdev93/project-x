@@ -48,7 +48,7 @@ export function LinkedInDocumentField({
       setState("idle");
       setNote(
         result.relinked
-          ? "Updated — the live LinkedIn post now shares this document instead."
+          ? "Updated - the live LinkedIn post now shares this document instead."
           : "Saved. Used the next time this post is published.",
       );
     } catch {
@@ -76,7 +76,7 @@ export function LinkedInDocumentField({
       setAttached(false);
       setState("idle");
       setNote(
-        result.relinked ? "Removed — the live LinkedIn post shares as a link again." : null,
+        result.relinked ? "Removed - the live LinkedIn post shares as a link again." : null,
       );
     } catch {
       setState("error");
@@ -91,7 +91,7 @@ export function LinkedInDocumentField({
       <p className="text-sm font-medium text-ink">LinkedIn document</p>
       <p className="mt-1 text-sm text-ink-muted">
         {attached
-          ? "Document attached — shared instead of the article link preview."
+          ? "Document attached, shared instead of the article link preview."
           : "None. Shares with the cover image and a link preview by default."}
       </p>
 

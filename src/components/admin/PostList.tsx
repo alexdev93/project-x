@@ -74,7 +74,7 @@ export function PostList({ initialPosts }: { initialPosts: Post[] }) {
         setErrors((current) => ({
           ...current,
           [post.id]:
-            "Published, but sharing to LinkedIn failed — check the connection in Overview.",
+            "Published, but sharing to LinkedIn failed - check the connection in Overview.",
         }));
       }
     } catch {

@@ -54,7 +54,7 @@ export function PortraitFrame({
         role="img"
         aria-label={label}
         style={{ backgroundImage: "var(--hero-portrait)" }}
-        className="relative aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-xl)] border border-line bg-surface-raised bg-cover bg-center"
+        className="relative aspect-4/5 w-full overflow-hidden rounded-xl border border-line bg-surface-raised bg-cover bg-center"
       />
     </div>
   );

@@ -9,7 +9,7 @@ import { profile } from "@/content";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Get in touch with ${profile.name} — ${profile.role} based in ${profile.location}.`,
+  description: `Get in touch with ${profile.name} - ${profile.role} based in ${profile.location}.`,
 };
 
 const details = [
@@ -37,7 +37,7 @@ export default function ContactPage() {
             </h1>
             <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-ink-muted sm:text-lg">
               Whether it&apos;s a role, a system that needs untangling, or a
-              question about something on this site — send a message and
+              question about something on this site, send a message and
               I&apos;ll get back to you.
             </p>
           </Reveal>

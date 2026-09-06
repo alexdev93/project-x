@@ -24,7 +24,7 @@ export function FeedView({ feed }: { feed: Page<PostSummary> }) {
         as="h1"
         eyebrow="Writing"
         title="Notes"
-        description="Thoughts on the systems I build — what broke, what held, and what I would do differently."
+        description="Thoughts on the systems I build: what broke, what held, and what I would do differently."
       />
 
       {feed.items.length === 0 ? (

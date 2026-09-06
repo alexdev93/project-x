@@ -83,7 +83,7 @@ export function LinkedInGalleryField({
       setState("idle");
       setNote(
         result.relinked
-          ? "Updated — the live LinkedIn post now includes this."
+          ? "Updated - the live LinkedIn post now includes this."
           : "Saved. Used the next time this post is published.",
       );
     } catch {
@@ -119,7 +119,7 @@ export function LinkedInGalleryField({
         uploaded.map((image, i) => ({ ...image, previewUrl: current[i]?.previewUrl })),
       );
       setState("idle");
-      setNote(result.relinked ? "Removed — the live LinkedIn post is updated." : "Removed.");
+      setNote(result.relinked ? "Removed - the live LinkedIn post is updated." : "Removed.");
     } catch {
       setState("error");
       setNote("Couldn't reach the server.");
@@ -134,8 +134,8 @@ export function LinkedInGalleryField({
       <p className="text-sm font-medium text-ink">Additional photos</p>
       <p className="mt-1 text-sm text-ink-muted">
         {hasCoverImage
-          ? "Shown as LinkedIn's own photo carousel, alongside the cover image. LinkedIn-only — not shown on the post itself."
-          : "Add a cover image first — it's always the first photo in the carousel."}
+          ? "Shown as LinkedIn's own photo carousel, alongside the cover image. LinkedIn-only, not shown on the post itself."
+          : "Add a cover image first - it's always the first photo in the carousel."}
       </p>
 
       {images.length > 0 ? (

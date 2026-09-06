@@ -13,9 +13,10 @@ import { errorResponse, notFound } from "@/lib/http/guards";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
-export async function GET(request: Request, { params }: Params) {
+export async function GET(request: Request, props: Params) {
+  const params = await props.params;
   const app = getAppBySlug(params.slug);
   if (!app?.repo) return notFound();
 

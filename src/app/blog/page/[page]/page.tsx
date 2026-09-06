@@ -19,7 +19,7 @@ import { getFeed } from "@/lib/blog/service";
 
 export const revalidate = 300;
 
-type Params = { params: { page: string } };
+type Params = { params: Promise<{ page: string }> };
 
 export async function generateStaticParams() {
   const feed = await getFeed(1);
@@ -29,16 +29,18 @@ export async function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: Params): Metadata {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
   return {
-    title: `Writing — page ${params.page}`,
+    title: `Writing - page ${params.page}`,
     // Deliberately not indexed: the posts themselves are what a search engine
     // should surface, and a paginated slice of excerpts competes with them.
     robots: { index: false, follow: true },
   };
 }
 
-export default async function BlogPagePage({ params }: Params) {
+export default async function BlogPagePage(props: Params) {
+  const params = await props.params;
   const page = Number(params.page);
 
   if (!Number.isInteger(page) || page < 1) notFound();

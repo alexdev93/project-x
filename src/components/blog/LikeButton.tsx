@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
-import { useSession } from "@/lib/auth/client";
-import { signInWithGoogle } from "@/lib/auth/client";
+import { useSession, signInWithGoogle, signInWithGooglePopup } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,6 +25,15 @@ import { cn } from "@/lib/utils";
  *
  * A signed-out reader sees a real button that starts sign-in, rather than a
  * disabled one: "you can't do this" is a worse answer than "here is how".
+ *
+ * ## Sign-in happens in place
+ *
+ * `toggle()` opens Google sign-in in a popup rather than redirecting the
+ * whole page: the post stays exactly where it was, and the moment the popup
+ * closes with a session, this same click's intent (`like()`) runs
+ * immediately, with no second tap required. A blocked popup falls back to
+ * the classic full-page redirect, which is the only path that still needs a
+ * `callbackURL` back to this post.
  */
 
 export function LikeButton({
@@ -74,11 +82,33 @@ export function LikeButton({
 
   async function toggle() {
     if (!signedIn) {
-      // Come back to this post afterwards.
-      await signInWithGoogle(`/blog/${slug}`);
+      setBusy(true);
+      setError(null);
+
+      const { error: signInError, blocked, cancelled } = await signInWithGooglePopup();
+
+      if (signInError) {
+        setBusy(false);
+        if (cancelled) return;
+        if (blocked) {
+          // The browser blocked the popup — fall back to a full-page
+          // redirect, returning to this exact post afterwards.
+          await signInWithGoogle(`/blog/${slug}`);
+          return;
+        }
+        setError("Couldn't sign you in. Please try again.");
+        return;
+      }
+
+      // Signed in without leaving the page — finish what the click was for.
+      await like();
       return;
     }
 
+    await like();
+  }
+
+  async function like() {
     const previous = { liked, count };
     setLiked(!liked);
     setCount(count + (liked ? -1 : 1));

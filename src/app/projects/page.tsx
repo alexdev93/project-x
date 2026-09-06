@@ -9,7 +9,7 @@ import { apps, projects } from "@/content";
 export const metadata: Metadata = {
   title: "Work",
   description:
-    "Selected engineering work — distributed systems, backend services, infrastructure and full-stack products.",
+    "Selected engineering work - distributed systems, backend services, infrastructure and full-stack products.",
 };
 
 export default function ProjectsPage() {

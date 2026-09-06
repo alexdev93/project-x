@@ -8,7 +8,7 @@ import { experiences, formatDateRange, type Experience } from "@/content";
 export const metadata: Metadata = {
   title: "Experience",
   description:
-    "Roles across banking, telecom and product engineering — backend services, platform work and full-stack delivery.",
+    "Roles across banking, telecom and product engineering - backend services, platform work and full-stack delivery.",
 };
 
 const kindLabels: Record<Experience["kind"], string> = {

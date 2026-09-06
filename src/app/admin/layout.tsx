@@ -46,7 +46,7 @@ export default async function AdminLayout({
 }) {
   // `headers()` is read here rather than in each page, which keeps the session
   // lookup to one per navigation.
-  headers();
+  await headers();
 
   const user = await getCurrentUser();
   if (!user?.isAdmin) notFound();

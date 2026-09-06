@@ -26,13 +26,18 @@ import { useSession } from "@/lib/auth/client";
  * so the button disappears when it expires rather than waiting to fail on click.
  * Client clocks drift, which is why this is the softer of the two checks and the
  * database keeps the authoritative one.
+ *
+ * `editWindowMinutes` is passed down from the server (see CommentThread), which
+ * is the only side that can read `getBlogConfig()` and get the real,
+ * env-overridable value — this component cannot import that config itself
+ * without silently falling back to its default, since env vars never reach
+ * client-side code.
  */
-
-const EDIT_WINDOW_MINUTES = 15;
 
 export function CommentActions({
   authorId,
   comment,
+  editWindowMinutes,
 }: {
   authorId: string;
   comment: {
@@ -41,16 +46,21 @@ export function CommentActions({
     /** ISO — a Date cannot cross the server/client boundary as itself. */
     createdAt: string;
   };
+  editWindowMinutes: number;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Captured once at mount rather than read fresh on every render: `Date.now()`
+  // is impure, and this is already the soft, best-effort check (see above) —
+  // a mount-time snapshot is all that check needs.
+  const [now] = useState(() => Date.now());
 
   const mine = session?.user?.id === authorId;
-  const age = Date.now() - new Date(comment.createdAt).getTime();
-  const editable = age <= EDIT_WINDOW_MINUTES * 60_000;
+  const age = now - new Date(comment.createdAt).getTime();
+  const editable = age <= editWindowMinutes * 60_000;
 
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

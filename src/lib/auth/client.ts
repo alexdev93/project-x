@@ -1,6 +1,7 @@
 "use client";
 
 import { createAuthClient } from "better-auth/react";
+import { oauthPopupClient } from "better-auth/client/plugins";
 
 /**
  * The browser side of authentication.
@@ -15,7 +16,9 @@ import { createAuthClient } from "better-auth/react";
  * different host from production.
  */
 
-export const authClient = createAuthClient();
+export const authClient = createAuthClient({
+  plugins: [oauthPopupClient()],
+});
 
 export const { useSession, signIn, signOut } = authClient;
 
@@ -38,6 +41,36 @@ export async function signInWithGoogle(callbackURL = "/"): Promise<{ error: bool
   const safe = /^\/(?!\/)/.test(callbackURL) ? callbackURL : "/";
   const result = await signIn.social({ provider: "google", callbackURL: safe });
   return { error: Boolean(result?.error) };
+}
+
+/**
+ * Kick off Google sign-in in a real popup window, so the calling page never
+ * navigates away — the caller keeps whatever it was doing (an in-progress
+ * comment draft, a like waiting to be sent) and can just continue once this
+ * resolves. No `callbackURL` here: nothing redirects, so there is nowhere for
+ * one to send.
+ *
+ * `blocked: true` means the browser's popup blocker stopped `window.open`
+ * before Google was ever reached — the caller should fall back to
+ * `signInWithGoogle` (a full-page redirect) rather than leaving the visitor
+ * stuck. `cancelled: true` means the visitor closed the popup themselves,
+ * which is not a failure worth showing an error for. Anything else (a
+ * timeout or a genuine provider error) is just `error: true`.
+ */
+export async function signInWithGooglePopup(): Promise<{
+  error: boolean;
+  blocked: boolean;
+  cancelled: boolean;
+}> {
+  const result = await authClient.signIn.popup({ provider: "google" });
+  if (result.error) {
+    return {
+      error: true,
+      blocked: result.error.code === "POPUP_BLOCKED",
+      cancelled: result.error.code === "POPUP_CLOSED",
+    };
+  }
+  return { error: false, blocked: false, cancelled: false };
 }
 
 /**

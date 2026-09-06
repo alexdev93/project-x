@@ -182,7 +182,6 @@ describe("POST /api/ai/chat", () => {
   it("never caches a failed answer", async () => {
     runAgent.mockReturnValue({
       stream: {
-        // eslint-disable-next-line require-yield
         async *[Symbol.asyncIterator]() {
           throw new Error("died immediately");
         },

@@ -1,7 +1,7 @@
 /**
  * Applies src/lib/db/schema.sql.
  *
- *   yarn db:migrate
+ *   pnpm db:migrate
  *
  * Safe to re-run — every statement in the schema is guarded. Requires
  * DATABASE_URL; the vector column width is taken from the schema file, so
@@ -52,7 +52,7 @@ async function main() {
     SELECT count(*)::int AS n FROM knowledge_chunks
   `) as { n: number }[];
   console.log(`\nSchema applied. knowledge_chunks holds ${rows[0]?.n ?? 0} rows.`);
-  console.log("Next: yarn ingest");
+  console.log("Next: pnpm ingest");
 }
 
 main().catch((error) => {

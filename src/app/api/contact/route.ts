@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       {
         success: false,
         error: "Please check the form and try again.",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        fieldErrors: z.flattenError(parsed.error).fieldErrors,
       },
       { status: 400 },
     );

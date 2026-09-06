@@ -19,7 +19,7 @@ export const siteUrl = (
     : `http://localhost:${process.env.PORT ?? 3000}`)
 ).replace(/\/$/, "");
 
-export const siteName = `${profile.name} — ${profile.role}`;
+export const siteName = `${profile.name} - ${profile.role}`;
 
 export type NavItem = { href: string; label: string };
 

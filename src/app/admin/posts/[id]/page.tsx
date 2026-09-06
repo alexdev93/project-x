@@ -17,11 +17,12 @@ import { formatDateTime } from "@/lib/format";
  * accidentally serve the wrong one.
  */
 
-export default async function EditPostPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditPostPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   await requireAdminPage();
 
   if (!hasBlog()) notFound();

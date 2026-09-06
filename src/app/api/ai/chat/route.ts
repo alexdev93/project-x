@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     console.error(
       "AI chat: GEMINI_API_KEY is not set.",
       misnamedKeyHint() ??
-        "Set it in the hosting environment for the Production scope, then redeploy — " +
+        "Set it in the hosting environment for the Production scope, then redeploy - " +
           "environment variables added after a build do not apply to it.",
     );
     return fail(
