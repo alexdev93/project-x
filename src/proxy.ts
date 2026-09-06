@@ -33,7 +33,7 @@ const SESSION_COOKIES = [
   "__Secure-better-auth.session_token",
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const signedIn = SESSION_COOKIES.some(
     (name) => request.cookies.get(name)?.value,
   );

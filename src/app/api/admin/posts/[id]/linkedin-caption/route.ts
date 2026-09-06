@@ -25,9 +25,10 @@ const MAX_LENGTH = 3000;
 
 const captionSchema = z.object({ commentary: z.string().max(MAX_LENGTH) });
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 

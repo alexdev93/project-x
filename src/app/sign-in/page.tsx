@@ -20,11 +20,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function SignInPage({
-  searchParams,
-}: {
-  searchParams: { callbackURL?: string };
-}) {
+export default async function SignInPage(
+  props: {
+    searchParams: Promise<{ callbackURL?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <Container className="flex min-h-[60vh] flex-col items-center justify-center gap-6 py-20 text-center">
       <div>

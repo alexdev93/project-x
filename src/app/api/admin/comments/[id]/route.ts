@@ -27,9 +27,10 @@ export const dynamic = "force-dynamic";
 
 const patchSchema = z.object({ action: z.enum(["approve", "hide"]) });
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 
@@ -52,7 +53,8 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 

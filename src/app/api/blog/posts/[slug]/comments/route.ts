@@ -35,9 +35,10 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   const checked = await checkRequest(request, { maxBytes: 32 * 1024 });

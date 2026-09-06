@@ -28,14 +28,15 @@ import { absoluteUrl } from "@/lib/site";
 
 export const revalidate = 300;
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   const slugs = await getPublishedSlugs();
   return slugs.map(({ slug }) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
   const post = await getPost(params.slug);
   if (!post) return {};
 
@@ -57,7 +58,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function PostPage({ params }: Params) {
+export default async function PostPage(props: Params) {
+  const params = await props.params;
   const post = await getPost(params.slug);
   if (!post) notFound();
 

@@ -30,9 +30,10 @@ const MAX_BYTES = 4 * 1024 * 1024;
 // upload queue.
 const MAX_EXTRA_IMAGES = 8;
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
   if (!sameOrigin(request)) return errorResponse(400, "Invalid request.");
@@ -93,7 +94,8 @@ export async function POST(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
   if (!sameOrigin(request)) return errorResponse(400, "Invalid request.");

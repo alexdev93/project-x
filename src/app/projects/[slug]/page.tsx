@@ -16,14 +16,15 @@ import {
   projects,
 } from "@/content";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 /** Pre-renders every project at build time. */
 export function generateStaticParams() {
   return getProjectSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: Params): Metadata {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
   const project = getProjectBySlug(params.slug);
   if (!project) return {};
 
@@ -34,7 +35,8 @@ export function generateMetadata({ params }: Params): Metadata {
   };
 }
 
-export default function ProjectPage({ params }: Params) {
+export default async function ProjectPage(props: Params) {
+  const params = await props.params;
   const project = getProjectBySlug(params.slug);
   if (!project) notFound();
 

@@ -21,9 +21,10 @@ export const dynamic = "force-dynamic";
 // Comfortably under Vercel's default serverless request body limit (4.5 MB).
 const MAX_BYTES = 4 * 1024 * 1024;
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
   if (!sameOrigin(request)) return errorResponse(400, "Invalid request.");
@@ -71,7 +72,8 @@ export async function POST(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
   if (!sameOrigin(request)) return errorResponse(400, "Invalid request.");

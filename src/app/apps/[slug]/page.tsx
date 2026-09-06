@@ -22,9 +22,10 @@ const platformLabel: Record<App["platform"], string> = {
   android: "Android",
 };
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
-export function generateMetadata({ params }: Params): Metadata {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
   const app = getAppBySlug(params.slug);
   if (!app) return {};
 
@@ -61,7 +62,8 @@ async function loadVersions(repoName: string): Promise<VersionsState> {
   }
 }
 
-export default function AppPage({ params }: Params) {
+export default async function AppPage(props: Params) {
+  const params = await props.params;
   const app = getAppBySlug(params.slug);
   if (!app) notFound();
 

@@ -28,9 +28,10 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   const checked = await checkRequest(request, { maxBytes: 32 * 1024 });
@@ -64,7 +65,8 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   // Bodyless, so only the cross-origin rule applies.

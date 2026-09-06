@@ -17,11 +17,12 @@ import { SECTIONS, isSectionKey } from "@/lib/content-editor/sections";
  * or two tabs — editing at once.
  */
 
-export default async function ContentSectionPage({
-  params,
-}: {
-  params: { section: string };
-}) {
+export default async function ContentSectionPage(
+  props: {
+    params: Promise<{ section: string }>;
+  }
+) {
+  const params = await props.params;
   await requireAdminPage();
 
   if (!isSectionKey(params.section)) notFound();

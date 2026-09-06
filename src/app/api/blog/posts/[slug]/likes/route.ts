@@ -32,7 +32,7 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 /** Generous: this is a read, and the button issues one per page view. */
 const READ_LIMIT = { limit: 60, windowMs: 60_000 };
@@ -47,7 +47,8 @@ const READ_LIMIT = { limit: 60, windowMs: 60_000 };
  */
 const WRITE_LIMIT = { limit: 30, windowMs: 60_000 };
 
-export async function GET(request: Request, { params }: Params) {
+export async function GET(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   const limit = rateLimit(clientKey(request, "blog-like-read"), READ_LIMIT);
@@ -71,7 +72,8 @@ export async function GET(request: Request, { params }: Params) {
   }
 }
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   if (!hasBlog()) return notFound();
 
   // A body-less toggle, so there is nothing to parse or size-check — but it is

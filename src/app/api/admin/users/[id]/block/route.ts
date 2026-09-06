@@ -32,9 +32,10 @@ const blockSchema = z.object({
   reason: z.string().trim().max(200).default(""),
 });
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 
@@ -61,7 +62,8 @@ export async function POST(request: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const auth = await requireAdmin(request);
   if (!auth.ok) return notFound();
 
