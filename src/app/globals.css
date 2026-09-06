@@ -114,6 +114,22 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Every colour on the page is a CSS variable that changes value the instant
+     `.dark` toggles, so without this the whole page hard-cuts on a theme
+     switch. Scoped to colour-related properties only, at low specificity, so
+     an element with its own `transition-colors` (a hover state, say) keeps
+     its own timing — this only fills the gap for elements that declare none.
+     Respects prefers-reduced-motion for free: that block below already forces
+     every transition-duration to near-zero. */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, fill, stroke,
+      box-shadow;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+  }
+
   body {
     background-color: var(--canvas);
     color: var(--ink);
