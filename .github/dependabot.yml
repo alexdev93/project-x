@@ -8,10 +8,17 @@ updates:
     groups:
       # Anything not explicitly grouped below still gets its own PR — patch
       # bumps across a whole tree get lumped together, but a major bump (the
-      # kind actually worth reading about, like the Next.js 14->15 jump this
-      # repo is already overdue for) still shows up as its own PR.
+      # kind actually worth reading about, like a framework jump) still shows
+      # up as its own PR.
       minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # Deliberately pinned to the same major as `engines.node` (see
+      # package.json) rather than "latest" — typechecking against a newer
+      # Node's API surface than the runtime actually targets is a correctness
+      # regression, not a freebie. Bump this by hand alongside engines.node.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
