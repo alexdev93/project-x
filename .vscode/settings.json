@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "url": "./.vscode/schemas/npm-package.schema.json",
+      "fileMatch": ["package.json"]
+    }
+  ]
+}
