@@ -1,17 +1,70 @@
+# yaml-language-server: $schema=../.vscode/schemas/dependabot-2.0.json
+#
+# What this file does, in one sentence: once a week, Dependabot diffs every
+# dependency here against its registry, opens a PR for anything outdated, and
+# that PR runs through the exact same ci.yml gate as a human-authored PR (see
+# docs/CI_CD.md) before anyone merges it.
+#
+# What this file does NOT do: patch known vulnerabilities out of band. That is
+# GitHub's separate "Dependabot security updates" feature (Settings ->
+# Security -> Dependabot), driven by GitHub's advisory database rather than
+# this schedule, and it opens its own PRs even with this file deleted. This
+# file only controls the routine, no-vulnerability version-update cadence.
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      # Where this project's owner actually is (see profile.json) — PRs land
+      # at the start of the local work week instead of at whatever UTC hour a
+      # bare `interval: weekly` would pick.
+      timezone: "Africa/Addis_Ababa"
+
+    # A brand-new release has had zero time for its own community to find the
+    # obvious breakage. Patches ship immediately (they're supposed to be
+    # small, low-risk fixes); a minor gets a few days for that to surface; a
+    # major — the kind with the largest blast radius — gets a full week.
+    cooldown:
+      default-days: 3
+      semver-patch-days: 0
+      semver-minor-days: 3
+      semver-major-days: 7
+
     open-pull-requests-limit: 10
+    labels: ["dependencies"]
+
     groups:
-      # Anything not explicitly grouped below still gets its own PR — patch
-      # bumps across a whole tree get lumped together, but a major bump (the
-      # kind actually worth reading about, like a framework jump) still shows
-      # up as its own PR.
+      # Groups are matched top-to-bottom; a dependency lands in the first one
+      # it fits and is skipped by every group after that. The coordinated
+      # stacks below come first for exactly that reason — they need to move
+      # together, in one reviewable PR, regardless of whether the bump is a
+      # patch or a major. `minor-and-patch` at the end is the catch-all for
+      # everything that isn't part of a stack that matters.
+      next-react:
+        # eslint-config-next's own version tracks the Next.js version it
+        # lints for, and Next pins the React major it expects — bumping one
+        # without the others is exactly how you get a build that typechecks
+        # against one React while running another.
+        patterns: ["next", "eslint-config-next", "react", "react-dom", "@types/react", "@types/react-dom"]
+      ai-sdk:
+        # The provider package and the SDK core it plugs into version
+        # together upstream; one without the other is an unsupported
+        # combination, not just an untested one.
+        patterns: ["ai", "@ai-sdk/*"]
+      tailwind:
+        patterns: ["tailwindcss", "@tailwindcss/*", "tailwind-merge"]
+      test-tooling:
+        # vitest declares the vite version range it actually works with.
+        patterns: ["vite", "vitest"]
+      # Anything not explicitly grouped above still gets its own PR for a
+      # major bump (the kind actually worth reading about, like a framework
+      # jump) — this group only absorbs the minor/patch noise.
       minor-and-patch:
         update-types: ["minor", "patch"]
+
     ignore:
       # Deliberately pinned to the same major as `engines.node` (see
       # package.json) rather than "latest" — typechecking against a newer
@@ -24,3 +77,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Africa/Addis_Ababa"
+    cooldown:
+      default-days: 3
+      semver-major-days: 7
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "ci"]
