@@ -65,11 +65,14 @@ export function cacheKey(
   const normalised = normaliseQuestion(only.content);
   if (!normalised) return null;
 
-  const { model, ragTopK } = getAiConfig();
-  // Model and top-K are part of the key: changing either changes the answer,
-  // and a stale entry from the previous setting would be wrong.
+  const { model, ragTopK, ragMinScore } = getAiConfig();
+  // Model, top-K and the score floor are part of the key: any of the three
+  // can change what the model sees (searchKnowledge's results are filtered by
+  // ragMinScore before they reach the model, not just before they're cited),
+  // so a stale entry from the previous setting would be wrong, not just
+  // differently attributed.
   return createHash("sha256")
-    .update(`${model}|${ragTopK}|${normalised}`)
+    .update(`${model}|${ragTopK}|${ragMinScore}|${normalised}`)
     .digest("hex")
     .slice(0, 32);
 }

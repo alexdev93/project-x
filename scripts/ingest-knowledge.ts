@@ -1,9 +1,9 @@
 /**
  * Builds the knowledge base from src/content and stores embeddings.
  *
- *   yarn ingest            # embed only what changed
- *   yarn ingest --force    # re-embed everything
- *   yarn ingest --dry-run  # show the plan, call nothing
+ *   pnpm ingest            # embed only what changed
+ *   pnpm ingest --force    # re-embed everything
+ *   pnpm ingest --dry-run  # show the plan, call nothing
  *
  * Idempotent. Each chunk carries a hash of its text, so re-running after an
  * unrelated content edit embeds only the chunks that actually changed — which
@@ -83,10 +83,16 @@ async function main() {
       );
     }
 
-    for (const [index, chunk] of changed.entries()) {
-      await upsertChunk(chunk, embeddings[index]);
-      console.log(`  stored  ${chunk.id}`);
-    }
+    // Independent rows, no ordering dependency between them — writing them
+    // concurrently rather than one round trip at a time is what keeps a
+    // larger corpus's ingest time close to the network's latency floor
+    // instead of growing linearly with chunk count.
+    await Promise.all(
+      changed.map(async (chunk, index) => {
+        await upsertChunk(chunk, embeddings[index]);
+        console.log(`  stored  ${chunk.id}`);
+      }),
+    );
   }
 
   const pruned = await deleteChunksExcept(chunks.map((c) => c.id));
