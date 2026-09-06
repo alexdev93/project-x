@@ -8,9 +8,12 @@ name: Migrate database
 # intentional, not wasteful: a merge, a revert, or a hotfix branch all still
 # end up migrated correctly with no extra bookkeeping about what already ran.
 #
-# Requires a DATABASE_URL secret on this repo (Settings -> Secrets and
-# variables -> Actions -> New repository secret) with write access to the
-# production database. Nothing here can run without it — the job fails
+# DATABASE_URL itself is not a secret set here — it's pulled at run time from
+# the env-vault (project "project-x"), the same source local dev and the
+# deployed app use, so rotating it never means updating a GitHub secret too.
+# The only thing this repo needs is ENV_VAULT_TOKEN (Settings -> Secrets and
+# variables -> Actions -> New repository secret, value from the vault
+# dashboard's Usage panel). Nothing here can run without it — the job fails
 # loudly rather than silently skipping, since a schema change deployed
 # without its migration is exactly the failure mode this exists to prevent.
 
@@ -40,7 +43,21 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Apply schema.sql
-        run: pnpm db:migrate
+      - name: Install envvault
+        run: |
+          curl -fsS https://env-vault-api.alexdev93.workers.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Configure envvault
+        run: |
+          mkdir -p ~/.config/env-vault
+          printf "ENV_VAULT_URL='https://env-vault-api.alexdev93.workers.dev'\nENV_VAULT_TOKEN='%s'\n" \
+            "$ENV_VAULT_TOKEN" > ~/.config/env-vault/config
+          chmod 600 ~/.config/env-vault/config
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ENV_VAULT_TOKEN: ${{ secrets.ENV_VAULT_TOKEN }}
+
+      - name: Apply schema.sql
+        # `pnpm db:migrate` already wraps itself with `envvault run project-x
+        # --` (see package.json) — same command as running it by hand.
+        run: pnpm db:migrate

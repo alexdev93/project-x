@@ -7,15 +7,16 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev": "dotenv -e .env.local -- next dev",
+    "dev": "envvault run project-x -- dotenv -e .env.local -o -- next dev",
     "build": "next build",
-    "start": "dotenv -e .env.local -- next start",
+    "start": "envvault run project-x -- dotenv -e .env.local -o -- next start",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:migrate": "envvault run project-x -- tsx scripts/db-migrate.ts",
     "ingest": "tsx scripts/ingest-knowledge.ts",
-    "seed:blog": "tsx scripts/seed-blog.ts"
+    "seed:blog": "tsx scripts/seed-blog.ts",
+    "sync:vercel-env": "envvault run project-x -- node scripts/sync-vercel-env.mjs"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.44",
