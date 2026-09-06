@@ -218,10 +218,10 @@ Rules:
 
 ```bash
 pip install fonttools brotli
-yarn build                        # emits Inter's woff2 for outline extraction
+pnpm build                        # emits Inter's woff2 for outline extraction
 python3 scripts/build-brand.py    # SVGs + geometry.ts
 node scripts/build-brand-png.js   # PNG exports (needs playwright)
 ```
 
-Both are one-off asset tools, not part of `yarn build`. The committed files are
+Both are one-off asset tools, not part of `pnpm build`. The committed files are
 what ship.

@@ -262,7 +262,7 @@ one comes back as a 409, passed through verbatim because it is the one failure a
 person can fix themselves.
 
 > **Note.** After a content edit the assistant still answers from the previous
-> ingestion until `yarn ingest` runs. Worth adding a "rebuild index" action —
+> ingestion until `pnpm ingest` runs. Worth adding a "rebuild index" action —
 > which wants `chunking.ts` to take content as an argument rather than importing
 > it, a change worth making on its own merits.
 
@@ -271,8 +271,8 @@ person can fix themselves.
 ## 10. Setup
 
 ```bash
-yarn db:migrate     # idempotent — safe to run repeatedly
-yarn seed:blog      # two example posts, keyed by slug so re-runs update
+pnpm db:migrate     # idempotent — safe to run repeatedly
+pnpm seed:blog      # two example posts, keyed by slug so re-runs update
 ```
 
 Then set, in `.env.local` and in Vercel:
@@ -315,7 +315,7 @@ Node-only Vitest, no jsdom, matching the existing setup.
 | Route handlers | 401/404/429, and that the database mock is **untouched** on a refusal |
 | Browser (Playwright, on demand) | Focus traps, optimistic likes, comment submission, both themes, 375px, reduced motion, and rendering with JavaScript disabled |
 
-Two things that are already tests: `yarn build`, whose route table shows whether
-a page is still static, and `yarn db:migrate` run twice, which is both the
+Two things that are already tests: `pnpm build`, whose route table shows whether
+a page is still static, and `pnpm db:migrate` run twice, which is both the
 idempotency check and the check that no statement contains a semicolon the
 splitter would break on.

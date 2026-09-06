@@ -1,0 +1,497 @@
+{
+  "info": {
+    "name": "Project X API",
+    "description": "Every HTTP endpoint under src/app/api in the project-x portfolio app. See docs/API.md for the full written reference this collection mirrors.\n\nAuth: sign-in is Google/LinkedIn OAuth via Better Auth, which sets an HTTP-only session cookie — there is no bearer token to paste in. In Postman, enable Settings -> General -> \"Automatically follow redirects\" and turn on the cookie jar for {{baseUrl}}, sign in once through a browser against the same baseUrl, then Postman's cookie jar (Cookies link under Send, or the built-in browser) can reuse that session. Everything under the Admin folder additionally requires the signed-in account's email to be listed in ADMIN_EMAILS.\n\nMutating requests (POST/PATCH/PUT/DELETE) are rejected unless the Origin header matches the request's own host. Every request in this collection sets Origin to {{baseUrl}} for that reason — leave it as-is even when testing against a deployed URL.\n\nEvery JSON response follows one of two shapes: {\"success\": true, ...} or {\"success\": false, \"error\": string, ...}. The two oldest routes (AI chat, contact) predate that convention and are called out individually below.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001", "type": "string" },
+    { "key": "postSlug", "value": "your-post-slug", "type": "string" },
+    { "key": "postId", "value": "00000000-0000-0000-0000-000000000000", "type": "string" },
+    { "key": "commentId", "value": "00000000-0000-0000-0000-000000000000", "type": "string" },
+    { "key": "userId", "value": "00000000-0000-0000-0000-000000000000", "type": "string" },
+    { "key": "appSlug", "value": "spendguard", "type": "string" },
+    { "key": "releaseTag", "value": "v1.0.0", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Send contact message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"subject\": \"Let's talk\",\n  \"message\": \"Hi, I saw your portfolio and wanted to reach out about a role.\",\n  \"company\": \"\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/contact", "host": ["{{baseUrl}}"], "path": ["api", "contact"] },
+            "description": "No auth. Rate-limited to 5/hour per IP (429 + Retry-After when exceeded). `company` is a honeypot field: real forms never fill it, so a non-empty value returns a fake 200 success without sending anything.\n\nConstraints: name 1-100 chars, email valid + <=200 chars, subject 1-200 chars, message 10-5000 chars.\n\nNote: this route predates the shared response-guard convention, so success is `{success:true, name}` and validation failure is `{success:false, error, fieldErrors}` (matches the common shape) but a send failure is `{error}` with no `success` key at all -- treat any non-2xx here defensively."
+          }
+        },
+        {
+          "name": "AI Assistant - chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"What backend work has Alex done recently?\" }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "chat"] },
+            "description": "No auth. Rate-limited per IP (config AI_RATE_LIMIT/AI_RATE_WINDOW). `messages` is a 1..AI_MAX_HISTORY array of {role: \"user\"|\"assistant\", content: 1..AI_MAX_MESSAGE_LENGTH chars}.\n\nSuccess is a streamed `text/plain` body (the answer), optionally followed by a sentinel + JSON block carrying source citations, with an `X-Cache: HIT|MISS` response header. This route predates the shared guards too: every error response is `{error: string}` with no `success` key, unlike the rest of the API. 503 means GEMINI_API_KEY isn't configured; the assistant still degrades gracefully rather than crashing the page that embeds it."
+          }
+        },
+        {
+          "name": "Blog - get like count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/blog/posts/:slug/likes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blog", "posts", ":slug", "likes"],
+              "variable": [{ "key": "slug", "value": "{{postSlug}}" }]
+            },
+            "description": "No auth required to read. If a session cookie is present, `liked` reflects that viewer's own like. Rate-limited 60/min per IP. 404 if the blog has no database configured, or the post doesn't exist / isn't published."
+          }
+        },
+        {
+          "name": "Blog - toggle like",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/blog/posts/:slug/likes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blog", "posts", ":slug", "likes"],
+              "variable": [{ "key": "slug", "value": "{{postSlug}}" }]
+            },
+            "description": "Requires a signed-in session cookie (401 otherwise). No body. Rate-limited 30/min per user. Flips the current user's like and returns the new count."
+          }
+        },
+        {
+          "name": "Blog - post a comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Great write-up, thanks for sharing.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/blog/posts/:slug/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blog", "posts", ":slug", "comments"],
+              "variable": [{ "key": "slug", "value": "{{postSlug}}" }]
+            },
+            "description": "Requires a signed-in session cookie. Body length is bounded by BLOG_COMMENT_MIN_LENGTH/MAX_LENGTH (defaults 2-2000 chars). Add `\"parentId\": \"<comment uuid>\"` to reply one level deep instead of starting a new thread.\n\n201 on success, with `status: \"visible\"|\"pending\"` depending on the moderation policy (BLOG_COMMENT_MODERATION) and the link-count heuristic. 403 if the account is blocked (message deliberately does not say why). 404 if the post/parent doesn't exist, isn't published, or the parent is hidden."
+          }
+        },
+        {
+          "name": "Blog - edit own comment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"body\": \"Edited: great write-up, thanks for sharing!\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/blog/comments/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blog", "comments", ":id"],
+              "variable": [{ "key": "id", "value": "{{commentId}}" }]
+            },
+            "description": "Requires a signed-in session cookie, and only within BLOG_COMMENT_EDIT_WINDOW_MINUTES (default 15) of posting. 404 (not 403) for someone else's comment, an expired window, or a withdrawn comment -- the endpoint never reveals which."
+          }
+        },
+        {
+          "name": "Blog - withdraw own comment",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/blog/comments/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "blog", "comments", ":id"],
+              "variable": [{ "key": "id", "value": "{{commentId}}" }]
+            },
+            "description": "Requires a signed-in session cookie. Soft delete (no edit window limit, unlike editing) -- the comment's spot in the thread is kept but its body is replaced with a withdrawal notice."
+          }
+        },
+        {
+          "name": "Apps - download latest release",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/apps/:slug/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "apps", ":slug", "download"],
+              "variable": [{ "key": "slug", "value": "{{appSlug}}" }]
+            },
+            "description": "No auth. Rate-limited 20/5min per IP. Streams the app's latest GitHub release .apk through this origin (visitors are never redirected to github.com). 404 if the app has no configured repo; 503 if APPS_GITHUB_TOKEN isn't set; 502 on a GitHub-side failure."
+          }
+        },
+        {
+          "name": "Apps - download specific release",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/apps/:slug/download/:tag",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "apps", ":slug", "download", ":tag"],
+              "variable": [
+                { "key": "slug", "value": "{{appSlug}}" },
+                { "key": "tag", "value": "{{releaseTag}}" }
+              ]
+            },
+            "description": "Same as the latest-release download, pinned to one release tag instead of always the newest."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth (Better Auth)",
+      "item": [
+        {
+          "name": "Get current session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/get-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "get-session"]
+            },
+            "description": "src/app/api/auth/[...all]/route.ts hands every /api/auth/* path to Better Auth's own Next.js handler, which owns sign-in, the OAuth callback, session lookup and sign-out under this one prefix -- this collection does not enumerate its internal sub-routes, since they're a third-party library's surface, not this app's. This one example (get-session) is the one most useful for confirming a Postman cookie jar is actually authenticated before calling anything under Admin below.\n\n503 with {success:false, error:\"Sign-in isn't available right now.\"} means BETTER_AUTH_SECRET / GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET aren't all set -- sign-in is entirely optional and the rest of the site is unaffected when it's off."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Posts",
+      "description": "Every request here requires an admin session cookie (the signed-in account's email must be in ADMIN_EMAILS). A non-admin gets 404, not 401/403 -- the panel's existence is not revealed to a signed-in-but-unlisted account.",
+      "item": [
+        {
+          "name": "List all posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/admin/posts", "host": ["{{baseUrl}}"], "path": ["api", "admin", "posts"] }
+          }
+        },
+        {
+          "name": "Create post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"How I profile a slow Postgres query\",\n  \"slug\": \"profiling-slow-postgres-queries\",\n  \"body\": \"Full post body, Markdown-free plain text.\",\n  \"excerpt\": \"\",\n  \"tags\": [\"postgres\", \"performance\"]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/posts", "host": ["{{baseUrl}}"], "path": ["api", "admin", "posts"] },
+            "description": "slug: 1-80 chars, lowercase, kebab-case pattern, required. body: 1-100000 chars, required. title <=200 (defaults to \"\"), excerpt <=400 (auto-derived from body when left empty), tags: up to 8 strings of 1-30 chars each.\n\n201 on success. 400 with `fieldErrors` on a validation failure. 409 if the slug is already taken."
+          }
+        },
+        {
+          "name": "Update post",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"How I profile a slow Postgres query (updated)\",\n  \"slug\": \"profiling-slow-postgres-queries\",\n  \"body\": \"Updated full post body.\",\n  \"excerpt\": \"\",\n  \"tags\": [\"postgres\", \"performance\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "Same schema and constraints as create. 404 if the id doesn't exist. 409 on a slug collision with a different post."
+          }
+        },
+        {
+          "name": "Delete post",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "Cascades: deletes the post's comments and reactions, removes its cover image from Blob storage, and best-effort removes the live LinkedIn post if one was shared."
+          }
+        },
+        {
+          "name": "Publish / unpublish / pin post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"action\": \"publish\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "status"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "`action` is one of \"publish\" | \"unpublish\" | \"pin\" | \"unpin\".\n\npublish's response includes `linkedIn: \"shared\"|\"not_connected\"|\"skipped\"|\"failed\"` -- publishing never fails just because the LinkedIn cross-post did."
+          }
+        },
+        {
+          "name": "Set LinkedIn caption",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"commentary\": \"New post: how I profile a slow Postgres query. Link below.\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/linkedin-caption",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "linkedin-caption"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "commentary: up to 3000 chars. Left empty, LinkedIn shows the post's title instead. `synced: true` in the response means an already-live LinkedIn post was updated in place; otherwise this only takes effect on the next publish/share."
+          }
+        },
+        {
+          "name": "Upload cover image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/cover-image",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "cover-image"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "multipart/form-data, field `file`: image/*, <=4MB. Also uploads the same image to LinkedIn's asset storage (best-effort) so a future share has a thumbnail. Replacing an existing cover image clears every extra gallery photo, since the gallery is always \"cover, then extras\"."
+          }
+        },
+        {
+          "name": "Remove cover image",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/cover-image",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "cover-image"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            }
+          }
+        },
+        {
+          "name": "Add gallery photo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": [] },
+                { "key": "altText", "type": "text", "value": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/linkedin-images",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "linkedin-images"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "LinkedIn-only extra gallery photo (up to 8, on top of the cover image). Requires a cover image to already exist (400 otherwise) and LinkedIn to be connected (503 otherwise)."
+          }
+        },
+        {
+          "name": "Remove gallery photo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"index\": 0\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/linkedin-images",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "linkedin-images"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "`index` is the photo's position in the current gallery list -- the server always re-reads the current list first, so the client never has to track or resend positions itself."
+          }
+        },
+        {
+          "name": "Attach LinkedIn document",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/linkedin-document",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "linkedin-document"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            },
+            "description": "Any file type, <=4MB. Shared instead of the default article-link preview. Requires LinkedIn to be connected (503 otherwise)."
+          }
+        },
+        {
+          "name": "Remove LinkedIn document",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/:id/linkedin-document",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", ":id", "linkedin-document"],
+              "variable": [{ "key": "id", "value": "{{postId}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Comments & Users",
+      "item": [
+        {
+          "name": "Moderate comment (approve/hide)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"action\": \"approve\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/comments/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "comments", ":id"],
+              "variable": [{ "key": "id", "value": "{{commentId}}" }]
+            },
+            "description": "`action` is \"approve\" (pending -> visible) or \"hide\" (visible -> hidden)."
+          }
+        },
+        {
+          "name": "Delete comment (hard)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/comments/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "comments", ":id"],
+              "variable": [{ "key": "id", "value": "{{commentId}}" }]
+            },
+            "description": "Unlike a reader withdrawing their own comment (soft delete), this is a hard delete and cascades to its replies. There is no undo."
+          }
+        },
+        {
+          "name": "Block user",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Repeated spam links in comments\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/:id/block",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", ":id", "block"],
+              "variable": [{ "key": "id", "value": "{{userId}}" }]
+            },
+            "description": "`reason` <=200 chars, optional, for the admin's own reference -- never shown to the blocked user. 400 if the target id is the acting admin's own account."
+          }
+        },
+        {
+          "name": "Unblock user",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Origin", "value": "{{baseUrl}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/:id/block",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", ":id", "block"],
+              "variable": [{ "key": "id", "value": "{{userId}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Content editor",
+      "description": "Backs /admin/content, the browser-based editor for src/content/*.json. Saving writes a real commit to GitHub, which triggers a normal deployment -- there is no separate \"publish\" step. Requires GITHUB_TOKEN/GITHUB_REPO to be configured (503 otherwise).",
+      "item": [
+        {
+          "name": "Get section content",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/content/:section",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "content", ":section"],
+              "variable": [{ "key": "section", "value": "profile" }]
+            },
+            "description": "`:section` is one of profile | experience | projects | apps | skills | education | ai (404 for anything else). Returns `{data, sha}` -- `sha` is the file's current git blob hash, required by the PUT below for optimistic concurrency."
+          }
+        },
+        {
+          "name": "Save section content",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{baseUrl}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"__comment\": \"Replace with the full JSON for this section -- the shape is validated against that section's own zod schema before anything is committed.\"\n  },\n  \"sha\": \"<sha from the GET above>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/content/:section",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "content", ":section"],
+              "variable": [{ "key": "section", "value": "profile" }]
+            },
+            "description": "Body capped at 512KB. `data` must validate against the section's schema before any GitHub call is made (400 with `issues` otherwise). `sha` must match the file's current blob hash -- a 409 means someone else (or another tab) saved first; re-fetch with GET and reapply your change on top of theirs."
+          }
+        }
+      ]
+    }
+  ]
+}

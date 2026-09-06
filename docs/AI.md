@@ -120,8 +120,8 @@ src/lib/cache/
   ai-cache.ts            normalised-question cache, TTL, LRU bound
 
 src/app/api/ai/chat/route.ts    the API boundary
-scripts/db-migrate.ts           yarn db:migrate
-scripts/ingest-knowledge.ts     yarn ingest
+scripts/db-migrate.ts           pnpm db:migrate
+scripts/ingest-knowledge.ts     pnpm ingest
 ```
 
 The earlier non-agent path (`lib/ai/provider.ts`, `gemini.ts`, `prompt.ts` and
@@ -163,8 +163,8 @@ Any Postgres with the `vector` extension works. Neon's free tier is sufficient:
 3. Apply the schema and ingest:
 
 ```bash
-yarn db:migrate     # CREATE EXTENSION vector + knowledge_chunks
-yarn ingest         # chunk, embed, store
+pnpm db:migrate     # CREATE EXTENSION vector + knowledge_chunks
+pnpm ingest         # chunk, embed, store
 ```
 
 `CREATE EXTENSION IF NOT EXISTS vector` is in the schema, so pgvector needs no
@@ -173,9 +173,9 @@ separate setup on Neon or Supabase.
 ### 4.3 Ingestion
 
 ```bash
-yarn ingest             # embed only chunks whose content changed
-yarn ingest --force     # re-embed everything
-yarn ingest --dry-run   # print the chunk plan; no database, no API calls
+pnpm ingest             # embed only chunks whose content changed
+pnpm ingest --force     # re-embed everything
+pnpm ingest --dry-run   # print the chunk plan; no database, no API calls
 ```
 
 Idempotent. Each chunk stores a SHA-256 of its text, so editing one project
@@ -359,8 +359,8 @@ answer — a truncated reply beats one that vanishes.
 ## 12. Testing
 
 ```bash
-yarn test          # once
-yarn test:watch
+pnpm test          # once
+pnpm test:watch
 ```
 
 72 tests. **Gemini and Postgres are mocked everywhere** — `vitest.config.ts`
@@ -396,7 +396,7 @@ Neon's HTTP driver is used rather than a TCP pool: serverless functions are
 short-lived and scale horizontally, and a pool per instance exhausts Postgres
 connection slots.
 
-After changing content: `yarn ingest` (locally, against the same
+After changing content: `pnpm ingest` (locally, against the same
 `DATABASE_URL`), then redeploy.
 
 ---
