@@ -91,7 +91,7 @@ function AppIcon({ app }: { app: App }) {
         aria-hidden
         width={48}
         height={48}
-        className="size-12 shrink-0 rounded-[var(--radius)]"
+        className="size-12 shrink-0 rounded-(--radius)"
       />
     );
   }
@@ -99,7 +99,7 @@ function AppIcon({ app }: { app: App }) {
   return (
     <span
       aria-hidden
-      className="flex size-12 shrink-0 items-center justify-center rounded-[var(--radius)] border border-line bg-surface-raised font-display text-lg text-ink-muted"
+      className="flex size-12 shrink-0 items-center justify-center rounded-(--radius) border border-line bg-surface-raised font-display text-lg text-ink-muted"
     >
       {app.name.trim().charAt(0).toLocaleUpperCase()}
     </span>

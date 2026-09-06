@@ -1,3 +1,4 @@
+import { flattenError } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
 import { postInputSchema } from "@/lib/blog/schema";
 import { excerpt, readingMinutes } from "@/lib/blog/text";
@@ -39,7 +40,7 @@ export async function PATCH(request: Request, props: Params) {
   const parsed = postInputSchema().safeParse(checked.body);
   if (!parsed.success) {
     return errorResponse(400, "Please check the form and try again.", {
-      fieldErrors: parsed.error.flatten().fieldErrors,
+      fieldErrors: flattenError(parsed.error).fieldErrors,
     });
   }
 

@@ -59,7 +59,7 @@ export function ProjectMarkdown({ children }: { children: string }) {
             <img
               alt={alt ?? ""}
               loading="lazy"
-              className="rounded-[var(--radius)]"
+              className="rounded-(--radius)"
               {...props}
             />
           ),

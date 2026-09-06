@@ -66,7 +66,7 @@ export default async function ContentSectionPage(
           sha={file.sha}
         />
       ) : (
-        <p className="rounded-[var(--radius)] border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent">
+        <p className="rounded-(--radius) border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-accent">
           Couldn&apos;t load this file from GitHub. Check that GITHUB_TOKEN and
           GITHUB_REPO are set and that the token can read this repository.
         </p>

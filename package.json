@@ -7,6 +7,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
     "dev": "envvault run project-x -- dotenv -e .env.local -o -- next dev",
     "build": "next build",
     "start": "envvault run project-x -- dotenv -e .env.local -o -- next start",

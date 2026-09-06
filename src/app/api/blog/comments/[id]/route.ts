@@ -1,3 +1,4 @@
+import { flattenError } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { getBlogConfig, hasBlog } from "@/lib/blog/config";
 import { commentEditSchema } from "@/lib/blog/schema";
@@ -40,7 +41,7 @@ export async function PATCH(request: Request, props: Params) {
   const parsed = commentEditSchema().safeParse(checked.body);
   if (!parsed.success) {
     return errorResponse(400, "Please check your comment and try again.", {
-      fieldErrors: parsed.error.flatten().fieldErrors,
+      fieldErrors: flattenError(parsed.error).fieldErrors,
     });
   }
 
