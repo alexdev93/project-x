@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { CommentActions } from "./CommentActions";
 import { CommentForm } from "./CommentForm";
+import { getBlogConfig } from "@/lib/blog/config";
 import { machineDate, relativeTime } from "@/lib/format";
 import type { CommentNode, Comment } from "@/lib/blog/types";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ export function CommentThread({
   canComment: boolean;
 }) {
   const total = comments.reduce((n, node) => n + 1 + node.replies.length, 0);
+  const editWindowMinutes = getBlogConfig().commentEditWindowMinutes;
 
   return (
     <section className="mt-14 max-w-[68ch] border-t border-line pt-10">
@@ -61,13 +63,13 @@ export function CommentThread({
         <ol className="mt-10 flex flex-col gap-8">
           {comments.map((node) => (
             <li key={node.id}>
-              <CommentBody comment={node} />
+              <CommentBody comment={node} editWindowMinutes={editWindowMinutes} />
 
               {node.replies.length > 0 ? (
                 <ol className="mt-6 flex flex-col gap-6 border-l border-line pl-5 sm:pl-6">
                   {node.replies.map((reply) => (
                     <li key={reply.id}>
-                      <CommentBody comment={reply} />
+                      <CommentBody comment={reply} editWindowMinutes={editWindowMinutes} />
                     </li>
                   ))}
                 </ol>
@@ -94,7 +96,13 @@ export function CommentThread({
   );
 }
 
-function CommentBody({ comment }: { comment: Comment }) {
+function CommentBody({
+  comment,
+  editWindowMinutes,
+}: {
+  comment: Comment;
+  editWindowMinutes: number;
+}) {
   const withdrawn = comment.status === "deleted";
 
   return (
@@ -136,6 +144,7 @@ function CommentBody({ comment }: { comment: Comment }) {
               body: comment.body,
               createdAt: comment.createdAt.toISOString(),
             }}
+            editWindowMinutes={editWindowMinutes}
           />
         )}
       </div>
